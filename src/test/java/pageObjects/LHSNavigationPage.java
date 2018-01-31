@@ -44,6 +44,8 @@ public class LHSNavigationPage extends Util {
 
     private void setFilter(String filterText)
     {
+        filter.click();
+        sleep(1);
         filter.sendKeys(filterText);
         filter.sendKeys(Keys.ENTER);
     }

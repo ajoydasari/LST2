@@ -270,16 +270,20 @@ public class IncidentPage extends Util {
         IsDisplayed(sourceReadOnly);
         Readonly(priority);
 
-        isElementPresent(IncidentSLA);
-        AssertElementText(IncidentSLAStatus, "In progress");
-
-
-
         SwitchToDefault();
 
         return incidentNo;
     }
 
+    public void SLACreatedAsInProgress()
+    {
+        SwitchToIFrame();
+
+        isElementPresent(IncidentSLA);
+        AssertElementText(IncidentSLAStatus, "In progress");
+
+        SwitchToDefault();
+    }
 
     public void RejectIncident(String WorkNotes) {
 

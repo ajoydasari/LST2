@@ -7,17 +7,22 @@ Feature: Incident Feature
   Scenario: Incident 1
     Given I am Logged in ServiceNow as Admin
     When I Logoff and Login as
-    | ServiceDeskAgent |
-    | Cameron McKenzie |
+      | ServiceDeskAgent |
+      | Cameron McKenzie |
     And I Select Favourites Tab
     And I Create a new Incident with details
-    | Requester    | CustomerRelated | ITService           | Component                           | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup   | Impact | Urgency | Priority | ShortDescription | Description                         |
-    | Adrian Moody | yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | HOT Tooling Team  | 4      | 4       | 4        | Access Request   | Access Request to the Shared Drives |
+      | Requester    | CustomerRelated | ITService           | Component                           | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup   | Impact | Urgency | Priority | ShortDescription | Description                         |
+      | Adrian Moody | yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | HOT Tooling Team  | 4      | 4       | 4        | Access Request   | Access Request to the Shared Drives |
     Then Service SLA has been added to the Incident and status changed to 'In Progress'
+    When I Logoff and Login as
+      | AdminUser   |
+      | Ajoy Dasari |
     And Incident notification Email has been sent to the requester
-##    When I Logoff and Login as <ToolingTeamUser>
-##      | ServiceDeskAgent |
-##      | Nicholas Gann  |
+      | Requester     |
+      | Adrian.Moody  |
+##    When I Logoff and Login as
+##    | ServiceDeskAgent |
+##    | Nicholas Gann  |
 ##    And I Select All Apps Tab
 ##    And I Select Incident from My Assignment Groups Open Incidents link
 ##    And I select the Incident created earlier
@@ -103,7 +108,7 @@ Feature: Incident Feature
 #    Then Incident Resolution email is sent to "Charles Melley"
 #    Then Incident Closure email is sent to "Charles Melley"
 
-
+#
 #  Scenario: Check Email
 #    Given I am Logged in ServiceNow as Admin
 #    When I Open Emails

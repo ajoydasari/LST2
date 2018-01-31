@@ -1,10 +1,12 @@
 package pageObjects;
 
 import Utilities.Util;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
 
 public class EmailsPage extends Util {
 
@@ -23,6 +25,14 @@ public class EmailsPage extends Util {
     @FindBy(how = How.XPATH, using = ".//button[@id=\"ok_button\"]")
     private WebElement okButton;
 
+    @FindBy(how = How.XPATH, using = ".//span[@id='sys_email_hide_search']//select")
+    private WebElement filterColumn;
+
+    @FindBy(how = How.XPATH, using = ".//span[@id='sys_email_hide_search']//input")
+    private WebElement filterText;
+
+    @FindBy(how = How.XPATH, using = ".//table[@id='sys_email_table']//tr[@data-list_id]")
+    private WebElement emails;
 
     public EmailsPage()
     {
@@ -43,21 +53,22 @@ public class EmailsPage extends Util {
 
     private void addFilter(String FilterColumn, String FilterText)
     {
-        if (!(isElementPresent(bodyColumn)))
-        {
-            WaitForElement(selectColumns);
-            click(selectColumns);
-            click(bodyOption);
-            click(addOption);
-            click(okButton);
-        }
+        selectValue(filterColumn,FilterColumn);
+        setValue(filterText,FilterText);
+        filterText.sendKeys(Keys.ENTER);
     }
 
-    public void findEmail(String Recepient, String Subject, String BodyText)
-    {
+    public void Email_Exists(String Recipient, String Subject, String BodyText) {
         SwitchToIFrame();
 
         addBodyColumn();
+        addFilter("Recipient", Recipient);
+        sleep(2);
+        addFilter("Subject", Subject);
+        sleep(2);
+        addFilter("Body", BodyText);
+
+        IsDisplayed(emails);
 
         SwitchToDefault();
 

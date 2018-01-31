@@ -158,12 +158,21 @@ public abstract class Util extends XMLUtil{
             //sleep(1);
             List<WebElement> options = element.findElements(By.tagName("option"));
             for (WebElement option : options) {
-                System.out.println("Option to select: '"+optionValue+"', option text: '"+option.getText()+"'");
+                //System.out.println("Option to select: '"+optionValue+"', option text: '"+option.getText()+"'");
                 if((option.getText().contains(optionValue)) || (option.getAttribute("value").contains(optionValue)))
                     option.click();
             }
         } catch (Exception e) {
             System.out.println("Exception occurred in 'selectValue' method :" + e.getMessage());
+        }
+    }
+
+    protected static void setValue(WebElement element, String textValue) {
+        try {
+            System.out.println("Set Value - " + element.toString() + " : '"+ textValue + "'");
+            element.sendKeys(textValue);
+        } catch (Exception e) {
+            System.out.println("Exception occurred in 'setValue' method :" + e.getMessage());
         }
     }
 

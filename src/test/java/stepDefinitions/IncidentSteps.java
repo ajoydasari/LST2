@@ -35,14 +35,20 @@ public class IncidentSteps extends Util{
 
     @Then("^Service SLA has been added to the Incident and status changed to 'In Progress'$")
     public void service_SLA_has_been_added_to_the_Incident_and_status_changed_to_In_Progress() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+        new IncidentPage().SLACreatedAsInProgress();
     }
 
     @Then("^Incident notification Email has been sent to the requester$")
-    public void incident_notification_Email_has_been_sent_to_the_requester() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+    public void incident_notification_Email_has_been_sent_to_the_requester(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        SNOWUser user= new SNOWUser();
+        user.initialize(data);
+
+        LHSNavigationPage navPage = new LHSNavigationPage();
+        EmailsPage emails = new EmailsPage();
+        navPage.openEmails();
+
+        emails.Email_Exists(user.username, "New Incident Raised", incidentNo);
     }
 
     @When("^I Select Incident from My Assignment Groups Open Incidents link$")
@@ -70,15 +76,16 @@ public class IncidentSteps extends Util{
         incidentPage.verifyIncidentRejected();
     }
 
-
-    @When("^I Open Emails$")
-    public void i_Open_Emails() throws Throwable {
-        LHSNavigationPage navPage = new LHSNavigationPage();
-        EmailsPage emails = new EmailsPage();
-        navPage.openEmails();
-        emails.findEmail("Adrian Moody", "New Incident", "INC");
-        sleep(10);
-    }
+//
+//    @When("^I Open Emails$")
+//    public void i_Open_Emails() throws Throwable {
+//        LHSNavigationPage navPage = new LHSNavigationPage();
+//        EmailsPage emails = new EmailsPage();
+//        navPage.openEmails();
+//        emails.Email_Exists("Adrian.Moody", "New Incident Raised", "INC0474023");
+//
+//        sleep(10);
+//    }
 
 }
 
