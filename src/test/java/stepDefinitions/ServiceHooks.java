@@ -16,7 +16,7 @@ public class ServiceHooks extends Util {
         xmlobj = new XMLUtil();
         xmlfilename ="C:\\Selenium\\IntelliJ_Projects\\LST2\\target\\LST2_RunData.xml";
         xmlobj.setXMLFileName(xmlfilename);
-        //xmlobj.CreateXML(xmlfilename);
+        xmlobj.CreateXML(xmlfilename);
         xmlobj.saveData("Browser","Chrome");
 
         System.setProperty("webdriver.chrome.driver", "C:\\Selenium\\IntelliJ_Projects\\LST2\\target\\drivers\\chromedriver-windows-32bit.exe");

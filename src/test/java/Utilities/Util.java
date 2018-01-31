@@ -2,9 +2,7 @@ package Utilities;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -21,14 +19,13 @@ public abstract class Util extends XMLUtil{
     protected static WebDriver driver = null;
     private static String parentWindowHandler;
     private static Set<String> oldWindows;
-    private static int defaultTimeout = 20;     //10 = 5 seconds, 20=10 seconds
+    private static int defaultTimeout = 40;     //10 = 5 seconds, 20=10 seconds
 
     protected static void sleep(long waitValue) {
         System.out.println("Sleeping for '" + waitValue + "' seconds");
         try {
             Thread.sleep(waitValue * 500);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -44,8 +41,10 @@ public abstract class Util extends XMLUtil{
         System.out.println("Checking to see if Element is Present :" + element.toString());
         try {
             element.isDisplayed();
+            System.out.println("Checking to see if Element is Present : Element Found !");
             return true;
         } catch (Exception e) {
+            System.out.println("Checking to see if Element is Present : Element Not Found !");
             return false;
         }
     }
@@ -106,7 +105,7 @@ public abstract class Util extends XMLUtil{
         return element.getAttribute("value");
     }
 
-    public static String getText(WebElement element) {
+    private static String getText(WebElement element) {
         String value;
         WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
         wait.until(ExpectedConditions.visibilityOf(element));
@@ -115,6 +114,10 @@ public abstract class Util extends XMLUtil{
             value = getValue(element);
             value = element.findElement(By.xpath(".//option[@value='" + value + "']")).getAttribute("text");
             System.out.println("element is a select: value: = "+value);
+        }
+        else if (element.getTagName().equals("td")) {
+            value = element.getAttribute("textContent");
+            System.out.println("element is a td: value: = "+value);
         }
         else {
             value = element.getAttribute("text");
@@ -155,7 +158,7 @@ public abstract class Util extends XMLUtil{
             //sleep(1);
             List<WebElement> options = element.findElements(By.tagName("option"));
             for (WebElement option : options) {
-                //System.out.println("Option to select: "+optionValue+", option text: "+option.getText());
+                System.out.println("Option to select: '"+optionValue+"', option text: '"+option.getText()+"'");
                 if((option.getText().contains(optionValue)) || (option.getAttribute("value").contains(optionValue)))
                     option.click();
             }
@@ -227,7 +230,6 @@ public abstract class Util extends XMLUtil{
                     + ".png" + "'>screenshot</a>");
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -250,6 +252,37 @@ public abstract class Util extends XMLUtil{
     protected static void Log(String text)
     {
         System.out.println(text);
+    }
+
+    protected static void Checked(WebElement element)
+    {
+        Log("Checking Element is Checked: "+ element);
+        Boolean result = element.isSelected();
+        Log("Checked Property Value is : "+ result);
+        Assert.assertTrue(result.equals(true),"Checkbox is NOT Ticked");
+    }
+
+    protected static void UnChecked(WebElement element)
+    {
+        Log("Checking Element is UnChecked: "+ element);
+        Boolean result = element.isSelected();
+        Assert.assertTrue(result.equals(false),"Checkbox is Ticked");
+    }
+
+    public static Boolean Check_checkbox(WebElement element)
+    {
+        Boolean result = element.isSelected();;
+        if(!result)
+            click(element);
+        return result;
+    }
+
+    public static Boolean UnCheck_checkbox(WebElement element)
+    {
+        Boolean result = element.isSelected();
+        if(result)
+            click(element);
+        return result;
     }
 }
 

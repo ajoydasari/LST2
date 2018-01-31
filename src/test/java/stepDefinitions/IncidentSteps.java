@@ -1,24 +1,35 @@
 package stepDefinitions;
 
 import Utilities.Util;
+import cucumber.api.DataTable;
 import cucumber.api.PendingException;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import dataObjects.Incident;
+import dataObjects.SNOWUser;
+import pageObjects.EmailsPage;
 import pageObjects.IncidentsListPage;
 import pageObjects.LHSNavigationPage;
 import pageObjects.IncidentPage;
+
+import java.util.List;
 
 public class IncidentSteps extends Util{
 
     private String incidentNo;
 
-    @When("^I Create a new Incident with details (.*), (.*), (.*), (.*), (.*), (.*), (.*), (.*), (.*), (.*), (.*), (.*), (.*)$")
-    public void i_Create_a_new_Incident(String Requester, String CustomerRelated, String ITService, String Component, String Symptom, String TFSReference, String SupplierReference, String OwningGroup, String AssignmentGroup, String Impact, String Urgency, String ShortDescription, String Description) {
+    @When("^I Create a new Incident with details$")
+    public void i_Create_a_new_Incident(DataTable dataTable) {
+
+        List<List<String>> data = dataTable.raw();
+        Incident incident= new Incident();
+        incident.initialize(data);
+
         LHSNavigationPage favPage = new LHSNavigationPage();
         favPage.CreateNewIncident();
 
         IncidentPage incidentPage = new IncidentPage();
-        incidentNo = incidentPage.NewIncident(Requester, CustomerRelated, ITService, Component, Symptom, TFSReference, SupplierReference, OwningGroup, AssignmentGroup, Impact, Urgency, ShortDescription, Description);
+        incidentNo = incidentPage.NewIncident(incident);
         SaveData("IncidentNo",incidentNo);
     }
 
@@ -59,4 +70,15 @@ public class IncidentSteps extends Util{
         incidentPage.verifyIncidentRejected();
     }
 
+
+    @When("^I Open Emails$")
+    public void i_Open_Emails() throws Throwable {
+        LHSNavigationPage navPage = new LHSNavigationPage();
+        EmailsPage emails = new EmailsPage();
+        navPage.openEmails();
+        emails.findEmail("Adrian Moody", "New Incident", "INC");
+        sleep(10);
+    }
+
 }
+

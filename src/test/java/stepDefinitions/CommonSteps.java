@@ -1,12 +1,15 @@
 package stepDefinitions;
 
 import Utilities.Util;
-import cucumber.api.PendingException;
+import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
+import dataObjects.SNOWUser;
 import pageObjects.HomePage;
 import pageObjects.Poise_LoginPage;
 import pageObjects.SNOW_LoginPage;
+
+import java.util.List;
 
 public class CommonSteps extends Util {
 
@@ -29,20 +32,26 @@ public class CommonSteps extends Util {
 
     }
 
-    @When("^I Logoff and Login as (.*)$")
-    public void i_Logoff_and_Login_as(String user ) throws Throwable {
+    @When("^I Logoff and Login as$")
+    public void i_Logoff_and_Login_as(DataTable dataTable)
+    {
+        List<List<String>> data = dataTable.raw();
+        SNOWUser user= new SNOWUser();
+        user.initialize(data);
 
         HomePage homePage = new HomePage();
-        homePage.Impersonate_User(user);
+        homePage.Impersonate_User(user.username);
     }
 
     @When("^I Select All Apps Tab$")
-    public void I_Select_All_Apps_Tab() throws Throwable {
+    public void I_Select_All_Apps_Tab()
+    {
         new HomePage().SelectAllAppsTab();
     }
 
     @When("^I Select Favourites Tab$")
-    public void I_Select_Favourites_Tab() throws Throwable {
+    public void I_Select_Favourites_Tab()
+    {
         new HomePage().SelectFavouritesTab();
     }
 }

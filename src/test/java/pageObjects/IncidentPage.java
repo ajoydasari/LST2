@@ -1,6 +1,7 @@
 package pageObjects;
 
 import Utilities.Util;
+import dataObjects.Incident;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -34,13 +35,25 @@ public class IncidentPage extends Util {
     @FindBy(how = How.ID, using = "sys_display.incident.caller_id")
     private WebElement requester;
 
+    @FindBy(how = How.ID, using = "sys_readonly.incident.number")
+    private WebElement requesterReadOnly;
+
     @FindBy(how = How.ID, using = "sys_display.incident.location")
     private WebElement location;
+
+    @FindBy(how = How.ID, using = "incident.caller_id.location_label")
+    private WebElement locationReadOnly;
+
+    @FindBy(how = How.ID, using = "incident.caller_id.u_reasonable_adjustment_needs")
+    private WebElement assistiveTechnologyUser;
+
+    @FindBy(how = How.ID, using = "sys_readonly.incident.caller_id.u_reasonable_adjustment_needs")
+    private WebElement assistiveTechnologyUserReadOnly;
 
     @FindBy(how = How.ID, using = "sys_display.incident.u_service")
     private WebElement service;
 
-    @FindBy(how = How.ID, using = "sys_display.incident.u_service.u_security_context")
+    @FindBy(how = How.ID, using = "incident.u_service.u_security_context_label")
     private WebElement security_context;
 
     @FindBy(how = How.ID, using = "sys_display.incident.u_component")
@@ -82,6 +95,9 @@ public class IncidentPage extends Util {
     @FindBy(how = How.ID, using = "incident.urgency")
     private WebElement urgency;
 
+    @FindBy(how = How.ID, using = "incident.priority")
+    private WebElement priority;
+
     @FindBy(how = How.ID, using = "sysverb_update_and_stay_save")
     private WebElement Save;
 
@@ -106,15 +122,28 @@ public class IncidentPage extends Util {
     @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Rejected']")
     private WebElement rejectedActive;
 
-    @FindBy(how = How.XPATH, using = ".//td[text() = 'ServiceNow Core Platform (Svc Comp)']")
+    @FindBy(how = How.XPATH, using = ".//*[@id='incident.task_sla.task_table']//tr[@record_class='task_sla']")
     private WebElement IncidentSLA;
+
+    @FindBy(how = How.XPATH, using = ".//*[@id='incident.task_sla.task_table']//tr[@record_class='task_sla']/td[4]")
+    private WebElement IncidentSLAStatus;
+
+    @FindBy(how = How.XPATH, using = ".//input[@id='ni.incident.u_major_incident']")
+    private WebElement majorIncident;
+
+    @FindBy(how = How.ID, using = ".//select[@id='incident.contact_type']")
+    private WebElement source;
+
+    @FindBy(how = How.ID, using = "sys_readonly.incident.contact_type")
+    private WebElement sourceReadOnly;
 
     public IncidentPage()
     {
         PageFactory.initElements(driver,this);
     }
 
-    public String NewIncident(String Requester, String CustomerRelated, String ITService, String Component, String Symptom, String TFSReference, String SupplierReference, String OwningGroup, String AssignmentGroup, String Impact, String Urgency, String ShortDescription, String Description) {
+    public String NewIncident(Incident incident)
+    {
         UserSearchPage userspage = new UserSearchPage();
 
         SwitchToIFrame();
@@ -139,14 +168,14 @@ public class IncidentPage extends Util {
         requesterLookup.click();
 
         SwitchToNewWindow();
-        userspage.SearchForUser(Requester);
+        userspage.SearchForUser(incident.Requester);
 
         SwitchToOldWindow();
         SwitchToIFrame();
 
         IsDisplayed(PSCUserMSG);
 
-        selectValue(customerRelated,CustomerRelated);
+        selectValue(customerRelated,incident.CustomerRelated);
         IsDisplayed(PSC_and_customerRelatedMSG);
         IsNotEmpty(location);
 
@@ -175,7 +204,7 @@ public class IncidentPage extends Util {
         SwitchToOldWindow();
         SwitchToIFrame();
 
-        sendKeys_Select(service,ITService);
+        sendKeys_Select(service,incident.ITService);
         sleep(3);
 
         //Capture how many Component options are available after selecting the IT Service
@@ -191,7 +220,7 @@ public class IncidentPage extends Util {
 
         Assert.assertTrue(Integer.parseInt(newcomponentCount)<Integer.parseInt(componentCount),"Component Options are now reduced after selecting the IT Service");
 
-        sendKeys_Select(component,Component);
+        sendKeys_Select(component,incident.Component);
         sleep(3);
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
@@ -207,29 +236,45 @@ public class IncidentPage extends Util {
 
         Assert.assertTrue(Integer.parseInt(newsymptomCount)<Integer.parseInt(symptomCount),"Symptom Options are now reduced after selecting the IT Service and Component");
 
-        sendKeys_Select(symptom,Symptom);
+        sendKeys_Select(symptom,incident.Symptom);
 
-        //AssertElementValue(security_context,"Open");
-        //Assert.assertEquals(getSecurityContextValue(),"Open");
-        //
-        //
-        // Readonly(security_context);
+        AssertElementValue(security_context,"Open");
+        Readonly(security_context);
 
-        tfsReference.sendKeys(TFSReference);
-        supplierReference.sendKeys(SupplierReference);
+        UnChecked(majorIncident);
+        selectValue(source,"Phone");
 
-        sendKeys_Select(owningGroup,OwningGroup);
-        sendKeys_Select(assignemntGroup,AssignmentGroup);
+        tfsReference.sendKeys(incident.TFSReference);
+        supplierReference.sendKeys(incident.SupplierReference);
 
-        selectValue(impact,Impact);
-        selectValue(urgency,Urgency);
+        sendKeys_Select(owningGroup,incident.OwningGroup);
+        sendKeys_Select(assignemntGroup,incident.AssignmentGroup);
 
-        short_description.sendKeys(ShortDescription);
-        description.sendKeys(Description);
+        selectValue(impact,incident.Impact);
+        selectValue(urgency,incident.Urgency);
+        AssertElementValue(priority, incident.Priority);
+
+        short_description.sendKeys(incident.ShortDescription);
+        description.sendKeys(incident.Description);
 
         click(Save);
         WaitForElement(assignedActive);
         String incidentNo = getValue(incidentNumber);
+
+        AssertElementText(incidentState, "Assigned");
+
+        IsDisplayed(requesterReadOnly);
+        Readonly(locationReadOnly);
+        IsDisplayed(assistiveTechnologyUserReadOnly);
+        Readonly(security_context);
+        IsDisplayed(sourceReadOnly);
+        Readonly(priority);
+
+        isElementPresent(IncidentSLA);
+        AssertElementText(IncidentSLAStatus, "In progress");
+
+
+
         SwitchToDefault();
 
         return incidentNo;
