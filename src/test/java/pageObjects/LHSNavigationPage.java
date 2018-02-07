@@ -6,20 +6,30 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Wait;
 
 public class LHSNavigationPage extends Util {
 
     @FindBy(how = How.ID, using = "filter")
     private WebElement filter;
 
-    @FindBy(how = How.XPATH, using = ".//span[text()='Create New']")
+    @FindBy(how = How.XPATH, using = ".//*[text()='Create New']")
     private WebElement CreateNew;
+
+    @FindBy(how = How.XPATH, using = ".//a[@title='Create New'][contains(@href,'incident')]")
+    private WebElement createNewIncident;
 
     @FindBy(how = How.XPATH, using = ".//div[text()='New record']")
     private WebElement newRecord;
 
     @FindBy(how = How.XPATH, using = ".//*[text()='My Assignment Groups Open Incidents']")
-    private WebElement myGroupOpenIncidents;
+    private WebElement myAssignmentGroupOpenIncidents;
+
+    @FindBy(how = How.XPATH, using = ".//*[text()='My Owning Groups Open Incidents']")
+    private WebElement myOwningGroupOpenIncidents;
+
+    @FindBy(how = How.XPATH, using = ".//*[text()='My Owning Groups Resolved Incidents']")
+    private WebElement myOwningGroupResolvedIncidents;
 
     @FindBy(how = How.XPATH, using = ".//*[text()='Emails']")
     private WebElement emails;
@@ -31,7 +41,9 @@ public class LHSNavigationPage extends Util {
     }
 
     public void CreateNewIncident() {
-        click(CreateNew);
+        //click(CreateNew);
+        setFilter("Create New");
+        click(createNewIncident);
         SwitchToIFrame();
         WaitForElement(newRecord);
         SwitchToDefault();
@@ -39,13 +51,25 @@ public class LHSNavigationPage extends Util {
 
     public void MyAssignmentGroupOpenIncidents()
     {
-        myGroupOpenIncidents.click();
+        click(myAssignmentGroupOpenIncidents);
+        WaitForIncidentsListPage();
+    }
+
+    public void MyOwningGroupOpenIncidents()
+    {
+        click(myOwningGroupOpenIncidents);
+        WaitForIncidentsListPage();
+    }
+
+    public void MyOwningGroupResolvedIncidents()
+    {
+        click(myOwningGroupResolvedIncidents);
+        WaitForIncidentsListPage();
     }
 
     private void setFilter(String filterText)
     {
-        filter.click();
-        sleep(1);
+        click(filter);
         filter.sendKeys(filterText);
         filter.sendKeys(Keys.ENTER);
     }
@@ -54,6 +78,15 @@ public class LHSNavigationPage extends Util {
     {
         setFilter("Emails");
         click(emails);
-        WaitForPageLoad();
+        SwitchToIFrame();
+        WaitForElementToBeClicable(new EmailsPage().filterColumn);
+        SwitchToDefault();
+    }
+
+    private void WaitForIncidentsListPage()
+    {
+        SwitchToIFrame();
+        WaitForElement(new IncidentsListPage().incidentsHeader);
+        SwitchToDefault();
     }
 }

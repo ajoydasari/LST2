@@ -1,7 +1,7 @@
 package pageObjects;
 
 import Utilities.Util;
-import dataObjects.Incident;
+import dataObjects.IncidentData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -16,6 +16,9 @@ public class IncidentPage extends Util {
 
     @FindBy(how = How.ID, using = "incident.state")
     private WebElement incidentState;
+
+    @FindBy(how = How.ID, using = "sys_readonly.incident.state")
+    private WebElement readOnly_incidentState;
 
     @FindBy(how = How.ID, using = "incident.u_customer_related")
     private WebElement customerRelated;
@@ -104,8 +107,17 @@ public class IncidentPage extends Util {
     @FindBy(how = How.XPATH, using = ".//div[text()='New record']")
     private WebElement newRecord;
 
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Main Details']")
+    private WebElement mainDetailsTab;
+
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Notes']")
     private WebElement notesTab;
+
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Resolution Information']")
+    private WebElement resolutionTab;
+
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Closure']")
+    private WebElement closureTab;
 
     @FindBy(how = How.ID, using = "activity-stream-work_notes-textarea")
     private WebElement WorkNotesTextArea;
@@ -116,11 +128,17 @@ public class IncidentPage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[text()='The following mandatory fields are not filled in: Work notes']")
     private WebElement workNotesMandatory;
 
+    @FindBy(how = How.XPATH, using = ".//span[text()='Work notes are required at the end of a customer call']")
+    private WebElement workNotesMandatory_CallCustomer;
+
     @FindBy(how = How.XPATH, using = ".//span[text()='The following mandatory fields are not filled in: Symptom, Requester, Short description, Description, Component, IT Service, Current location']")
     private WebElement mandatoryFieldsMSG;
 
     @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Rejected']")
     private WebElement rejectedActive;
+
+    @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Resolved']")
+    private WebElement resolvedActive;
 
     @FindBy(how = How.XPATH, using = ".//*[@id='incident.task_sla.task_table']//tr[@record_class='task_sla']")
     private WebElement IncidentSLA;
@@ -131,18 +149,49 @@ public class IncidentPage extends Util {
     @FindBy(how = How.XPATH, using = ".//input[@id='ni.incident.u_major_incident']")
     private WebElement majorIncident;
 
-    @FindBy(how = How.ID, using = ".//select[@id='incident.contact_type']")
+    @FindBy(how = How.XPATH, using = ".//*[@id='incident.contact_type']")
     private WebElement source;
 
     @FindBy(how = How.ID, using = "sys_readonly.incident.contact_type")
     private WebElement sourceReadOnly;
+
+    @FindBy(how = How.ID, using = "incident.close_code")
+    private WebElement resolutionCode;
+
+    @FindBy(how = How.ID, using = "incident.close_notes")
+    private WebElement resolutionNotes;
+
+    @FindBy(how = How.ID, using = "sys_display.incident.u_resolution_it_service")
+    private WebElement resolutionITService;
+
+    @FindBy(how = How.ID, using = "sys_display.incident.u_resolution_component")
+    private WebElement resolutionComponent;
+
+    @FindBy(how = How.ID, using = "sys_display.incident.u_resolution_symptom")
+    private WebElement resolutionSymptom;
+
+    @FindBy(how = How.ID, using = "call_customer")
+    private WebElement callCustomer;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.incident.u_closure_code']/option[@selected]")
+    private WebElement closureCode;
+
+    @FindBy(how = How.ID, using = "sys_readonly.incident.u_closure_notes")
+    private WebElement closureNotes;
 
     public IncidentPage()
     {
         PageFactory.initElements(driver,this);
     }
 
-    public String NewIncident(Incident incident)
+    protected void WaitForPageLoad()
+    {
+        SwitchToIFrame();
+        WaitForElementToBeClicable(incidentState);
+        SwitchToDefault();
+    }
+
+    public String NewIncident(IncidentData incidentData)
     {
         UserSearchPage userspage = new UserSearchPage();
 
@@ -160,31 +209,34 @@ public class IncidentPage extends Util {
         IsNotEmpty(openedBy);
 
         click(Save);
-        IsDisplayed(mandatoryFieldsMSG);
+        AssertDisplayed(mandatoryFieldsMSG);
 
         CaptureWindowHandles();
 
         requesterLookup.isDisplayed();
-        requesterLookup.click();
+        click(requesterLookup);
 
         SwitchToNewWindow();
-        userspage.SearchForUser(incident.Requester);
+        userspage.SearchForUser(incidentData.Requester);
 
         SwitchToOldWindow();
         SwitchToIFrame();
 
-        IsDisplayed(PSCUserMSG);
+        if(incidentData.PSCUser.contains("yes"))
+        {
+            AssertDisplayed(PSCUserMSG);
+            selectValue(customerRelated, incidentData.CustomerRelated);
+            AssertDisplayed(PSC_and_customerRelatedMSG);
+        }
 
-        selectValue(customerRelated,incident.CustomerRelated);
-        IsDisplayed(PSC_and_customerRelatedMSG);
         IsNotEmpty(location);
 
         CommonPageObjects commonPage = new CommonPageObjects();
 
         //Capture how many Component options are available before selecting the IT Service
         CaptureWindowHandles();
-        componentlookup.click();
-        WaitForPageLoad();
+        click(componentlookup);
+        //WaitForPageLoad();
         SwitchToNewWindow();
 
         String componentCount = commonPage.getResultsCount();
@@ -195,8 +247,8 @@ public class IncidentPage extends Util {
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
         CaptureWindowHandles();
-        symptomlookup.click();
-        WaitForPageLoad();
+        click(symptomlookup);
+        //WaitForPageLoad();
         SwitchToNewWindow();
         String symptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count before selecting the IT Service and Component: "+symptomCount);
@@ -204,13 +256,13 @@ public class IncidentPage extends Util {
         SwitchToOldWindow();
         SwitchToIFrame();
 
-        sendKeys_Select(service,incident.ITService);
-        sleep(3);
+        sendKeys_Select(service, incidentData.ITService);
+        //sleep(3);
 
         //Capture how many Component options are available after selecting the IT Service
         CaptureWindowHandles();
-        componentlookup.click();
-        WaitForPageLoad();
+        click(componentlookup);
+        //WaitForPageLoad();
         SwitchToNewWindow();
         String newcomponentCount = commonPage.getResultsCount();
         Log("Component Options Count after selecting the IT Service: "+newcomponentCount);
@@ -220,13 +272,13 @@ public class IncidentPage extends Util {
 
         Assert.assertTrue(Integer.parseInt(newcomponentCount)<Integer.parseInt(componentCount),"Component Options are now reduced after selecting the IT Service");
 
-        sendKeys_Select(component,incident.Component);
-        sleep(3);
+        sendKeys_Select(component, incidentData.Component);
+        //sleep(3);
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
         CaptureWindowHandles();
-        symptomlookup.click();
-        WaitForPageLoad();
+        click(symptomlookup);
+        //WaitForPageLoad();
         SwitchToNewWindow();
         String newsymptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count after selecting the IT Service and Component: "+newsymptomCount);
@@ -236,7 +288,7 @@ public class IncidentPage extends Util {
 
         Assert.assertTrue(Integer.parseInt(newsymptomCount)<Integer.parseInt(symptomCount),"Symptom Options are now reduced after selecting the IT Service and Component");
 
-        sendKeys_Select(symptom,incident.Symptom);
+        sendKeys_Select(symptom, incidentData.Symptom);
 
         AssertElementValue(security_context,"Open");
         Readonly(security_context);
@@ -244,30 +296,32 @@ public class IncidentPage extends Util {
         UnChecked(majorIncident);
         selectValue(source,"Phone");
 
-        tfsReference.sendKeys(incident.TFSReference);
-        supplierReference.sendKeys(incident.SupplierReference);
+        tfsReference.sendKeys(incidentData.TFSReference);
+        supplierReference.sendKeys(incidentData.SupplierReference);
 
-        sendKeys_Select(owningGroup,incident.OwningGroup);
-        sendKeys_Select(assignemntGroup,incident.AssignmentGroup);
+        sendKeys_Select(owningGroup, incidentData.OwningGroup);
+        sendKeys_Select(assignemntGroup, incidentData.AssignmentGroup);
 
-        selectValue(impact,incident.Impact);
-        selectValue(urgency,incident.Urgency);
-        AssertElementValue(priority, incident.Priority);
+        selectValue(impact, incidentData.Impact);
+        selectValue(urgency, incidentData.Urgency);
+        AssertElementValue(priority, incidentData.Priority);
 
-        short_description.sendKeys(incident.ShortDescription);
-        description.sendKeys(incident.Description);
+        short_description.sendKeys(incidentData.ShortDescription);
+        description.sendKeys(incidentData.Description);
 
         click(Save);
+        WaitForPageRefresh();
+
         WaitForElement(assignedActive);
         String incidentNo = getValue(incidentNumber);
 
         AssertElementText(incidentState, "Assigned");
 
-        IsDisplayed(requesterReadOnly);
+        AssertDisplayed(requesterReadOnly);
         Readonly(locationReadOnly);
-        IsDisplayed(assistiveTechnologyUserReadOnly);
+        AssertDisplayed(assistiveTechnologyUserReadOnly);
         Readonly(security_context);
-        IsDisplayed(sourceReadOnly);
+        AssertDisplayed(sourceReadOnly);
         Readonly(priority);
 
         SwitchToDefault();
@@ -285,31 +339,75 @@ public class IncidentPage extends Util {
         SwitchToDefault();
     }
 
+
+    public void ChangeIncidentStatus(String status) {
+        SwitchToDefault();
+        SwitchToIFrame();
+        WaitForElementToBeClicable(incidentState);
+        selectValue(incidentState,status);
+        click(Save);
+        WaitForPageRefresh();
+    }
+
     public void RejectIncident(String WorkNotes) {
 
         SwitchToDefault();
         SwitchToIFrame();
-        WaitForPageLoad();
+
+        WaitForElementToBeClicable(incidentState);
         selectValue(incidentState,"Rejected");     //Rejected
         click(Save);
 
-        IsDisplayed(workNotesMandatory);
-
-        notesTab.click();
-        WorkNotesTextArea.sendKeys(WorkNotes);
+        AssertDisplayed(workNotesMandatory);
+        AddWorkNotes(WorkNotes);
         click(Save);
 
         WaitForElement(rejectedActive);
         SwitchToDefault();
     }
 
+    private void AddWorkNotes(String WorkNotes)
+    {
+        if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(notesTab);
+        WorkNotesTextArea.sendKeys(WorkNotes);
+    }
 
+    public void verifyIncidentStatus(String status)
+    {
+        Log("Verifying Incident Status : '"+status+"'");
+        SwitchToDefault();
+        SwitchToIFrame();
 
-    public void verifyIncidentRejected()
+        switch (status) {
+            case "Rejected":
+                AssertElementValue(incidentState, "8");
+                break;
+            case "Assigned":
+                AssertElementValue(incidentState, "2");
+                break;
+            case "In Progress":
+                AssertElementValue(incidentState, "22");
+                break;
+            case "Awaiting Info":
+                AssertElementValue(incidentState, "23");
+                break;
+            case "Resolved":
+                AssertElementValue(readOnly_incidentState, "6");
+                break;
+            case "Closed":
+                AssertElementValue(readOnly_incidentState, "7");
+                break;
+        }
+        SwitchToDefault();
+    }
+
+    public void verifyAssignemntGroupRemoved()
     {
         SwitchToDefault();
         SwitchToIFrame();
-        AssertElementValue(incidentState, "8");
+        click(mainDetailsTab);
+        IsEmpty(assignemntGroup);
         SwitchToDefault();
     }
 
@@ -318,4 +416,89 @@ public class IncidentPage extends Util {
         return driver.findElement(By.id("sys_display.incident.u_service.u_security_context")).getAttribute("value");
     }
 
+    public void Select_AssignmentGroup(IncidentData incidentData) {
+
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        selectMainTab();
+
+        WaitForElementToBeClicable(assignemntGroup);
+        sendKeys_Select(assignemntGroup,incidentData.AssignmentGroup);
+        AddWorkNotes(incidentData.WorkNotes);
+        click(mainDetailsTab);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void ResolveIncident(IncidentData incidentData) {
+
+        WaitForPageLoad();
+
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        WaitForElementToBeClicable(resolutionTab);
+        click(resolutionTab);
+        WaitForElement(resolutionCode);
+
+        selectValue(incidentState,"Resolved");
+        selectValue(resolutionCode, incidentData.ResolutionCode);
+        resolutionNotes.sendKeys(incidentData.ResolutionNotes);
+        click(Save);
+
+        WaitForPageRefresh();
+
+        WaitForElement(resolvedActive);
+        SwitchToDefault();
+    }
+
+    public void verifyServiceClassfication(IncidentData incidentData)
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+        AssertElementValue(resolutionITService, incidentData.ITService );
+        AssertElementValue(resolutionComponent, incidentData.Component );
+        AssertElementValue(resolutionSymptom, incidentData.Symptom );
+        SwitchToDefault();
+    }
+
+    public void CallCustomer(String WorkNotes) {
+
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        click(callCustomer);
+        AssertDisplayed(workNotesMandatory_CallCustomer);
+        AddWorkNotes(WorkNotes);
+        click(callCustomer);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void verifyClosureDetails(IncidentData incidentData)
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        selectClosureTab();
+
+        AssertElementValue(closureCode, incidentData.ClosureCode );
+        AssertElementValue(closureNotes, incidentData.ClosureNotes);
+        SwitchToDefault();
+    }
+
+
+    private void selectMainTab()
+    {
+        if(!(mainDetailsTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            mainDetailsTab.click();
+    }
+
+    private void selectClosureTab()
+    {
+        if(!(closureTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            closureTab.click();
+    }
 }
