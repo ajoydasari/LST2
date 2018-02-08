@@ -67,7 +67,7 @@ public class LHSNavigationPage extends Util {
         WaitForIncidentsListPage();
     }
 
-    private void setFilter(String filterText)
+    public void setFilter(String filterText)
     {
         click(filter);
         filter.sendKeys(filterText);

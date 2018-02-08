@@ -7,16 +7,16 @@ Feature: Incident Feature
   Scenario: Incident 1
     Given I am Logged in ServiceNow as Admin
     When I Logoff and Login as
-      | ServiceDeskAgent |
-      | Cameron McKenzie |
+      | ServiceDeskAgent           |
+      | Test SIServiceDeskAnalyst1 |
     And I Create a new Incident with details
-      | Requester    | PSCUser | CustomerRelated | ITService           | Component                           | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup   | Impact | Urgency | Priority | ShortDescription | Description                         |
-      | Adrian Moody | yes     | yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | HOT Tooling Team  | 4      | 4       | 4        | Access Request   | Access Request to the Shared Drives |
+      | Requester    | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | ShortDescription            | Description                         |
+      | Test User1   | yes     | yes             | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 4      | 4       | 4        | Incident 1 - Access Request | Access Request to the Shared Drives |
     Then Service SLA has been added to the Incident and status changed to 'In Progress'
     And New Incident notification Email has been sent to the requester
     When I Logoff and Login as
-      | ServiceDeskAgent |
-      | Nicholas Gann    |
+      | Resolver1               |
+      | Test AssignmentGrpUser1 |
     And I Select Incident from My Assignment Groups Open Incidents link
     And I Reject the Incident with notes
       | WorkNotes                 |
@@ -25,17 +25,17 @@ Feature: Incident Feature
     And Assignment Group is Removed
     And Incident no longer appears in My Assignment Groups Open Incidents
     When I Logoff and Login as
-      | HOTServiceDeskAgent |
-      | Alex Weir           |
+      | HOTServiceDeskAgent        |
+      | Test SDServiceDeskAnalyst1 |
     And I Select the Incident from My Owning Groups Open Incidents link
     And I Change the Incident Status to Assigned
     And I Assign Group with WorkNotes and Save
-      | AssignmentGroup | WorkNotes                     |
-      | FJ ESNT         | Incident Assigned to FJ ESNT  |
+      | AssignmentGroup       | WorkNotes                               |
+      | Test AssignmentGroup2 | Incident Assigned to Assignment Group 2 |
     Then Incident Status changed to Assigned
     When I Logoff and Login as
-      |  FJResolver2    |
-      | Adam Armstrong  |
+      | Resolver2               |
+      | Test AssignmentGrpUser2 |
     And I Select Incident from My Assignment Groups Open Incidents link
     And I Change the Incident Status to In Progress
     Then Incident Status changed to In Progress
@@ -50,8 +50,8 @@ Feature: Incident Feature
     And Incident Status changed to Resolved
     Then Incident Resolution Email has been sent to the requester
     When I Logoff and Login as
-      | HOTServiceDeskAgent   |
-      | Alex Weir             |
+      | HOTServiceDeskAgent        |
+      | Test SDServiceDeskAnalyst1 |
     And I Call Customer with notes for the Incident
       | WorkNotes                                 |
       | Attempt call customer for the first time  |
@@ -67,69 +67,61 @@ Feature: Incident Feature
       | ClosureCode                       | ClosureNotes                                                                                            |
       | Closed - Three Contacts Attempted | This call is being closed automatically after three contacts. Please see work notes for further details |
     Then Incident Closure Email has been sent to the requester
-      | Requester     | Subject           |
-      | Adrian.Moody  | Incident Closure |
 
 
 
-#  Scenario: Incident 2
-#    Given I am Logged in ServiceNow as Admin
-#    When I Logoff and Login as
-#      | HOT Service Desk Agent      |
-#      | Test SDServiceDeskAnalyst1  |
-#    And I Create a new Incident1 with details
-#      | Requester  | PSCUser | CustomerRelated | ITService           | Component                           | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | WorkNotes		              | ShortDescription 		    | Description  	              |
-#      | Test User1 | yes     | yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 3      | 3       | 3        | Incident Parent and Child 1  | Incident Parent and Child 1 | Incident Parent and Child 1 |
-#    And I Create a new Incident2 with details
-#      | Requester  | PSCUser | CustomerRelated | ITService           | Component                           | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | WorkNotes     		          | ShortDescription 		    | Description                 |
-#      | Test User2 | no      | yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 4      | 4       | 4        | Incident Parent and Child 2  | Incident Parent and Child 2 | Incident Parent and Child 2 |
-#    And I Create a new Incident3 with details
-#      | Requester  | PSCUser | CustomerRelated | ITService           | Component              	          | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | WorkNotes     		          | ShortDescription 		    | Description                 |
-#      | Test User3 | no      | yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 4      | 4       | 4        | Incident Parent and Child 3  | Incident Parent and Child 3 | Incident Parent and Child 3 |
-#    And I Search and Open the Incident3
-#    And I Click Edit on the Child Incidents Tab
-#    And I Add Incident1 as a Child Incident
-#    Then Incident1 is Added as a Child Incident
-#    When I Add Incident2 as a Child Incident
-#    Then Incident2 is Added as a Child Incident
-#    When I Save the Incident
-#    Then Incident1 and Incident2 displayed as Child Incidents of Incident3
-#    When I Logoff and Login as
-#      | FJ Resolver 1           |
-#      | Test AssignmentGrpUser1 |
-#    And I Select Favourites Tab
-#    And I Select Incident3 from My Assignment Groups Open Incidents link
-#    And I Change the Incident Status to In Progress
-#    Then Incident Status changed to In Progress
-#    When I Resolve the Incident with Resolution Details
-#      | ResolutionCode        | ResolutionNotes        |
-#      | Solved                | Resolution Notes Text  |
-#    Then Incident3 Status changed to Resolved
-#    Then Resolution Service Classification information is automaticlaly populated from Incident3
-#      | ITService           | Component                           | Symptom   |
-#      | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    |
-#    Then Incident Resolution Email has been sent to the requester
-#      | Requester   | Subject           |
-#      | Test.User3  | Incident Resolved |
-#    And Incident1 Status changed to Resolved
-#    And Incident2 Status changed to Resolved
-#    When I Logoff and Login as
-#      | HOT Service Desk Agent     |
-#      | Test SDServiceDeskAnalyst1 |
-#    And I Search and Open the Incident3
-#    And I Change the Incident3 Status to Closed
-#    Then Incident3 Status changed to Closed
-#    Then Incident1 Status changed to Closed
-#    Then Incident2 Status changed to Closed
-#    And Child Incident1 contains Closure Details from Incident3
-#      | ClosureCode                     | ClosureNotes       |
-#      | Closed - Parent Incident closed | Closure Notes Text |
-#    And Child Incident2 contains Closure Details from Incident3
-#      | ClosureCode                     | ClosureNotes       |
-#      | Closed - Parent Incident closed | Closure Notes Text |
-#    Then Incident Closure Email has been sent to the requester
-#      | Requester     | Subject          |
-#      | Test.User3    | Incident Closure |
+  Scenario: Incident 2
+    Given I am Logged in ServiceNow as Admin
+    When I Logoff and Login as
+      | HOT Service Desk Agent    |
+      | Test SDServiceDeskAnalyst1 |
+    And I Create a new Incident1 with details
+      | Requester  | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | WorkNotes		             | ShortDescription 		    | Description  	             |
+      | Test User1 | yes     | yes             | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 3      | 3       | 3        | Incident Parent and Child 1  | Incident Parent and Child 1 | Incident Parent and Child 1 |
+    And I Create a new Incident2 with details
+      | Requester  | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | WorkNotes     		         | ShortDescription 		    | Description                |
+      | Test User2 | no      | yes             | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 4      | 4       | 4        | Incident Parent and Child 2  | Incident Parent and Child 2 | Incident Parent and Child 2 |
+    And I Create a new Incident3 with details
+      | Requester  | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | WorkNotes     		         | ShortDescription 		    | Description                |
+      | Test User3 | no      | yes             | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 4      | 4       | 4        | Incident Parent and Child 3  | Incident Parent and Child 3 | Incident Parent and Child 3 |
+    And I Search and Open the Incident3
+    And I Click Edit on the Child Incidents Tab
+    And I Add Incident1 as a Child Incident
+    Then Incident1 is Added as a Child Incident
+    And I Click Edit on the Child Incidents Tab
+    When I Add Incident2 as a Child Incident
+    Then Incident2 is Added as a Child Incident
+    When I Logoff and Login as
+      | FJ Resolver 1           |
+      | Test AssignmentGrpUser1 |
+    And I Select Incident3 from My Assignment Groups Open Incidents link
+    And I Change the Incident Status to In Progress
+    Then Incident Status changed to In Progress
+    When I Resolve the Incident with Resolution Details
+      | ResolutionCode        | ResolutionNotes        |
+      | Solved                | Resolution Notes Text  |
+    Then Incident3 Status changed to Resolved
+    Then Resolution Service Classification displayed correctly for Incident3
+    Then Incident3 Resolution Email has been sent to the requester
+    When I Search and Open the Incident1
+    Then Incident1 Status changed to Resolved
+    When I Search and Open the Incident2
+    Then Incident2 Status changed to Resolved
+    When I Logoff and Login as
+      | HOT Service Desk Agent     |
+      | Test SDServiceDeskAnalyst1 |
+    And I Search and Open the Incident3
+    When I Close the Incident3 with details
+      | ClosureCode                     | ClosureNotes       |
+      | Closed - Parent incident closed | Closure Notes Text |
+    Then Incident3 Status changed to Closed
+    When I Search and Open the Incident1
+    Then Incident1 Status changed to Closed
+    When I Search and Open the Incident2
+    Then Incident2 Status changed to Closed
+    And Child Incident1 contains Closure Details from Incident3
+    And Child Incident2 contains Closure Details from Incident3
+    Then Incident3 Closure Email has been sent to the requester
 
 
 

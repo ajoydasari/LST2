@@ -3,6 +3,7 @@ package pageObjects;
 import Utilities.Util;
 import dataObjects.IncidentData;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -174,10 +175,23 @@ public class IncidentPage extends Util {
     private WebElement callCustomer;
 
     @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.incident.u_closure_code']/option[@selected]")
+    private WebElement closureCode_ReadOnly;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='incident.u_closure_code']")
     private WebElement closureCode;
 
     @FindBy(how = How.ID, using = "sys_readonly.incident.u_closure_notes")
+    private WebElement closureNotes_ReadOnly;
+
+    @FindBy(how = How.ID, using = "incident.u_closure_notes")
     private WebElement closureNotes;
+
+    @FindBy(how = How.XPATH, using = ".//*[@id='tabs2_list']//span[contains(text(),'Child')]")
+    private WebElement childIncidentsTab;
+
+    @FindBy(how = How.ID, using = "sysverb_edit_o2m")
+    private WebElement editChildIncidents;
+
 
     public IncidentPage()
     {
@@ -187,7 +201,7 @@ public class IncidentPage extends Util {
     protected void WaitForPageLoad()
     {
         SwitchToIFrame();
-        WaitForElementToBeClicable(incidentState);
+        WaitForElement(incidentState);
         SwitchToDefault();
     }
 
@@ -236,7 +250,6 @@ public class IncidentPage extends Util {
         //Capture how many Component options are available before selecting the IT Service
         CaptureWindowHandles();
         click(componentlookup);
-        //WaitForPageLoad();
         SwitchToNewWindow();
 
         String componentCount = commonPage.getResultsCount();
@@ -248,7 +261,6 @@ public class IncidentPage extends Util {
         //Capture how many Symptom options are available before selecting the IT Service and Component
         CaptureWindowHandles();
         click(symptomlookup);
-        //WaitForPageLoad();
         SwitchToNewWindow();
         String symptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count before selecting the IT Service and Component: "+symptomCount);
@@ -270,15 +282,15 @@ public class IncidentPage extends Util {
         SwitchToOldWindow();
         SwitchToIFrame();
 
+        System.out.println(componentCount);
+        System.out.println(newcomponentCount);
         Assert.assertTrue(Integer.parseInt(newcomponentCount)<Integer.parseInt(componentCount),"Component Options are now reduced after selecting the IT Service");
 
         sendKeys_Select(component, incidentData.Component);
-        //sleep(3);
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
         CaptureWindowHandles();
         click(symptomlookup);
-        //WaitForPageLoad();
         SwitchToNewWindow();
         String newsymptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count after selecting the IT Service and Component: "+newsymptomCount);
@@ -349,6 +361,22 @@ public class IncidentPage extends Util {
         WaitForPageRefresh();
     }
 
+
+    public void CloseIncident(IncidentData incidentData) {
+        SwitchToDefault();
+        SwitchToIFrame();
+        WaitForElementToBeClicable(incidentState);
+        selectValue(incidentState,"Closed");
+
+        selectClosureTab();
+
+        closureCode.sendKeys(incidentData.ClosureCode );
+        closureNotes.sendKeys(incidentData.ClosureNotes);
+
+        click(Save);
+        WaitForPageRefresh();
+    }
+
     public void RejectIncident(String WorkNotes) {
 
         SwitchToDefault();
@@ -393,7 +421,8 @@ public class IncidentPage extends Util {
                 AssertElementValue(incidentState, "23");
                 break;
             case "Resolved":
-                AssertElementValue(readOnly_incidentState, "6");
+                //AssertElementValue(readOnly_incidentState, "6");
+                AssertElementValue(incidentState, "6");
                 break;
             case "Closed":
                 AssertElementValue(readOnly_incidentState, "7");
@@ -484,8 +513,8 @@ public class IncidentPage extends Util {
 
         selectClosureTab();
 
-        AssertElementValue(closureCode, incidentData.ClosureCode );
-        AssertElementValue(closureNotes, incidentData.ClosureNotes);
+        AssertElementValue(closureCode_ReadOnly, incidentData.ClosureCode );
+        AssertElementValue(closureNotes_ReadOnly, incidentData.ClosureNotes);
         SwitchToDefault();
     }
 
@@ -500,5 +529,43 @@ public class IncidentPage extends Util {
     {
         if(!(closureTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
             closureTab.click();
+    }
+
+    private void selectChildIncidentsTab()
+    {
+        if(!(childIncidentsTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            childIncidentsTab.click();
+    }
+
+    public void EditChildIncident()
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+        ScrollPage(1);
+        WaitForElement(childIncidentsTab);
+        selectChildIncidentsTab();
+        click(editChildIncidents);
+        SwitchToDefault();
+    }
+
+    public void verifyChildAdded(String IncidentNumber)
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        isElementPresent(ElementByXPath(".//a[text()='" + IncidentNumber + "']"));
+        SwitchToDefault();
+    }
+
+
+    public void ScrollPage(int pages)
+    {
+        System.out.println("Scrolling Page, Pages to Scroll : "+pages);
+        incidentNumber.click();
+        for (int i = 0; i < pages; i++)
+        {
+            incidentNumber.sendKeys(Keys.PAGE_DOWN);
+            sleep(1);
+        }
     }
 }

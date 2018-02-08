@@ -1,6 +1,7 @@
 package Utilities;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -23,8 +24,8 @@ public abstract class Util extends XMLUtil{
     private static int defaultTimeout = 40;
     public String GblEmailsUser = "Ajoy Dasari";
 
-    protected static void sleep(long waitValue) {
-        System.out.println("Sleeping for '" + (waitValue/2) + "' seconds");
+    protected static void sleep(int waitValue) {
+        System.out.println("Sleeping for '" + waitValue + "' seconds");
         try {
             Thread.sleep(waitValue * 500);
         } catch (InterruptedException e) {
@@ -63,7 +64,6 @@ public abstract class Util extends XMLUtil{
                     wait.until(ExpectedConditions.visibilityOf(element));
                     waiting = false;
                 } catch (Exception e) {
-                    //System.out.println("Exception occurred in 'setValue' method :" + e.getMessage());
                     sleep(1);
                 }
                 timeout = timeout -1;
@@ -83,6 +83,12 @@ public abstract class Util extends XMLUtil{
         System.out.println("Waiting for Element to Disappear :" + element.toString());
         WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
         wait.until(ExpectedConditions.invisibilityOf(element));
+    }
+
+    protected static WebElement ElementByXPath(String xpath) {
+        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        return driver.findElement(By.xpath(xpath));
     }
 
     protected static void ClickElementByXPath(String xpath) {
@@ -162,6 +168,7 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static void SwitchToNewWindow() {
+        sleep(1);
         SwitchToDefault();
         Set<String> allWindows;
         allWindows = driver.getWindowHandles();
@@ -290,6 +297,11 @@ public abstract class Util extends XMLUtil{
         sleep(8);
     }
 
+    protected static void WaitForPopup()
+    {
+        sleep(1);
+    }
+
     protected static void AssertElementValue(WebElement element, String expected){
         Log("Asserting Element Value: '"+ expected+"'");
         String actual = getValue(element);
@@ -340,7 +352,21 @@ public abstract class Util extends XMLUtil{
 
     public static String FormatEmailReceiver(String emailUser)
     {
-        return emailUser.replaceFirst(" ", ".");
+        return StringUtils.remove(emailUser,' ');
     }
+
+
+//    public static void ScrollPage(int pages)
+//    {
+//        System.out.println("Scrolling Page, Pages to Scroll : "+pages);
+//        WebElement element = driver.findElement(By.xpath(".//div[contains(@id,'form_scroll')]"));
+//        element.click();
+//        for (int i = 0; i < pages; i++)
+//        {
+//            element.sendKeys(Keys.PAGE_DOWN);
+//            sleep(1);
+//        }
+//
+//    }
 }
 

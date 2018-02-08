@@ -16,11 +16,17 @@ public class CommonPageObjects extends Util {
         PageFactory.initElements(driver,this);
     }
 
+    protected void WaitForPageLoad()
+    {
+        WaitForPopup();
+    }
+
     protected String getResultsCount() {
         String rows="";
+        WaitForPageLoad();
         try {
             rows = totalRows.getAttribute("total_rows");
-            //System.out.println("Number of Records in the Search Popup :" + rows);
+            System.out.println("Number of Records in the Search Popup :" + rows);
         } catch (Exception e) {
             System.out.println("Exception Occurred in getResultsCount function, details: "+e.getMessage());
         }

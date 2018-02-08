@@ -1,6 +1,7 @@
 package pageObjects;
 
 import Utilities.Util;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -95,6 +96,7 @@ public class HomePage extends Util {
             globalSearch.sendKeys(searchText);
             globalSearch.sendKeys(Keys.ENTER);
             WaitForPageRefresh();
+
     }
 
     public HomePage()
