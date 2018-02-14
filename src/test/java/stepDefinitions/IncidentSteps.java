@@ -61,6 +61,23 @@ public class IncidentSteps extends Util{
     }
 
 
+    @When("^I Create a new (.*) with details without Saving$")
+    public void i_Create_a_new_Incident_with_details_without_Saving(String IncidentNumber, DataTable dataTable){
+        List<List<String>> data = dataTable.raw();
+
+        new HomePage().SelectAllAppsTab();
+
+        LHSNavigationPage favPage = new LHSNavigationPage();
+        favPage.CreateNewIncident();
+
+        IncidentPage incidentPage = new IncidentPage();
+        incidentData = GetIncidentObject(IncidentNumber);
+        incidentData.initialize(data);
+        incidentNo = incidentPage.CompleteNewIncidentDetails(incidentData);
+
+        SaveData(IncidentNumber,incidentNo);
+    }
+
 
     @Then("^Service SLA has been added to the Incident and status changed to 'In Progress'$")
     public void service_SLA_has_been_added_to_the_Incident_and_status_changed_to_In_Progress() {
@@ -261,5 +278,74 @@ public class IncidentSteps extends Util{
             new HomePage().GlobalSearch(incidentNo);
             new IncidentPage().verifyClosureDetails(incidentData);
     }
+
+
+    // ******  Incident 2 Steps ****** //
+
+    @When("^I Click on the First Time Fix button$")
+    public void i_Click_on_the_First_Time_Fix_button(){
+        new IncidentPage().FirstTimeFix();
+        sleep(3);
+    }
+
+
+    @Then("^Closure code populated popup displayed$")
+    public void closure_code_populated_popup_displayed() {
+        AssertAlertText("Closure code has been pre populated for first time fix.");
+    }
+
+    @Then("^Closure Code has been automatically populated$")
+    public void closure_Code_has_been_automatically_populated(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        incidentData = GetIncidentObject("Incident");
+        incidentData.initialize(data);
+        new IncidentPage().verifyClosureCode(incidentData.ClosureCode);
+    }
+
+    @When("^I Complete the Closure Notes$")
+    public void i_Complete_the_Closure_Notes(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        incidentData = GetIncidentObject("Incident");
+        incidentData.initialize(data);
+        new IncidentPage().CompleteClosureNotes(incidentData);
+    }
+
+
+
+    @Then("^Closure Notes have been prompted as a mandatory field$")
+    public void closure_Notes_have_been_prompted_as_a_mandatory_field(){
+        AssertAlertText("Closure notes are mandatory to confirm first time fix.");
+    }
+
+
+
+    @When("^I Validate user can view Work notes$")
+    public void i_Validate_user_can_view_Work_notes()  {
+        new IncidentPage().verifyWorkNotesVisible();
+    }
+
+    @When("^I Validate user can view Customer Work notes$")
+    public void i_Validate_user_can_view_Customer_Work_notes()  {
+        new IncidentPage().verifyCustomerNotesVisible();
+    }
+
+    @When("^I Populate the Customer Work notes and Save$")
+    public void i_Populate_the_Customer_Work_notes_and_Save(DataTable dataTable)  {
+        List<List<String>> data = dataTable.raw();
+        incidentData = GetIncidentObject("Incident");
+        incidentData.initialize(data);
+        new IncidentPage().AddCustomerWorkNoteswithSave(incidentData);
+    }
+
+    @When("^I Validate user cannot view Work notes$")
+    public void i_Validate_user_cannot_view_Work_notes()  {
+        new IncidentPage().verifyWorkNotesNotVisible();
+    }
+
+    @When("^I Validate user cannot view Customer Work notes$")
+    public void i_Validate_user_cannot_view_Customer_Work_notes()  {
+        new IncidentPage().verifyCustomerNotesNotVisible();
+    }
+    
 }
 

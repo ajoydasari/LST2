@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -22,7 +23,7 @@ public abstract class Util extends XMLUtil{
     private static String parentWindowHandler;
     private static Set<String> oldWindows;
     private static int defaultTimeout = 40;
-    public String GblEmailsUser = "Ajoy Dasari";
+    protected String GblEmailsUser = "Ajoy Dasari";
 
     protected static void sleep(int waitValue) {
         System.out.println("Sleeping for '" + waitValue + "' seconds");
@@ -94,7 +95,8 @@ public abstract class Util extends XMLUtil{
     protected static void ClickElementByXPath(String xpath) {
         System.out.println("Clicking on Element :" + xpath);
         WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+        //WaitForElement(driver.findElement(By.xpath(xpath)));
         driver.findElement(By.xpath(xpath)).click();
     }
 
@@ -240,16 +242,16 @@ public abstract class Util extends XMLUtil{
     protected static void AssertNotDisplayed(WebElement element)
     {
         System.out.println("Verifying Element is Not Displayed :" + element.toString());
-        try {
-            element.isDisplayed();
+        boolean found = element.isDisplayed();
+        if(found==true) {
             System.out.println("Verifying Element is Not Displayed : Element Found !");
             Assert.fail("Verifying Element is Not Displayed : Element Found !");
-        } catch (Exception e) {
-            System.out.println("Verifying Element is Not Displayed : Element Not Found !");
         }
+        else
+            System.out.println("Verifying Element is Not Displayed : Element Not Found !");
     }
 
-    public static void IsEmpty(WebElement element)
+    protected static void IsEmpty(WebElement element)
     {
         System.out.println("Verifying Element is Empty :" + element.toString());
         String Value = element.getText();
@@ -336,7 +338,7 @@ public abstract class Util extends XMLUtil{
 
     public static Boolean Check_checkbox(WebElement element)
     {
-        Boolean result = element.isSelected();;
+        Boolean result = element.isSelected();
         if(!result)
             click(element);
         return result;
@@ -350,23 +352,35 @@ public abstract class Util extends XMLUtil{
         return result;
     }
 
-    public static String FormatEmailReceiver(String emailUser)
+    protected static String FormatEmailReceiver(String emailUser)
     {
         return StringUtils.remove(emailUser,' ');
     }
 
 
-//    public static void ScrollPage(int pages)
-//    {
-//        System.out.println("Scrolling Page, Pages to Scroll : "+pages);
-//        WebElement element = driver.findElement(By.xpath(".//div[contains(@id,'form_scroll')]"));
-//        element.click();
-//        for (int i = 0; i < pages; i++)
-//        {
-//            element.sendKeys(Keys.PAGE_DOWN);
-//            sleep(1);
-//        }
-//
-//    }
+    protected static void AssertAlertText(String expectedText) {
+        Alert alert = driver.switchTo().alert();
+        String displayedText = alert.getText();
+        Log("Alert Text Displayed is : "+ displayedText);
+        Assert.assertTrue(expectedText.equals(displayedText),"Alert Text displayed doesn't match the expected");
+        Alert_OK();
+    }
+
+
+    protected static void Alert_OK() {
+        Alert alert = driver.switchTo().alert();
+        Log("Clicking OK on Alert ");
+        alert.accept();
+    }
+
+
+
+    protected static void sendKeys(WebElement element, String text) {
+        Log("Entering Text'"+text+"' in ths element '"+element+"'");
+        for (int i = 0; i < text.length() ; i++) {
+            element.sendKeys(String.valueOf(text.charAt(i)));
+        }
+    }
+
 }
 

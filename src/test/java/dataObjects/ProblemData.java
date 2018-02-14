@@ -2,7 +2,7 @@ package dataObjects;
 
 import java.util.List;
 
-public class IncidentData extends dataUtil{
+public class ProblemData extends dataUtil{
     public String Requester;
     public String PSCUser;
     public String CustomerRelated;

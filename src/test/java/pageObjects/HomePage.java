@@ -58,7 +58,8 @@ public class HomePage extends Util {
         click(userinfodropdown);
         click(impersonateUser);
         click(searchForUserDropdown);
-        searchInput.sendKeys(username);
+        //searchInput.sendKeys(username);
+        sendKeys(searchInput,username);
 
         ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
         WaitForElementToDisappear(impersonatePopup);

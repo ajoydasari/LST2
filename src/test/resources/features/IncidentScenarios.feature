@@ -3,6 +3,7 @@ Feature: Incident Feature
   1. Incident 1 - The purpose of this test is to validate that a PSC user can raise a customer related incident, assigned to appropriate groups, updated, comments added, closed through the 3 strike rule
   2. Incident 2 - The purpose of this test is to ensure that multiple Incidents with similar issues can be added to a 'Parent' Incident as 'Child' Incidents. The test also actions the ability to update the Parent record which automatically updates the Child records attached to it.
   3. Incident 3 - The purpose of this test is to validate that an incident can be created and closed as a First Time Fix (FTF)
+  4. Incident 4 - The purpose of this test is to view work notes in both an on tool and off tool assigned incident
 
   Scenario: Incident 1
     Given I am Logged in ServiceNow as Admin
@@ -125,26 +126,82 @@ Feature: Incident Feature
 
 
 
+  Scenario: Incident 3
+    Given I am Logged in ServiceNow as Admin
+    When I Logoff and Login as
+      | HOT Service Desk Agent     |
+      | Test SDServiceDeskAnalyst3 |
+    And I Create a new Incident with details without Saving
+      | Requester    | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | ShortDescription            | Description                         |
+      | Test User3   | no      | no              | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup3 | 4      | 4       | 4        | Incident First Time Fix     | Incident First Time Fix Description |
+    And I Click on the First Time Fix button
+    Then Closure code populated popup displayed
+    And Closure Code has been automatically populated
+      | ClosureCode             |
+      | Closed - First Time Fix |
+    And I Click on the First Time Fix button
+    Then Closure Notes have been prompted as a mandatory field
+    When I Complete the Closure Notes
+      | ClosureNotes            |
+      | Closed - First Time Fix |
+    And I Click on the First Time Fix button
+    When I Search and Open the Incident
+    Then Incident Status changed to Closed
+    And New Incident notification Email has been sent to the requester
 
-#  Scenario: Incident 3
-#    Given I am Logged in ServiceNow as Admin
-#    When I Logoff and Login as <ServiceDeskAgent>
-#    And I Select Favourites Tab
-#    And I Create a new Incident 1 with details <Requester>, <CustomerRelated>, <ITService>, <Component>, <Symptom>, <TFSReference>, <SupplierReference>, <OwningGroup>, <AssignmentGroup>, <Impact>, <Urgency>, <ShortDescription>, <Description>
-#      | ServiceDeskAgent  | ToolingTeamUser | Requester    | CustomerRelated | ITService           | Component                           | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup   | Impact | Urgency | Priority | WorkNotes      	     	        | ShortDescription 	        | Description                         |
-#      | Alex Weir         | Nicholas Gann   | Charles Melly| yes             | Service Now (IT Svc)| ServiceNow Core Platform (Svc Comp) | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | HOT Tooling Team  | 4      | 4       | 4        | Incident First Time Fix Worknotes | Incident First Time Fix   | Incident First Time Fix Description |
-#    And I Click on the First Time Fix button
-#    Then Closure Notes have been prompted as a mandatory field
-#
-#    When I populate the closure code as *Closure Notes Text*
-#    Then Closure Code has been automatically populated as *Closed - First Time Fix*
-#    When click on the First Time Fix button
-#
-#    Then Incident state is "Closed"
-#    Then Incident Resolution email is sent to "Charles Melley"
-#    Then Incident Closure email is sent to "Charles Melley"
 
-#
-#  Scenario: Check Email
-#    Given I am Logged in ServiceNow as Admin
-#    When I Open Emails
+  Scenario: Incident 4
+
+  The purpose of this test is to view work notes in both an on tool and off tool assigned incident.
+
+    Given I am Logged in ServiceNow as Admin
+    When I Logoff and Login as
+      | HOT Service Desk Agent     |
+      | Test SIServiceDeskAnalyst1 |
+    And I Create a new Incident1 with details
+      | Requester    | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | ShortDescription  | Description                       |
+      | Test User2   | no      | no              | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup1 | 4      | 4       | 4        | Incident On Tool  | Incident On Tool Assignment Group |
+    And I Change the Incident Status to In Progress
+    Then Incident Status changed to In Progress
+    When I Logoff and Login as
+      | HOT Service Desk Agent     |
+      | Test SIServiceDeskAnalyst2 |
+    And I Create a new Incident2 with details
+      | Requester    | PSCUser | CustomerRelated | ITService    | Component              | Symptom   | TFSReference | SupplierReference| OwningGroup      | AssignmentGroup       | Impact | Urgency | Priority | ShortDescription  | Description                        |
+      | Test User3   | no      | no              | Test Service | Test Service Component | ACCESS    | TFSRef001    | SupRef001        | HOT Service Desk | Test AssignmentGroup2 | 4      | 4       | 4        | Incident Off Tool | Incident Off Tool Assignment Group |
+    And I Change the Incident Status to In Progress
+    Then Incident Status changed to In Progress
+    When I Logoff and Login as
+      | HOT Service Desk Agent  |
+      | Test SIIncidentManager1 |
+    When I Search and Open the Incident1
+    And I Validate user can view Work notes
+    And I Validate user can view Customer Work notes
+    And I Populate the Customer Work notes and Save
+      | CustomerWorkNotes                                             |
+      | Customer Visible Notes - Incident 1 - Test SIIncidentManager1 |
+    When I Search and Open the Incident2
+    And I Validate user can view Work notes
+    And I Validate user can view Customer Work notes
+    And I Populate the Customer Work notes and Save
+      | CustomerWorkNotes                                             |
+      | Customer Visible Notes - Incident 2 - Test SIIncidentManager1 |
+    When I Logoff and Login as
+      | HOT Service Desk Agent     |
+      | Test SDServiceDeskAnalyst1 |
+    When I Search and Open the Incident1
+    And I Validate user can view Work notes
+    And I Validate user can view Customer Work notes
+    And I Populate the Customer Work notes and Save
+      | CustomerWorkNotes                                             |
+      | Customer Visible Notes - Incident 1 - Test SDServiceDeskAnalyst1 |
+    When I Logoff and Login as
+      | HOT Service Desk Agent |
+      | Test User4             |
+    When I Search and Open the Incident1
+    And I Validate user cannot view Work notes
+    And I Validate user cannot view Customer Work notes
+    When I Search and Open the Incident2
+    And I Validate user cannot view Work notes
+    And I Validate user cannot view Customer Work notes
+

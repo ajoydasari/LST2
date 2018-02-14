@@ -19,6 +19,9 @@ public class LHSNavigationPage extends Util {
     @FindBy(how = How.XPATH, using = ".//a[@title='Create New'][contains(@href,'incident')]")
     private WebElement createNewIncident;
 
+    @FindBy(how = How.XPATH, using = ".//a[@title='Create New.'][contains(@href,'problem')]")
+    private WebElement createNewProblem;
+
     @FindBy(how = How.XPATH, using = ".//div[text()='New record']")
     private WebElement newRecord;
 
@@ -41,6 +44,15 @@ public class LHSNavigationPage extends Util {
     }
 
     public void CreateNewIncident() {
+        //click(CreateNew);
+        setFilter("Create New");
+        click(createNewIncident);
+        SwitchToIFrame();
+        WaitForElement(newRecord);
+        SwitchToDefault();
+    }
+
+    public void CreateNewProblem() {
         //click(CreateNew);
         setFilter("Create New");
         click(createNewIncident);

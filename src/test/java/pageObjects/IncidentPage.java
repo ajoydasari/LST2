@@ -105,6 +105,9 @@ public class IncidentPage extends Util {
     @FindBy(how = How.ID, using = "sysverb_update_and_stay_save")
     private WebElement Save;
 
+    @FindBy(how = How.ID, using = "first_time_fixinc")
+    private WebElement FirstTimeFix;
+
     @FindBy(how = How.XPATH, using = ".//div[text()='New record']")
     private WebElement newRecord;
 
@@ -122,6 +125,9 @@ public class IncidentPage extends Util {
 
     @FindBy(how = How.ID, using = "activity-stream-work_notes-textarea")
     private WebElement WorkNotesTextArea;
+
+    @FindBy(how = How.ID, using = "activity-stream-comments-textarea")
+    private WebElement CustomerNotesTextArea;
 
     @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Assigned']")
     private WebElement assignedActive;
@@ -205,11 +211,14 @@ public class IncidentPage extends Util {
         SwitchToDefault();
     }
 
-    public String NewIncident(IncidentData incidentData)
-    {
-        UserSearchPage userspage = new UserSearchPage();
 
+
+    public String CompleteNewIncidentDetails(IncidentData incidentData) {
+
+        String incidentNo;
         SwitchToIFrame();
+
+        UserSearchPage userspage = new UserSearchPage();
 
         WaitForElement(newRecord);
         AssertElementText(incidentState, "New");
@@ -321,11 +330,25 @@ public class IncidentPage extends Util {
         short_description.sendKeys(incidentData.ShortDescription);
         description.sendKeys(incidentData.Description);
 
+        incidentNo = getValue(incidentNumber);
+
+        SwitchToDefault();
+
+        return incidentNo;
+    }
+
+
+
+    public String NewIncident(IncidentData incidentData)
+    {
+        String incidentNo = CompleteNewIncidentDetails(incidentData);
+
+        SwitchToIFrame();
+
         click(Save);
         WaitForPageRefresh();
 
         WaitForElement(assignedActive);
-        String incidentNo = getValue(incidentNumber);
 
         AssertElementText(incidentState, "Assigned");
 
@@ -340,6 +363,17 @@ public class IncidentPage extends Util {
 
         return incidentNo;
     }
+
+    public void FirstTimeFix()
+    {
+        SwitchToIFrame();
+
+        click(FirstTimeFix);
+
+        //SwitchToDefault();
+    }
+
+
 
     public void SLACreatedAsInProgress()
     {
@@ -374,6 +408,22 @@ public class IncidentPage extends Util {
         closureNotes.sendKeys(incidentData.ClosureNotes);
 
         click(Save);
+
+        SwitchToDefault();
+        WaitForPageRefresh();
+    }
+
+
+    public void CompleteClosureNotes(IncidentData incidentData) {
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        selectClosureTab();
+
+        closureNotes.sendKeys(incidentData.ClosureNotes);
+
+        SwitchToDefault();
+
         WaitForPageRefresh();
     }
 
@@ -394,12 +444,34 @@ public class IncidentPage extends Util {
         SwitchToDefault();
     }
 
+
+    public void AddCustomerWorkNoteswithSave(IncidentData incidentData) {
+
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        AddCustomerWorkNotes(incidentData.CustomerWorkNotes);
+        click(Save);
+        WaitForPageRefresh();
+
+        SwitchToDefault();
+    }
+
+
     private void AddWorkNotes(String WorkNotes)
     {
         if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
             click(notesTab);
         WorkNotesTextArea.sendKeys(WorkNotes);
     }
+
+    private void AddCustomerWorkNotes(String WorkNotes)
+    {
+        if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(notesTab);
+        CustomerNotesTextArea.sendKeys(WorkNotes);
+    }
+
 
     public void verifyIncidentStatus(String status)
     {
@@ -439,6 +511,55 @@ public class IncidentPage extends Util {
         IsEmpty(assignemntGroup);
         SwitchToDefault();
     }
+
+
+    public void verifyWorkNotesVisible()
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+        if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(notesTab);
+        AssertDisplayed(WorkNotesTextArea);
+        SwitchToDefault();
+    }
+
+
+    public void verifyCustomerNotesVisible()
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+        if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(notesTab);
+        AssertDisplayed(WorkNotesTextArea);
+        SwitchToDefault();
+    }
+
+
+
+    public void verifyWorkNotesNotVisible()
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+        if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(notesTab);
+        WaitForPageRefresh();
+        AssertNotDisplayed(WorkNotesTextArea);
+        SwitchToDefault();
+    }
+
+
+    public void verifyCustomerNotesNotVisible()
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+        if(!(notesTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(notesTab);
+        WaitForPageRefresh();
+        AssertNotDisplayed(WorkNotesTextArea);
+        SwitchToDefault();
+    }
+
+
 
     private String getSecurityContextValue()
     {
@@ -515,6 +636,17 @@ public class IncidentPage extends Util {
 
         AssertElementValue(closureCode_ReadOnly, incidentData.ClosureCode );
         AssertElementValue(closureNotes_ReadOnly, incidentData.ClosureNotes);
+        SwitchToDefault();
+    }
+
+    public void verifyClosureCode(String ClosureCode)
+    {
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        selectClosureTab();
+
+        AssertElementValue(closureCode, ClosureCode );
         SwitchToDefault();
     }
 
