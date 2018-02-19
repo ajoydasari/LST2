@@ -8,29 +8,20 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Wait;
 import org.testng.Assert;
 
 
 public class ProblemPage extends Util {
-
 
     @FindBy(how = How.ID, using = "sys_readonly.problem.number")
     private WebElement problemNumber;
 
     @FindBy(how = How.ID, using = "problem.state")
     private WebElement problemState;
-//
-//    @FindBy(how = How.ID, using = "sys_readonly.problem.state")
-//    private WebElement readOnly_problemState;
-//
-//    @FindBy(how = How.ID, using = "problem.u_customer_related")
-//    private WebElement customerRelated;
-//
-//    @FindBy(how = How.XPATH, using = ".//div[text()='This user is a Premium Service Centre (PSC) user. Please indicate whether this is a customer related problem.']")
-//    private WebElement PSCUserMSG;
-//
-//    @FindBy(how = How.XPATH, using = ".//div[text()='This is a Premium Service Centre (PSC) user and this is a customer related problem.']")
-//    private WebElement PSC_and_customerRelatedMSG;
+
+    @FindBy(how = How.ID, using = "sys_readonly.problem.state")
+    private WebElement problemState_Readonly;
 
     @FindBy(how = How.ID, using = "sys_readonly.problem.opened_at")
     private WebElement openedAt;
@@ -40,36 +31,33 @@ public class ProblemPage extends Util {
 
     @FindBy(how = How.ID, using = "sys_display.problem.u_requester")
     private WebElement requester;
-//
-//    @FindBy(how = How.ID, using = "sys_readonly.problem.number")
-//    private WebElement requesterReadOnly;
-//
-//    @FindBy(how = How.ID, using = "sys_display.problem.location")
-//    private WebElement location;
 
-//    @FindBy(how = How.ID, using = "problem.caller_id.location_label")
-//    private WebElement locationReadOnly;
+    @FindBy(how = How.ID, using = "problem.u_requester_label")
+    private WebElement requester_Readonly;
 
-//    @FindBy(how = How.ID, using = "problem.caller_id.u_reasonable_adjustment_needs")
-//    private WebElement assistiveTechnologyUser;
-
-//    @FindBy(how = How.ID, using = "sys_readonly.problem.caller_id.u_reasonable_adjustment_needs")
-//    private WebElement assistiveTechnologyUserReadOnly;
-//
     @FindBy(how = How.ID, using = "sys_display.problem.u_service")
     private WebElement service;
 
-    @FindBy(how = How.ID, using = "sys_display.problem.u_service.u_security_context")
+    @FindBy(how = How.ID, using = "problem.u_service_label")
+    private WebElement service_Readonly;
+
+    @FindBy(how = How.XPATH, using = ".//*[@id='sys_display.problem.u_service.u_security_context']")
     private WebElement security_context;
 
     @FindBy(how = How.ID, using = "sys_display.problem.u_component")
     private WebElement component;
+
+    @FindBy(how = How.ID, using = "problem.u_component_label")
+    private WebElement component_Readonly;
 
     @FindBy(how = How.ID, using = "lookup.problem.u_component")
     private WebElement componentlookup;
 
     @FindBy(how = How.ID, using = "sys_display.problem.u_subcat")
     private WebElement symptom;
+
+    @FindBy(how = How.ID, using = "problem.u_subcat_label")
+    private WebElement symptom_Readonly;
 
     @FindBy(how = How.ID, using = "lookup.problem.u_subcat")
     private WebElement symptomlookup;
@@ -83,11 +71,20 @@ public class ProblemPage extends Util {
     @FindBy(how = How.ID, using = "problem.description")
     private WebElement problemStatement;
 
+    @FindBy(how = How.ID, using = "sys_readonly.problem.description")
+    private WebElement problemStatement_Readonly;
+
     @FindBy(how = How.ID, using = "problem.u_business_impact")
     private WebElement businessImpact;
 
+    @FindBy(how = How.ID, using = "sys_readonly.problem.u_business_impact")
+    private WebElement businessImpact_Readonly;
+
     @FindBy(how = How.ID, using = "problem.work_around")
     private WebElement workAround;
+
+    @FindBy(how = How.ID, using = "sys_readonly.problem.work_around")
+    private WebElement workAround_Readonly;
 
     @FindBy(how = How.ID, using = "lookup.problem.u_requester")
     private WebElement requesterLookup;
@@ -135,28 +132,20 @@ public class ProblemPage extends Util {
     private WebElement closureTab;
 
     @FindBy(how = How.ID, using = "problem.work_notes")
+    private WebElement workNotes;
+
+
+    @FindBy(how = How.ID, using = "activity-stream-work_notes-textarea")
     private WebElement WorkNotesTextArea;
-//
-//    @FindBy(how = How.ID, using = "activity-stream-comments-textarea")
-//    private WebElement CustomerNotesTextArea;
 
     @FindBy(how = How.ID, using = "sys_display.problem.rfc")
     private WebElement relatedChange;
 
     @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Assigned']")
     private WebElement assignedActive;
-//
-//    @FindBy(how = How.XPATH, using = ".//span[text()='The following mandatory fields are not filled in: Work notes']")
-//    private WebElement workNotesMandatory;
-//
-//    @FindBy(how = How.XPATH, using = ".//span[text()='Work notes are required at the end of a customer call']")
-//    private WebElement workNotesMandatory_CallCustomer;
-//
-//    @FindBy(how = How.XPATH, using = ".//span[text()='The following mandatory fields are not filled in: Symptom, Requester, Short description, Description, Component, IT Service, Current location']")
-//    private WebElement mandatoryFieldsMSG;
 
-//    @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Rejected']")
-//    private WebElement rejectedActive;
+    @FindBy(how = How.XPATH, using = ".//span[text()='The following mandatory fields are not filled in: Requestor, Symptom, Business Impact, Problem Type, Owning group, Problem Title, Problem Statement, Component, IT Service']")
+    private WebElement mandatoryFieldsMSG;
 
     @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Resolved']")
     private WebElement resolvedActive;
@@ -169,21 +158,27 @@ public class ProblemPage extends Util {
 
     @FindBy(how = How.XPATH, using = ".//input[@id='ni.problem.known_error']")
     private WebElement knownError;
-//
-//    @FindBy(how = How.XPATH, using = ".//*[@id='problem.contact_type']")
-//    private WebElement source;
-//
-//    @FindBy(how = How.ID, using = "sys_readonly.problem.contact_type")
-//    private WebElement sourceReadOnly;
 
     @FindBy(how = How.ID, using = "problem.u_resolution_code")
     private WebElement resolutionCode;
 
+    @FindBy(how = How.ID, using = "sys_readonly.problem.u_resolution_code")
+    private WebElement resolutionCode_Readonly;
+
     @FindBy(how = How.ID, using = "problem.u_problem_resolution_details")
     private WebElement resolutionDetails;
 
+    @FindBy(how = How.ID, using = "sys_readonly.problem.u_problem_resolution_details")
+    private WebElement resolutionDetails_Readonly;
+
+    @FindBy(how = How.ID, using = "problem.u_sol_deploy")
+    private WebElement solutionDeploymentDetails;
+
     @FindBy(how = How.ID, using = "problem.u_root_cause_information")
     private WebElement rootCauseInformation;
+
+    @FindBy(how = How.ID, using = "sys_readonly.problem.u_root_cause_information")
+    private WebElement rootCauseInformation_Readonly;
 
     @FindBy(how = How.ID, using = "sys_display.problem.u_resolution_it_service")
     private WebElement resolutionITService;
@@ -197,26 +192,26 @@ public class ProblemPage extends Util {
     @FindBy(how = How.ID, using = "sys_display.problem.u_resolution_configuration_item")
     private WebElement resolutionConfigItem;
 
-//    @FindBy(how = How.ID, using = "call_customer")
-//    private WebElement callCustomer;
-//
     @FindBy(how = How.XPATH, using = ".//select[@id='problem.u_closure_code']/option[@selected]")
     private WebElement closureCode_ReadOnly;
 
     @FindBy(how = How.XPATH, using = ".//select[@id='problem.u_closure_code']")
     private WebElement closureCode;
 
+    @FindBy(how = How.ID, using = "sys_readonly.problem.u_closure_code")
+    private WebElement closureCode_Readonly;
+
     @FindBy(how = How.ID, using = "sys_readonly.problem.u_closure_notes")
     private WebElement closureNotes_ReadOnly;
 
     @FindBy(how = How.ID, using = "problem.u_closure_notes")
     private WebElement closureNotes;
-//
-//    @FindBy(how = How.XPATH, using = ".//*[@id='tabs2_list']//span[contains(text(),'Child')]")
-//    private WebElement childProblemsTab;
-//
-//    @FindBy(how = How.ID, using = "sysverb_edit_o2m")
-//    private WebElement editChildProblems;
+
+    @FindBy(how = How.XPATH, using = ".//*[@id='tabs2_list']//span[contains(text(),'Tasks')]")
+    private WebElement problemTasksTab;
+
+    @FindBy(how = How.ID, using = "sysverb_new")
+    private WebElement newTask;
 
 
     public ProblemPage() {
@@ -248,8 +243,10 @@ public class ProblemPage extends Util {
         IsNotEmpty(openedAt);
         IsNotEmpty(openedBy);
 
+        sleep(2);   // To avoid No Data Found page being displayed as Selenium is too quick
+
         click(Save);
-//        AssertDisplayed(mandatoryFieldsMSG);
+        AssertDisplayed(mandatoryFieldsMSG);
 
         CaptureWindowHandles();
 
@@ -261,14 +258,6 @@ public class ProblemPage extends Util {
 
         SwitchToOldWindow();
         SwitchToIFrame();
-
-//        if (problemData.PSCUser.contains("yes")) {
-//            AssertDisplayed(PSCUserMSG);
-//            selectValue(customerRelated, problemData.CustomerRelated);
-//            AssertDisplayed(PSC_and_customerRelatedMSG);
-//        }
-//
-//        IsNotEmpty(location);
 
         CommonPageObjects commonPage = new CommonPageObjects();
 
@@ -299,7 +288,6 @@ public class ProblemPage extends Util {
         //Capture how many Component options are available after selecting the IT Service
         CaptureWindowHandles();
         click(componentlookup);
-        //WaitForPageLoad();
         SwitchToNewWindow();
         String newcomponentCount = commonPage.getResultsCount();
         Log("Component Options Count after selecting the IT Service: " + newcomponentCount);
@@ -326,25 +314,28 @@ public class ProblemPage extends Util {
         Assert.assertTrue(Integer.parseInt(newsymptomCount) < Integer.parseInt(symptomCount), "Symptom Options are now reduced after selecting the IT Service and Component");
 
         sendKeys_Select(symptom, problemData.Symptom);
-
         AssertElementValue(security_context, "Open");
-        Readonly(security_context);
+        //Readonly(security_context);
 
         UnChecked(knownError);
-//        selectValue(source, "Phone");
 
         tfsReference.sendKeys(problemData.TFSReference);
         supplierReference.sendKeys(problemData.SupplierReference);
 
         sendKeys_Select(owningGroup, problemData.OwningGroup);
-        sendKeys_Select(assignemntGroup, problemData.AssignmentGroup);
 
         selectValue(impact, problemData.Impact);
         selectValue(urgency, problemData.Urgency);
         AssertElementValue(priority, problemData.Priority);
 
-//        short_description.sendKeys(problemData.ShortDescription);
-//        description.sendKeys(problemData.Description);
+        selectValue(problemType, problemData.ProblemType);
+        sendKeys(problemTitle, problemData.ProblemTitle);
+        sendKeys(problemStatement, problemData.ProblemStatement);
+        sendKeys(businessImpact, problemData.BusinessImpact);
+
+        click(notesTab);
+        sendKeys(workNotes,problemData.WorkNotes);
+        click(mainDetailsTab);
 
         problemNo = getValue(problemNumber);
 
@@ -357,25 +348,231 @@ public class ProblemPage extends Util {
     public String NewProblem(ProblemData problemData) {
         String problemNo = CompleteNewProblemDetails(problemData);
 
-        SwitchToIFrame();
-
+        SwitchToDefaultIFrame();
         click(Save);
         WaitForPageRefresh();
 
-        WaitForElement(assignedActive);
-
-        AssertElementText(problemState, "Assigned");
-
-//        AssertDisplayed(requesterReadOnly);
-//        Readonly(locationReadOnly);
-//        AssertDisplayed(assistiveTechnologyUserReadOnly);
-//        Readonly(security_context);
-//        AssertDisplayed(sourceReadOnly);
-//        Readonly(priority);
+        AssertElementText(problemState, "New");
+        problemData.Opened = getValue(openedAt);
 
         SwitchToDefault();
 
         return problemNo;
     }
+
+
+    public void VerifyAssignmentReadOnlyFields()
+    {
+        SwitchToDefaultIFrame();
+        Readonly(requester_Readonly);
+        IsEditable(service);
+        IsEditable(component);
+        IsEditable(symptom);
+        IsEditable(problemType);
+        IsEditable(impact);
+        IsEditable(urgency);
+        IsEditable(problemTitle);
+        IsEditable(problemStatement);
+        IsEditable(businessImpact);
+
+        click(notesTab);
+        IsEditable(WorkNotesTextArea);
+        click(relatedRecordsTab);
+        Readonly(relatedChange);
+        click(resolutionTab);
+        Readonly(resolutionCode_Readonly);
+        click(closureTab);
+        Readonly(closureNotes_ReadOnly);
+
+        click(mainDetailsTab);
+        SwitchToDefault();
+    }
+
+
+
+    public void VerifyInProgressReadOnlyFields()
+    {
+        SwitchToDefaultIFrame();
+        Readonly(requester_Readonly);
+        IsEditable(service);
+        IsEditable(component);
+        IsEditable(symptom);
+        IsEditable(problemType);
+        IsEditable(impact);
+        IsEditable(urgency);
+        IsEditable(problemTitle);
+        IsEditable(problemStatement);
+        IsEditable(businessImpact);
+
+        click(notesTab);
+        IsEditable(WorkNotesTextArea);
+        click(relatedRecordsTab);
+        Readonly(relatedChange);
+
+        click(resolutionTab);
+        IsEditable(resolutionCode);
+        IsEditable(rootCauseInformation);
+        IsEditable(resolutionDetails);
+        IsEditable(resolutionITService);
+        IsEditable(resolutionComponent);
+        IsEditable(resolutionSymptom);
+        IsEditable(resolutionConfigItem);
+
+        click(closureTab);
+        IsEditable(closureCode);
+        IsEditable(closureNotes);
+
+        click(mainDetailsTab);
+
+        UnChecked(knownError);
+
+        SwitchToDefault();
+    }
+
+
+    public void ValidateKnownErrorField()
+    {
+        SwitchToDefaultIFrame();
+        UnChecked(knownError);
+        ChangeProblemStatusWithoutSave("Known Error");
+        SwitchToIFrame();
+        Checked(knownError);
+        ChangeProblemStatusWithoutSave("In Progress");
+        SwitchToIFrame();
+        UnChecked(knownError);
+        SwitchToDefault();
+    }
+
+
+    public void ChangeProblemStatus(String status) {
+        SwitchToDefaultIFrame();
+        WaitForElementToBeClicable(problemState);
+        selectValue(problemState,status);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+    public void ChangeProblemStatusWithoutSave(String status) {
+        SwitchToDefaultIFrame();
+        WaitForElementToBeClicable(problemState);
+        selectValue(problemState, status);
+        SwitchToDefault();
+    }
+
+    public void ChangeAssignmentGroup(String group) {
+        SwitchToDefaultIFrame();
+        WaitForElementToBeClicable(assignemntGroup);
+        sendKeys_Select(assignemntGroup,group);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void CompleteWorkAround(String workaround) {
+        SwitchToDefaultIFrame();
+        WaitForElement(workAround);
+        sendKeys(workAround, workaround);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void CompleteRootCause(String rootcause) {
+        SwitchToDefaultIFrame();
+        if(!(resolutionTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(resolutionTab);
+        WaitForElement(rootCauseInformation);
+        sendKeys(rootCauseInformation, rootcause);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void CreateNewTask()
+    {
+        SwitchToDefaultIFrame();
+        if(!(problemTasksTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(problemTasksTab);
+        click(newTask);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void AwaitingImplementation(ProblemData problemData){
+        ChangeProblemStatus("Awaiting Implementation");
+        SwitchToDefaultIFrame();
+        selectValue(solutionDeploymentDetails, problemData.SolutionDeploymentDetails);
+        sendKeys(resolutionDetails,problemData.ResolutionDetails);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void ResolveProblem(ProblemData problemData){
+        ChangeProblemStatus("Resolved");
+        SwitchToDefaultIFrame();
+        if(!(resolutionTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(resolutionTab);
+        selectValue(resolutionCode, problemData.ResolutionCode);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+    public void CloseProblem(ProblemData problemData){
+        ChangeProblemStatus("Closed");
+        SwitchToDefaultIFrame();
+        if(!(closureTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(closureTab);
+        selectValue(closureCode, problemData.ClosureCode);
+        sendKeys(closureNotes,problemData.ClosureNotes);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+
+    public void VerifyClosedReadonlyFields()
+    {
+        SwitchToDefaultIFrame();
+        click(mainDetailsTab);
+        Readonly(requester_Readonly);
+        Readonly(service_Readonly);
+        Readonly(component_Readonly);
+        Readonly(symptom_Readonly);
+        Readonly(problemStatement_Readonly);
+        Readonly(businessImpact_Readonly);
+        Readonly(workAround_Readonly);
+
+        click(notesTab);
+
+        click(resolutionTab);
+        Readonly(rootCauseInformation_Readonly);
+        Readonly(resolutionDetails_Readonly);
+
+        click(closureTab);
+        Readonly(closureCode_Readonly);
+        Readonly(closureNotes_ReadOnly);
+
+        SwitchToDefault();
+    }
+
+    public void verifyProblemStatus(String status)
+    {
+        Log("Verifying Problem Status : '"+status+"'");
+        SwitchToDefaultIFrame();
+
+        switch (status) {
+            case "Closed":
+                AssertElementValue(problemState_Readonly, "13");
+                break;
+        }
+        SwitchToDefault();
+    }
+
 
 }

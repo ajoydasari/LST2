@@ -1,3 +1,5 @@
+package TestRunners;
+
 import cucumber.api.CucumberOptions;
 import cucumber.api.testng.TestNGCucumberRunner;
 import cucumber.api.testng.CucumberFeatureWrapper;
@@ -9,7 +11,7 @@ import org.testng.annotations.Test;
 @CucumberOptions(
         features = "src/test/resources/features/IncidentScenarios.feature",
         //features = "src/test/resources/features",
-        glue = {"stepDefinitions"},
+        glue = {"stepDefinitions","Utilities"},
         tags = {"~@Ignore"},
         format = {
                 "pretty",
@@ -17,7 +19,7 @@ import org.testng.annotations.Test;
                 "json:target/cucumber-reports/CucumberTestReport.json",
                 "rerun:target/cucumber-reports/rerun.txt"
         })
-public class TestRunner {
+public class IncidentFeature_Runner {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)

@@ -44,7 +44,6 @@ public class LHSNavigationPage extends Util {
     }
 
     public void CreateNewIncident() {
-        //click(CreateNew);
         setFilter("Create New");
         click(createNewIncident);
         SwitchToIFrame();
@@ -53,9 +52,8 @@ public class LHSNavigationPage extends Util {
     }
 
     public void CreateNewProblem() {
-        //click(CreateNew);
-        setFilter("Create New");
-        click(createNewIncident);
+        setFilter("Problem");
+        click(createNewProblem);
         SwitchToIFrame();
         WaitForElement(newRecord);
         SwitchToDefault();

@@ -43,10 +43,8 @@ public class IncidentSteps extends Util{
     }
 
 
-    @When("^I Create a new (.*) with details$")
-    public void i_Create_a_new_Incident_with_details(String IncidentNumber, DataTable dataTable){
-        List<List<String>> data = dataTable.raw();
-
+    private void NewIncident(String IncidentNumber, List<List<String>> data)
+    {
         new HomePage().SelectAllAppsTab();
 
         LHSNavigationPage favPage = new LHSNavigationPage();
@@ -59,6 +57,47 @@ public class IncidentSteps extends Util{
 
         SaveData(IncidentNumber,incidentNo);
     }
+
+    @When("^I Create a new Incident with details$")
+    public void i_Create_a_new_Incident_with_details(DataTable dataTable){
+        List<List<String>> data = dataTable.raw();
+        NewIncident("Incident",data);
+    }
+
+    @When("^I Create a new Incident1 with details$")
+    public void i_Create_a_new_Incident1_with_details(DataTable dataTable){
+        List<List<String>> data = dataTable.raw();
+        NewIncident("Incident1",data);
+    }
+
+    @When("^I Create a new Incident2 with details$")
+    public void i_Create_a_new_Incident2_with_details(DataTable dataTable){
+        List<List<String>> data = dataTable.raw();
+        NewIncident("Incident2",data);
+    }
+
+    @When("^I Create a new Incident3 with details$")
+    public void i_Create_a_new_Incident3_with_details(DataTable dataTable){
+        List<List<String>> data = dataTable.raw();
+        NewIncident("Incident3",data);
+    }
+
+//    @When("^I Create a new (.*) with details$")
+//    public void i_Create_a_new_Incident_with_details(String IncidentNumber, DataTable dataTable){
+//        List<List<String>> data = dataTable.raw();
+//
+//        new HomePage().SelectAllAppsTab();
+//
+//        LHSNavigationPage favPage = new LHSNavigationPage();
+//        favPage.CreateNewIncident();
+//
+//        IncidentPage incidentPage = new IncidentPage();
+//        incidentData = GetIncidentObject(IncidentNumber);
+//        incidentData.initialize(data);
+//        incidentNo = incidentPage.NewIncident(incidentData);
+//
+//        SaveData(IncidentNumber,incidentNo);
+//    }
 
 
     @When("^I Create a new (.*) with details without Saving$")
@@ -213,10 +252,29 @@ public class IncidentSteps extends Util{
         Find_Email(FormatEmailReceiver(incidentData.Requester), "Incident Closure", incidentNo);
     }
 
-    @When("^I Search and Open the (.*)$")
-    public void i_Search_and_Open_the_Incident(String IncidentNumber){
+    public void Find_Incident(String IncidentNumber){
         incidentNo = RetrieveData(IncidentNumber);
         new HomePage().GlobalSearch(incidentNo);
+    }
+
+    @When("^I Search and Open the Incident$")
+    public void i_Search_and_Open_the_Incident(){
+        Find_Incident("Incident");
+    }
+
+    @When("^I Search and Open the Incident1$")
+    public void i_Search_and_Open_the_Incident1(){
+        Find_Incident("Incident1");
+    }
+
+    @When("^I Search and Open the Incident2$")
+    public void i_Search_and_Open_the_Incident2(){
+        Find_Incident("Incident2");
+    }
+
+    @When("^I Search and Open the Incident3$")
+    public void i_Search_and_Open_the_Incident3(){
+        Find_Incident("Incident3");
     }
 
     @When("^I Call Customer with notes for the (.*)")
@@ -256,8 +314,23 @@ public class IncidentSteps extends Util{
         new IncidentPage().verifyChildAdded(incidentNo);
     }
 
-    @When("^I Change the (.*) Status to (.*)$")
+    @When("^I Change the Incident Status to (.*)$")
     public void i_Change_the_Incident_Status_to(String IncidentNumber, String status){
+        new IncidentPage().ChangeIncidentStatus(status);
+    }
+
+    @When("^I Change the Incident1 Status to (.*)$")
+    public void i_Change_the_Incident1_Status_to(String IncidentNumber, String status){
+        new IncidentPage().ChangeIncidentStatus(status);
+    }
+
+    @When("^I Change the Incident2 Status to (.*)$")
+    public void i_Change_the_Incident2_Status_to(String IncidentNumber, String status){
+        new IncidentPage().ChangeIncidentStatus(status);
+    }
+
+    @When("^I Change the Incident3 Status to (.*)$")
+    public void i_Change_the_Incident3_Status_to(String IncidentNumber, String status){
         new IncidentPage().ChangeIncidentStatus(status);
     }
 

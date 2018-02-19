@@ -22,7 +22,7 @@ public abstract class Util extends XMLUtil{
     protected static WebDriver driver = null;
     private static String parentWindowHandler;
     private static Set<String> oldWindows;
-    private static int defaultTimeout = 40;
+    private static int defaultTimeout = 20;
     protected String GblEmailsUser = "Ajoy Dasari";
 
     protected static void sleep(int waitValue) {
@@ -74,11 +74,50 @@ public abstract class Util extends XMLUtil{
         }
     }
 
+
     protected static void WaitForElementToBeClicable(WebElement element) {
-        System.out.println("Waiting for Element :" + element.toString());
-        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.elementToBeClickable(element));
+        Boolean waiting=true;
+        int timeout = defaultTimeout;
+        System.out.println("Waiting for Element To Be Clickable :" + element.toString());
+        while(waiting) {
+            if(timeout>0)
+            {
+                try {
+                    WebDriverWait wait = new WebDriverWait(driver, 5);
+                    wait.until(ExpectedConditions.elementToBeClickable(element));
+                    waiting = false;
+                } catch (Exception e) {
+                    sleep(1);
+                }
+                timeout = timeout -1;
+            }else {
+                waiting = false;
+            }
+        }
     }
+
+
+    protected static void WaitForElementToBeClickableByXPath(String xpath) {
+        Boolean waiting=true;
+        int timeout = defaultTimeout;
+        System.out.println("Waiting for Element To Be Clickable By XPath:" + xpath);
+        while(waiting) {
+            if(timeout>0)
+            {
+                try {
+                    WebDriverWait wait = new WebDriverWait(driver, 5);
+                    wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
+                    waiting = false;
+                } catch (Exception e) {
+                    sleep(1);
+                }
+                timeout = timeout -1;
+            }else {
+                waiting = false;
+            }
+        }
+    }
+
 
     protected static void WaitForElementToDisappear(WebElement element) {
         System.out.println("Waiting for Element to Disappear :" + element.toString());
@@ -94,9 +133,9 @@ public abstract class Util extends XMLUtil{
 
     protected static void ClickElementByXPath(String xpath) {
         System.out.println("Clicking on Element :" + xpath);
-        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
-        //WaitForElement(driver.findElement(By.xpath(xpath)));
+//        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
+//        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+        WaitForElementToBeClickableByXPath(xpath);
         driver.findElement(By.xpath(xpath)).click();
     }
 
@@ -105,6 +144,13 @@ public abstract class Util extends XMLUtil{
         WaitForElement(driver.findElement(By.tagName("iframe")));
         driver.switchTo().frame(driver.findElement(By.tagName("iframe")));
     }
+
+    protected static void SwitchToDefaultIFrame() {
+        SwitchToDefault();
+        WaitForElement(driver.findElement(By.tagName("iframe")));
+        driver.switchTo().frame(driver.findElement(By.tagName("iframe")));
+    }
+
 
     public static void SwitchToIFrame(String IdOrName) {
         driver.switchTo().frame(driver.findElement(By.xpath(".//iframe[(@id='" + IdOrName + "') or (@name='" + IdOrName + "')]")));
@@ -120,8 +166,23 @@ public abstract class Util extends XMLUtil{
         WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
         wait.until(ExpectedConditions.visibilityOf(element));
         String readonly = element.getAttribute("readOnly");
-        Assert.assertTrue((readonly.equals("true")), "Element '" + element.toString() + "' is NOT ReadOnly");
+        Log("ReadOnly :=" + readonly);
+        Assert.assertTrue((readonly.contains("true")), "Element '" + element.toString() + "' is NOT ReadOnly");
     }
+
+
+
+    protected static void IsEditable(WebElement element)
+    {
+        System.out.println("Verifying Element is Editable :" + element.toString());
+        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
+        wait.until(ExpectedConditions.visibilityOf(element));
+        String classname = element.getAttribute("class");
+        Log("classname :=" + classname);
+        Assert.assertTrue((!(classname.contains("readonly"))), "Element '" + element.toString() + "' is NOT Editable");
+    }
+
+
 
     protected static void NotReadonly(WebElement element) {
         System.out.println("Verifying Element is Not ReadOnly :" + element.toString());
@@ -132,12 +193,12 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static String getValue(WebElement element) {
-        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.visibilityOf(element));
+        //WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
+        //wait.until(ExpectedConditions.visibilityOf(element));
         return element.getAttribute("value");
     }
 
-    private static String getText(WebElement element) {
+    protected static String getText(WebElement element) {
         String value;
         WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
         wait.until(ExpectedConditions.visibilityOf(element));
@@ -187,15 +248,12 @@ public abstract class Util extends XMLUtil{
         try {
             WaitForElementToBeClicable(element);
             System.out.println("Select Value - " + element.toString() + " : '"+ optionValue + "'");
-            //new Select(element).selectByValue(optionValue);
             click(element);
-            //sleep(1);
             List<WebElement> options = element.findElements(By.tagName("option"));
             for (WebElement option : options) {
-                //System.out.println("Option to select: '"+optionValue+"', option text: '"+option.getText()+"'");
                 if((option.getText().contains(optionValue)) || (option.getAttribute("value").contains(optionValue)))
                 {
-                    WaitForElementToBeClicable(option);
+                    Log("Option '"+ optionValue +"' Found!");
                     click(option);
                     break;
                 }
@@ -216,6 +274,7 @@ public abstract class Util extends XMLUtil{
 
     protected static void sendKeys_Select(WebElement element, String valueToSelect)
     {
+        WaitForElementToBeClicable(element);
         element.clear();
         element.sendKeys(valueToSelect);
         ClickElementByXPath(".//*[text()='" + valueToSelect + "']");
@@ -258,6 +317,7 @@ public abstract class Util extends XMLUtil{
         Assert.assertTrue(Value.isEmpty(), "Element '" + element.toString() + "' is NOT Empty");
     }
 
+
     protected static void IsNotEmpty(WebElement element)
     {
         System.out.println("Verifying Element is NOT Empty :" + element.toString());
@@ -268,8 +328,6 @@ public abstract class Util extends XMLUtil{
     protected static void click(WebElement element)
     {
         System.out.println("Clicking on Element :" + element.toString());
-        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.visibilityOf(element));
         WaitForElementToBeClicable(element);
         element.click();
     }
@@ -307,11 +365,13 @@ public abstract class Util extends XMLUtil{
     protected static void AssertElementValue(WebElement element, String expected){
         Log("Asserting Element Value: '"+ expected+"'");
         String actual = getValue(element);
+        Log("Expected: '" + expected + "', Actual: '" + actual + "'");
         Assert.assertTrue(expected.equals(actual), "Assert Failed, Expected: '" + expected + ", Actual: '" + actual + "'");
     }
 
     protected static void AssertElementText(WebElement element, String expected) {
         Log("Asserting Element Text: '"+ expected+"'");
+        WaitForElement(element);
         String actual = getText(element);
         Assert.assertTrue(expected.equals(actual), "Assert Failed, Expected: '" + expected + ", Actual: '" + actual + "'");
     }
@@ -377,10 +437,17 @@ public abstract class Util extends XMLUtil{
 
     protected static void sendKeys(WebElement element, String text) {
         Log("Entering Text'"+text+"' in ths element '"+element+"'");
+        WaitForElement(element);
+        element.sendKeys(text);
+    }
+
+    protected static void sendChars(WebElement element, String text) {
+        Log("Entering Text'"+text+"' in ths element '"+element+"'");
         for (int i = 0; i < text.length() ; i++) {
             element.sendKeys(String.valueOf(text.charAt(i)));
         }
     }
+
 
 }
 

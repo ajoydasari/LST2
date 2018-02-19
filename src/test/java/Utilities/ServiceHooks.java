@@ -1,7 +1,5 @@
-package stepDefinitions;
+package Utilities;
 
-import Utilities.Util;
-import Utilities.XMLUtil;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -31,6 +29,7 @@ public class ServiceHooks extends Util {
     public void embedScreenshot(Scenario scenario) {
         if (scenario.isFailed()) {
             try {
+                sleep(5);
                 captureScreenshot();
             } catch (Exception e) {
                 e.printStackTrace();
