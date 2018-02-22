@@ -9,6 +9,7 @@ public class ProblemTaskData extends dataUtil{
     public String Priority;
     public String DueDate;
     public String ResolutionDetails;
+    public String WorkNotes;
 
     public void initialize(List<List<String>> data){
         this.AssignmentGroup = getData("AssignmentGroup", data, this.AssignmentGroup);
@@ -17,5 +18,6 @@ public class ProblemTaskData extends dataUtil{
         this.Priority = getData("Priority", data, this.Priority);
         this.DueDate = getData("DueDate", data, this.DueDate);
         this.ResolutionDetails = getData("ResolutionDetails", data, this.ResolutionDetails);
+        this.WorkNotes = getData("WorkNotes", data, this.WorkNotes);
     }
 }

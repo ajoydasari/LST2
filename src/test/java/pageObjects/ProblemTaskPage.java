@@ -65,6 +65,12 @@ public class ProblemTaskPage extends Util {
     @FindBy(how = How.ID, using = "problem_task.u_task_description")
     private WebElement description;
 
+    @FindBy(how = How.ID, using = "problem_task.work_notes")
+    private WebElement workNotes;
+
+    @FindBy(how = How.ID, using = "activity-stream-work_notes-textarea")
+    private WebElement workNotesActivity;
+
     @FindBy(how = How.ID, using = "sys_readonly.problem_task.u_task_description")
     private WebElement description_Readonly;
 
@@ -311,6 +317,9 @@ public class ProblemTaskPage extends Util {
         SwitchToDefaultIFrame();
 
         switch (status) {
+            case "Rejected":
+                AssertElementValue(taskStatus, "10");
+                break;
             case "Closed":
                 AssertElementValue(taskStatus_Readonly, "3");
                 break;
@@ -319,4 +328,13 @@ public class ProblemTaskPage extends Util {
     }
 
 
+    public void CompleteWorkNotes(ProblemTaskData problemTaskData) {
+
+        SwitchToIFrame();
+        click(notesTab);
+        sendKeys(workNotesActivity, problemTaskData.WorkNotes);
+        click(Save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
 }

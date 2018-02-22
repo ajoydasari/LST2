@@ -1,47 +1,69 @@
 package stepDefinitions;
 
+import Utilities.Util;
+import cucumber.api.DataTable;
 import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import dataObjects.ChangeData;
+import pageObjects.ChangePage;
+import pageObjects.HomePage;
+import pageObjects.LHSNavigationPage;
+import pageObjects.ProblemPage;
 
-public class ChangeSteps {
+import java.util.List;
 
-    @When("^I Create a new Change with details in the Ready Reckoner page Service Now \\(IT Svc\\), No, No, No, No, No, No$")
-    public void i_Create_a_new_Change_with_details_in_the_Ready_Reckoner_page_Service_Now_IT_Svc_No_No_No_No_No_No() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+public class ChangeSteps  extends Util {
+
+
+    private String changeNo;
+    private ChangeData changeData;
+    private ChangeData change1Data;
+    private ChangeData change2Data;
+    private ChangeData change3Data;
+
+    public ChangeSteps(){
+        change1Data = new ChangeData();
+        change2Data = new ChangeData();
+        change3Data = new ChangeData();
     }
 
-    @Then("^Risk and Impact Score Calculated and Change Record is calculated$")
-    public void risk_and_Impact_Score_Calculated_and_Change_Record_is_calculated() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+    public ChangeData GetChangeObject(String ChangeNumber)
+    {
+        switch (ChangeNumber) {
+            case "Change":
+                changeData = change1Data;
+                break;
+            case "Change2":
+                changeData = change2Data;
+                break;
+            case "Change3":
+                changeData = change3Data;
+                break;
+            default:
+                changeData = change1Data;
+        }
+        return  changeData;
     }
 
-    @When("^I click on Submit for Validation button$")
-    public void i_click_on_Submit_for_Validation_button() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
 
-    @Then("^Mandatory fields are prompted for completion$")
-    public void mandatory_fields_are_prompted_for_completion() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
 
-    @When("^I complete all the mandatory fields and click on Submit for Validation$")
-    public void i_complete_all_the_mandatory_fields_and_click_on_Submit_for_Validation() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
+    @When("^I Click on Create New in the Change module menu$")
+    public void i_Create_a_new_Problem_with_details(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
 
-    @Then("^Change record created and moves into the state of Validation$")
-    public void change_record_created_and_moves_into_the_state_of_Validation() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
+        new HomePage().SelectAllAppsTab();
 
+        LHSNavigationPage favPage = new LHSNavigationPage();
+        favPage.CreateNewChange();
+
+        ChangePage changePage = new ChangePage();
+        changeData = GetChangeObject("Change");
+        changeData.initialize(data);
+        changeNo = changePage.NewChange(changeData);
+
+        SaveData("Change", changeNo);
+    }
 
 }

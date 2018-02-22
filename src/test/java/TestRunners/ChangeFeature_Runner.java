@@ -9,7 +9,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 @CucumberOptions(
-        features = "src/test/resources/features/ProblemScenarios.feature",
+        features = "src/test/resources/features/ChangeScenarios.feature",
         //features = "src/test/resources/features",
         glue = {"stepDefinitions","Utilities"},
         tags = {"~@Ignore"},

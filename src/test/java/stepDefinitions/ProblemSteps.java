@@ -75,15 +75,9 @@ public class ProblemSteps extends Util {
         ProblemPage problemPage = new ProblemPage();
         problemPage.ValidateKnownErrorField();
         problemPage.ChangeProblemStatus("Known Error");
+        problemPage.VerifyKnownErrorTicked();
     }
 
-
-    @When("^I Click Save$")
-    public void i_Click_Save() {
-
-
-
-    }
 
     @When("^I populate the Assignment group and Save$")
     public void populate_the_Assignment_group_to(DataTable dataTable) {
@@ -125,6 +119,16 @@ public class ProblemSteps extends Util {
     }
 
 
+
+    @Then("^I populate the WorkNotes with details$")
+    public void I_populate_the_WorkNotes_with_details(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        ProblemTaskPage problemTaskPage = new ProblemTaskPage();
+        problemData = GetProblemObject("Problem");
+        problemData.taskData1.initialize(data);
+        problemTaskPage.CompleteWorkNotes(problemData.taskData1);
+    }
+
     @When("^I click New in the Problem Tasks Tab$")
     public void i_click_New_in_the_Problem_Tasks_Tab() {
         new ProblemPage().CreateNewTask();
@@ -162,6 +166,31 @@ public class ProblemSteps extends Util {
         SaveData("ProblemTask", problemTaskNo);
     }
 
+
+    @Then("^I populate the Task 2 with details$")
+    public void i_populate_the_task2_with_details(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        ProblemTaskPage taskPage = new ProblemTaskPage();
+        problemData = GetProblemObject("Problem");
+        problemData.taskData2.initialize(data);
+        problemTaskNo = taskPage.CompleteTaskDetails(problemData.taskData2);
+        SaveData("ProblemTask2", problemTaskNo);
+    }
+
+
+
+    @Then("^I populate the Task 3 with details$")
+    public void i_populate_the_task3_with_details(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        ProblemTaskPage taskPage = new ProblemTaskPage();
+        problemData = GetProblemObject("Problem");
+        problemData.taskData3.initialize(data);
+        problemTaskNo = taskPage.CompleteTaskDetails(problemData.taskData3);
+        SaveData("ProblemTask3", problemTaskNo);
+    }
+
+
+
     @When("^I Change DueDate field to \\+1 days$")
     public void i_Change_DueDate_field_to_plus1days() {
         new ProblemTaskPage().SetDueDateToTomorrow();
@@ -192,16 +221,7 @@ public class ProblemSteps extends Util {
 
     @Then("^I Change the Task Status to (.*)$")
     public void I_Change_the_Task_Status_to(String status) {
-        new ProblemTaskPage().ChangeTaskStatus("In Progress");
-    }
-
-
-    @When("^I populate the Resolution details$")
-    public void i_populate_the_Resolution_details(DataTable arg1) {
-
-
-
-
+        new ProblemTaskPage().ChangeTaskStatus(status);
     }
 
     @Then("^Resolved field is automatically populated with the resolved date and time$")
@@ -257,6 +277,24 @@ public class ProblemSteps extends Util {
         problemTaskPage.Find_ProblemTask("ProblemTask");
         problemTaskPage.VerifyClosedReadonlyFields();
     }
+//
+//    @Then("^all fields in the Problem record and Problem Task 2 are ready only$")
+//    public void all_fields_in_the_Problem_record_and_Problem_Task2_are_ready_only() {
+//        new ProblemPage().VerifyClosedReadonlyFields();
+//        ProblemTaskPage problemTaskPage = new ProblemTaskPage();
+//        problemTaskPage.Find_ProblemTask("ProblemTask2");
+//        problemTaskPage.VerifyClosedReadonlyFields();
+//    }
+
+
+
+    @Then("^all fields in the Problem record and Problem Task (\\d+) are ready only$")
+    public void all_fields_in_the_Problem_record_and_Problem_Task2_are_ready_only(int taskNo) {
+        new ProblemPage().VerifyClosedReadonlyFields();
+        ProblemTaskPage problemTaskPage = new ProblemTaskPage();
+        problemTaskPage.Find_ProblemTask("ProblemTask"+taskNo);
+        problemTaskPage.VerifyClosedReadonlyFields();
+    }
 
     @Then("^the Problem Record state is Closed$")
     public void the_Problem_Record_state_is_Closed() {
@@ -264,11 +302,27 @@ public class ProblemSteps extends Util {
         new ProblemPage().verifyProblemStatus("Closed");
     }
 
-    @Then("^the Problem Task state is Closed$")
-    public void the_Problem_Task_state_is_Closed() {
+    @Then("^the Problem Task state is (.*)")
+    public void the_Problem_Task_state_is_Closed(String status) {
         ProblemTaskPage problemTaskPage = new ProblemTaskPage();
         problemTaskPage.Find_ProblemTask("ProblemTask");
-        problemTaskPage.verifyProblemTaskStatus("Closed");
+        problemTaskPage.verifyProblemTaskStatus(status);
+    }
+//
+//
+//    @Then("^the Problem Task 2 state is (.*)")
+//    public void the_Problem_Task2_state_is_Closed(String status) {
+//        ProblemTaskPage problemTaskPage = new ProblemTaskPage();
+//        problemTaskPage.Find_ProblemTask("ProblemTask2");
+//        problemTaskPage.verifyProblemTaskStatus(status);
+//    }
+
+
+    @Then("^the Problem Task (\\d+) state is (.*)")
+    public void the_Problem_Task2_state_is_Closed(int taskNo, String status) {
+        ProblemTaskPage problemTaskPage = new ProblemTaskPage();
+        problemTaskPage.Find_ProblemTask("ProblemTask"+taskNo);
+        problemTaskPage.verifyProblemTaskStatus(status);
     }
 
     @When("^I Resolve the Task with details$")
@@ -278,9 +332,15 @@ public class ProblemSteps extends Util {
         problemData = GetProblemObject("Problem");
         problemData.taskData1.initialize(data);
         taskPage.ResolveTask(problemData.taskData1);
+    }
 
-
-
+    @When("^I Resolve the Task 2 with details$")
+    public void i_Resolve_the_Task2_with_details(DataTable dataTable) {
+        List<List<String>> data = dataTable.raw();
+        ProblemTaskPage taskPage = new ProblemTaskPage();
+        problemData = GetProblemObject("Problem");
+        problemData.taskData2.initialize(data);
+        taskPage.ResolveTask(problemData.taskData2);
     }
 
 }

@@ -393,6 +393,8 @@ public class ProblemPage extends Util {
     public void VerifyInProgressReadOnlyFields()
     {
         SwitchToDefaultIFrame();
+        if(!(mainDetailsTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(mainDetailsTab);
         Readonly(requester_Readonly);
         IsEditable(service);
         IsEditable(component);
@@ -440,6 +442,13 @@ public class ProblemPage extends Util {
         ChangeProblemStatusWithoutSave("In Progress");
         SwitchToIFrame();
         UnChecked(knownError);
+        SwitchToDefault();
+    }
+
+    public void VerifyKnownErrorTicked()
+    {
+        SwitchToDefaultIFrame();
+        Checked(knownError);
         SwitchToDefault();
     }
 
@@ -503,7 +512,10 @@ public class ProblemPage extends Util {
     public void AwaitingImplementation(ProblemData problemData){
         ChangeProblemStatus("Awaiting Implementation");
         SwitchToDefaultIFrame();
+        if(!(resolutionTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(resolutionTab);
         selectValue(solutionDeploymentDetails, problemData.SolutionDeploymentDetails);
+        sendKeys(rootCauseInformation, problemData.RootcauseInfo);
         sendKeys(resolutionDetails,problemData.ResolutionDetails);
         click(Save);
         WaitForPageRefresh();
