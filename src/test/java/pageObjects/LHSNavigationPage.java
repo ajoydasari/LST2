@@ -22,7 +22,7 @@ public class LHSNavigationPage extends Util {
     @FindBy(how = How.XPATH, using = ".//a[@title='Create New.'][contains(@href,'problem')]")
     private WebElement createNewProblem;
 
-    @FindBy(how = How.XPATH, using = ".//a[@title='Create New.'][contains(@href,'change')]")
+    @FindBy(how = How.XPATH, using = ".//a[contains(@title,' Create New')][contains(@href,'change')]")
     private WebElement createNewChange;
 
     @FindBy(how = How.XPATH, using = ".//div[text()='New record']")
@@ -37,6 +37,9 @@ public class LHSNavigationPage extends Util {
     @FindBy(how = How.XPATH, using = ".//*[text()='My Owning Groups Resolved Incidents']")
     private WebElement myOwningGroupResolvedIncidents;
 
+    @FindBy(how = How.XPATH, using = ".//a/span[text()='Change']/../..//a[contains(@title,'My Approvals')]")
+    private WebElement change_MyApprovals;
+
     @FindBy(how = How.XPATH, using = ".//*[text()='Emails']")
     private WebElement emails;
 
@@ -49,6 +52,7 @@ public class LHSNavigationPage extends Util {
     public void CreateNewIncident() {
         setFilter("Create New");
         click(createNewIncident);
+//        PageLoadWait();
         SwitchToIFrame();
         WaitForElement(newRecord);
         SwitchToDefault();
@@ -57,6 +61,7 @@ public class LHSNavigationPage extends Util {
     public void CreateNewProblem() {
         setFilter("Problem");
         click(createNewProblem);
+        WaitForPageRefresh();
         SwitchToIFrame();
         WaitForElement(newRecord);
         SwitchToDefault();
@@ -68,6 +73,7 @@ public class LHSNavigationPage extends Util {
         click(createNewChange);
         SwitchToIFrame();
         WaitForElement(newRecord);
+        WaitForPageRefresh();
         SwitchToDefault();
     }
 
@@ -92,7 +98,7 @@ public class LHSNavigationPage extends Util {
     public void setFilter(String filterText)
     {
         click(filter);
-        filter.sendKeys(filterText);
+        sendKeysVerify(filter, filterText);
         filter.sendKeys(Keys.ENTER);
     }
 
@@ -104,6 +110,15 @@ public class LHSNavigationPage extends Util {
         WaitForElementToBeClicable(new EmailsPage().filterColumn);
         SwitchToDefault();
     }
+
+
+    public void Change_MyApprovals() {
+        setFilter("Change");
+        click(change_MyApprovals);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
 
     private void WaitForIncidentsListPage()
     {

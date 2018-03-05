@@ -41,7 +41,8 @@ public class ProblemPage extends Util {
     @FindBy(how = How.ID, using = "problem.u_service_label")
     private WebElement service_Readonly;
 
-    @FindBy(how = How.XPATH, using = ".//*[@id='sys_display.problem.u_service.u_security_context']")
+//    @FindBy(how = How.XPATH, using = ".//*[@id='sys_display.problem.u_service.u_security_context']")
+    @FindBy(how = How.XPATH, using = ".//*[@id='problem.u_service.u_security_context_label']")
     private WebElement security_context;
 
     @FindBy(how = How.ID, using = "sys_display.problem.u_component")
@@ -228,7 +229,7 @@ public class ProblemPage extends Util {
     public String CompleteNewProblemDetails(ProblemData problemData) {
 
         String problemNo;
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
 
         UserSearchPage userspage = new UserSearchPage();
 
@@ -247,13 +248,8 @@ public class ProblemPage extends Util {
 
         click(Save);
         AssertDisplayed(mandatoryFieldsMSG);
-
-        CaptureWindowHandles();
-
         requesterLookup.isDisplayed();
-        click(requesterLookup);
-
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(requesterLookup);
         userspage.SearchForUser(problemData.Requester);
 
         SwitchToOldWindow();
@@ -262,9 +258,7 @@ public class ProblemPage extends Util {
         CommonPageObjects commonPage = new CommonPageObjects();
 
         //Capture how many Component options are available before selecting the IT Service
-        CaptureWindowHandles();
-        click(componentlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(componentlookup);
 
         String componentCount = commonPage.getResultsCount();
         Log("Component Options Count before selecting the IT Service: " + componentCount);
@@ -273,9 +267,8 @@ public class ProblemPage extends Util {
         SwitchToIFrame();
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
-        CaptureWindowHandles();
-        click(symptomlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(symptomlookup);
+
         String symptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count before selecting the IT Service and Component: " + symptomCount);
         CloseNewWindow();
@@ -286,9 +279,7 @@ public class ProblemPage extends Util {
         //sleep(3);
 
         //Capture how many Component options are available after selecting the IT Service
-        CaptureWindowHandles();
-        click(componentlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(componentlookup);
         String newcomponentCount = commonPage.getResultsCount();
         Log("Component Options Count after selecting the IT Service: " + newcomponentCount);
         CloseNewWindow();
@@ -302,9 +293,7 @@ public class ProblemPage extends Util {
         sendKeys_Select(component, problemData.Component);
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
-        CaptureWindowHandles();
-        click(symptomlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(symptomlookup);
         String newsymptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count after selecting the IT Service and Component: " + newsymptomCount);
         CloseNewWindow();

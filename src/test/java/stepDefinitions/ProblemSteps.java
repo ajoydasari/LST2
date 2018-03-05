@@ -92,6 +92,7 @@ public class ProblemSteps extends Util {
     public void Find_Problem(String ProblemNumber){
         problemNo = RetrieveData(ProblemNumber);
         new HomePage().GlobalSearch(problemNo);
+        WaitForPageRefresh();
     }
 
     @When("^I Search and Open the Problem$")

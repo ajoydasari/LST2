@@ -29,6 +29,7 @@ public class ServiceHooks extends Util {
     public void embedScreenshot(Scenario scenario) {
         if (scenario.isFailed()) {
             try {
+                Log("Waiting for 5 Seconds before Capturing the Screenshot");
                 sleep(5);
                 captureScreenshot();
             } catch (Exception e) {

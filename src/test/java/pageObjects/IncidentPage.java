@@ -18,6 +18,9 @@ public class IncidentPage extends Util {
     @FindBy(how = How.ID, using = "incident.state")
     private WebElement incidentState;
 
+    @FindBy(how = How.XPATH, using = ".//select[@id='incident.state']/option")
+    private WebElement incidentStateOption;
+
     @FindBy(how = How.ID, using = "sys_readonly.incident.state")
     private WebElement readOnly_incidentState;
 
@@ -206,7 +209,14 @@ public class IncidentPage extends Util {
 
     protected void WaitForPageLoad()
     {
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
+        WaitForElement(incidentState);
+        SwitchToDefault();
+    }
+
+    public void WaitForIncidentStateEditable()
+    {
+        SwitchToDefaultIFrame();
         WaitForElement(incidentState);
         SwitchToDefault();
     }
@@ -216,8 +226,9 @@ public class IncidentPage extends Util {
     public String CompleteNewIncidentDetails(IncidentData incidentData) {
 
         String incidentNo;
-        SwitchToIFrame();
-
+        SwitchToDefaultIFrame();
+        WaitForElementToBeClicable(incidentState);
+        sleep(3);
         UserSearchPage userspage = new UserSearchPage();
 
         WaitForElement(newRecord);
@@ -230,16 +241,12 @@ public class IncidentPage extends Util {
         IsNotEmpty(incidentNumber);
         IsNotEmpty(openedAt);
         IsNotEmpty(openedBy);
-
         click(Save);
         AssertDisplayed(mandatoryFieldsMSG);
 
-        CaptureWindowHandles();
-
         requesterLookup.isDisplayed();
-        click(requesterLookup);
 
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(requesterLookup);
         userspage.SearchForUser(incidentData.Requester);
 
         SwitchToOldWindow();
@@ -255,11 +262,8 @@ public class IncidentPage extends Util {
         IsNotEmpty(location);
 
         CommonPageObjects commonPage = new CommonPageObjects();
-
         //Capture how many Component options are available before selecting the IT Service
-        CaptureWindowHandles();
-        click(componentlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(componentlookup);
 
         String componentCount = commonPage.getResultsCount();
         Log("Component Options Count before selecting the IT Service: "+componentCount);
@@ -268,9 +272,7 @@ public class IncidentPage extends Util {
         SwitchToIFrame();
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
-        CaptureWindowHandles();
-        click(symptomlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(symptomlookup);
         String symptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count before selecting the IT Service and Component: "+symptomCount);
         CloseNewWindow();
@@ -278,13 +280,9 @@ public class IncidentPage extends Util {
         SwitchToIFrame();
 
         sendKeys_Select(service, incidentData.ITService);
-        //sleep(3);
 
         //Capture how many Component options are available after selecting the IT Service
-        CaptureWindowHandles();
-        click(componentlookup);
-        //WaitForPageLoad();
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(componentlookup);
         String newcomponentCount = commonPage.getResultsCount();
         Log("Component Options Count after selecting the IT Service: "+newcomponentCount);
         CloseNewWindow();
@@ -298,9 +296,7 @@ public class IncidentPage extends Util {
         sendKeys_Select(component, incidentData.Component);
 
         //Capture how many Symptom options are available before selecting the IT Service and Component
-        CaptureWindowHandles();
-        click(symptomlookup);
-        SwitchToNewWindow();
+        ClickToOpenNewWindow(symptomlookup);
         String newsymptomCount = commonPage.getResultsCount();
         Log("Symptom Options Count after selecting the IT Service and Component: "+newsymptomCount);
         CloseNewWindow();
@@ -367,38 +363,34 @@ public class IncidentPage extends Util {
     public void FirstTimeFix()
     {
         SwitchToIFrame();
-
         click(FirstTimeFix);
-
-        //SwitchToDefault();
     }
 
 
 
     public void SLACreatedAsInProgress()
     {
-        SwitchToIFrame();
-
+        SwitchToDefaultIFrame();
         isElementPresent(IncidentSLA);
         AssertElementText(IncidentSLAStatus, "In progress");
-
         SwitchToDefault();
     }
 
 
     public void ChangeIncidentStatus(String status) {
-        SwitchToDefault();
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
         WaitForElementToBeClicable(incidentState);
         selectValue(incidentState,status);
         click(Save);
         WaitForPageRefresh();
+        WaitForElementToBeClicable(incidentState);
+        String incidentStatusValue = getIncidentStatusValue(status);
+        WaitForElementValue(incidentState, incidentStatusValue);
     }
 
 
     public void CloseIncident(IncidentData incidentData) {
-        SwitchToDefault();
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
         WaitForElementToBeClicable(incidentState);
         selectValue(incidentState,"Closed");
 
@@ -415,27 +407,19 @@ public class IncidentPage extends Util {
 
 
     public void CompleteClosureNotes(IncidentData incidentData) {
-        SwitchToDefault();
-        SwitchToIFrame();
-
+        SwitchToDefaultIFrame();
         selectClosureTab();
-
         closureNotes.sendKeys(incidentData.ClosureNotes);
-
         SwitchToDefault();
-
-        WaitForPageRefresh();
     }
 
     public void RejectIncident(String WorkNotes) {
 
-        SwitchToDefault();
-        SwitchToIFrame();
-
+        SwitchToDefaultIFrame();
         WaitForElementToBeClicable(incidentState);
         selectValue(incidentState,"Rejected");     //Rejected
         click(Save);
-
+        WaitForPageRefresh();
         AssertDisplayed(workNotesMandatory);
         AddWorkNotes(WorkNotes);
         click(Save);
@@ -473,6 +457,35 @@ public class IncidentPage extends Util {
     }
 
 
+
+    public String getIncidentStatusValue(String status)
+    {
+        Log("Get Incident Status Value: '"+status+"'");
+        SwitchToDefaultIFrame();
+
+        switch (status) {
+            case "Assigned":
+                return "2";
+            case "Rejected":
+                return "8";
+            case "Awaiting Approval":
+                return "10";
+            case "In Progress":
+                return "22";
+            case "Awaiting Info":
+                return "23";
+            case "Resolved":
+                return "6";
+            case "Closed":
+                return "7";
+        }
+        SwitchToDefault();
+        return "";
+    }
+
+
+
+
     public void verifyIncidentStatus(String status)
     {
         Log("Verifying Incident Status : '"+status+"'");
@@ -480,11 +493,14 @@ public class IncidentPage extends Util {
         SwitchToIFrame();
 
         switch (status) {
+            case "Assigned":
+                AssertElementValue(incidentState, "2");
+                break;
             case "Rejected":
                 AssertElementValue(incidentState, "8");
                 break;
-            case "Assigned":
-                AssertElementValue(incidentState, "2");
+            case "Awaiting Approval":
+                AssertElementValue(incidentState, "10");
                 break;
             case "In Progress":
                 AssertElementValue(incidentState, "22");
@@ -568,11 +584,8 @@ public class IncidentPage extends Util {
 
     public void Select_AssignmentGroup(IncidentData incidentData) {
 
-        SwitchToDefault();
-        SwitchToIFrame();
-
+        SwitchToDefaultIFrame();
         selectMainTab();
-
         WaitForElementToBeClicable(assignemntGroup);
         sendKeys_Select(assignemntGroup,incidentData.AssignmentGroup);
         AddWorkNotes(incidentData.WorkNotes);
@@ -615,16 +628,15 @@ public class IncidentPage extends Util {
     }
 
     public void CallCustomer(String WorkNotes) {
-
-        SwitchToDefault();
-        SwitchToIFrame();
-
+        WaitForPageLoad();
+        SwitchToDefaultIFrame();
         click(callCustomer);
         AssertDisplayed(workNotesMandatory_CallCustomer);
         AddWorkNotes(WorkNotes);
         click(callCustomer);
-        WaitForPageRefresh();
         SwitchToDefault();
+        new HomePage().WaitForPageLoad();
+
     }
 
     public void verifyClosureDetails(IncidentData incidentData)
@@ -673,7 +685,7 @@ public class IncidentPage extends Util {
     {
         SwitchToDefault();
         SwitchToIFrame();
-        ScrollPage(1);
+        ScrollPage(incidentNumber,1);
         WaitForElement(childIncidentsTab);
         selectChildIncidentsTab();
         click(editChildIncidents);
@@ -690,14 +702,4 @@ public class IncidentPage extends Util {
     }
 
 
-    public void ScrollPage(int pages)
-    {
-        System.out.println("Scrolling Page, Pages to Scroll : "+pages);
-        incidentNumber.click();
-        for (int i = 0; i < pages; i++)
-        {
-            incidentNumber.sendKeys(Keys.PAGE_DOWN);
-            sleep(1);
-        }
-    }
 }

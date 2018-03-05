@@ -89,7 +89,7 @@ public class ProblemTaskPage extends Util {
     @FindBy(how = How.ID, using = "sysverb_update_and_stay_save")
     private WebElement Save;
 
-    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Main Details']")
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Main Details']/..")
     private WebElement mainDetailsTab;
 
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][text() = 'Notes']")
@@ -106,7 +106,7 @@ public class ProblemTaskPage extends Util {
 
     protected void WaitForPageLoad()
     {
-        WaitForPageRefresh();
+//        PageLoadWait();
         SwitchToIFrame();
         WaitForElement(documentationType);
         SwitchToDefault();
@@ -145,6 +145,8 @@ public class ProblemTaskPage extends Util {
     public void VerifyShortDescriptionCopiedFromProblem(ProblemData problemData)
     {
         SwitchToDefaultIFrame();
+        if(!(mainDetailsTab.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            click(mainDetailsTab);
         AssertElementValue(shortDescription, problemData.ProblemTitle);
         SwitchToDefault();
     }
@@ -290,15 +292,17 @@ public class ProblemTaskPage extends Util {
     public void VerifyClosedReadonlyFields()
     {
         SwitchToDefaultIFrame();
+
+        click(resolutionTab);
+        Readonly(dueDate_Readonly);
+
         click(mainDetailsTab);
+        sleep(3);
         Readonly(taskStatus_Readonly);
         Readonly(description_Readonly);
         Readonly(resolutionDetails_Readonly);
 
         click(notesTab);
-
-        click(resolutionTab);
-        Readonly(dueDate_Readonly);
 
         SwitchToDefault();
     }

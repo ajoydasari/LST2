@@ -5,7 +5,7 @@
         <classes>
             <class name="TestRunners.IncidentFeature_Runner"/>
             <class name="TestRunners.ProblemFeature_Runner"/>
-            <class name="TestRunners.ChangeFeature_Runner"/>
+            <!--<class name="TestRunners.ChangeFeature_Runner"/>-->
         </classes>
     </test>
 </suite>

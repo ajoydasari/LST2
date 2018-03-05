@@ -47,32 +47,42 @@ public class HomePage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[@class='icon-loading']")
     private WebElement loading;
 
-    protected void WaitForPageLoad()
+    @FindBy(how = How.XPATH, using = ".//div[@id='output_messages']/button")
+    private WebElement notificationMsg;
+
+
+    public void WaitForPageLoad()
     {
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
         WaitForElement(homePage000);
         SwitchToDefault();
     }
 
     public void Impersonate_User(String username) {
+        WaitForElement(userinfodropdown);
         click(userinfodropdown);
+        WaitForElement(impersonateUser);
         click(impersonateUser);
+        WaitForElement(searchForUserDropdown);
         click(searchForUserDropdown);
-        //searchInput.sendKeys(username);
-        sendKeys(searchInput,username);
-
+        sendKeysVerify(searchInput,username);
+        sleep(2);
         ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
-        WaitForElementToDisappear(impersonatePopup);
+//        WaitForPageRefresh();
+        try {
+            WaitForElementToDisappear(impersonatePopup);
+        }catch (Exception e){}
 
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
         WaitForElement(welcome);
         SwitchToDefault();
         new HomePage().WaitForPageLoad();
-        sleep(5);
+//        sleep(5);
     }
 
     public void SelectFavouritesTab() {
         WaitForElementToDisappear(loading);
+        WaitForElement(favouritesTab);
         if(favouritesTab.getAttribute("aria-expanded").equals("false")) {
             click(favouritesTab);
             WaitForPageRefresh();
@@ -81,6 +91,7 @@ public class HomePage extends Util {
 
     public void SelectAllAppsTab() {
         WaitForElementToDisappear(loading);
+        WaitForElement(allAppsTab);
         if(allAppsTab.getAttribute("aria-expanded").equals("false")) {
             click(allAppsTab);
             WaitForPageRefresh();
@@ -96,8 +107,10 @@ public class HomePage extends Util {
             globalSearch.clear();
             globalSearch.sendKeys(searchText);
             globalSearch.sendKeys(Keys.ENTER);
-            WaitForPageRefresh();
 
+            SwitchToDefaultIFrame();
+            WaitForElement(notificationMsg);
+            click(notificationMsg);
     }
 
     public HomePage()

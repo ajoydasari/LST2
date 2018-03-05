@@ -152,8 +152,6 @@ Feature: Incident Feature
 
   Scenario: Incident 4
 
-  The purpose of this test is to view work notes in both an on tool and off tool assigned incident.
-
     Given I am Logged in ServiceNow as Admin
     When I Logoff and Login as
       | HOT Service Desk Agent     |

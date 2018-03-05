@@ -38,7 +38,7 @@ public class CommonSteps extends Util {
         List<List<String>> data = dataTable.raw();
         SNOWUser user= new SNOWUser();
         user.initialize(data);
-
+        WaitForPageRefresh();
         HomePage homePage = new HomePage();
         homePage.Impersonate_User(user.username);
     }

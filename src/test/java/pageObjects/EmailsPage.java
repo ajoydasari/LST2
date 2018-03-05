@@ -13,7 +13,8 @@ public class EmailsPage extends Util {
     @FindBy(how = How.XPATH, using = ".//div[@id='sys_email_expanded']//a[text()='Body']")
     private WebElement bodyColumn;
 
-    @FindBy(how = How.XPATH, using = ".//div[@id='sys_email_expanded']//i[@title='Update Personalized List']")
+//    @FindBy(how = How.XPATH, using = ".//div[@id='sys_email_expanded']//i[@title='Update Personalized List']")
+    @FindBy(how = How.XPATH, using = ".//div[@id='sys_email_expanded']//i[@data-title='Personalize List Columns']")
     private WebElement selectColumns;
 
     @FindBy(how = How.XPATH, using = ".//*[@id=\"slush_left\"]/option[text()='Body']")
@@ -43,6 +44,15 @@ public class EmailsPage extends Util {
     @FindBy(how = How.XPATH, using = ".//div[@id='sys_email_expanded']//td[@name='body']//input")
     private WebElement bodyFilter;
 
+    @FindBy(how = How.ID, using = "sys_email_filter_toggle_image")
+    private WebElement showHideFilter;
+
+    @FindBy(how = How.XPATH, using = ".//span[text()='Body']/../../../../td[3]/select")
+    private WebElement bodyFilterCondition;
+
+    @FindBy(how = How.XPATH, using = ".//button[text()='Run']")
+    private WebElement runFilters;
+
     public EmailsPage()
     {
         PageFactory.initElements(driver,this);
@@ -50,8 +60,9 @@ public class EmailsPage extends Util {
 
     protected void WaitForPageLoad()
     {
-        SwitchToIFrame();
+        SwitchToDefaultIFrame();
         WaitForElementToBeClicable(filterColumn);
+//        WaitForPageRefresh();
         SwitchToDefault();
     }
 
@@ -60,42 +71,78 @@ public class EmailsPage extends Util {
         if (!(isElementPresent(bodyColumn)))
         {
             WaitForElement(selectColumns);
-            click(selectColumns);
+            for (int i = 0; i < 3; i++) {
+                click(selectColumns);
+                if(isElementPresent(bodyOption)) {
+                    System.out.println("Checking to see if Element is Present : Element Found !");
+                    break;
+                }
+                else
+                    sleep(1);
+            }
             click(bodyOption);
             click(addOption);
             click(okButton);
+            WaitForPageRefresh();
+            SwitchToDefaultIFrame();
         }
     }
 
     private void addFilter(String FilterColumn, String FilterText)
     {
         selectValue(filterColumn,FilterColumn);
-        setValue(filterText,FilterText);
+        sendKeysVerify(filterText,FilterText);
         filterText.sendKeys(Keys.ENTER);
         sleep(2);
+        WaitForElementToBeClicable(filterColumn);
+    }
+
+    private void amendbodyFilter()
+    {
+        click(showHideFilter);
+        WaitForElementToBeClicable(bodyFilterCondition);
+        selectValue(bodyFilterCondition,"LIKE");
+        click(runFilters);
+        sleep(2);
+        WaitForElementToBeClicable(bodyColumn);
+    }
+
+    private void refreshFilter()
+    {
+        click(showHideFilter);
+        WaitForElementToBeClicable(bodyFilterCondition);
+        click(runFilters);
+        sleep(2);
+        WaitForElementToBeClicable(bodyColumn);
     }
 
     public void Email_Exists(String Recipient, String Subject, String BodyText) {
-        SwitchToIFrame();
 
+        int retryCount = 3;
+        WaitForPageLoad();
+
+        SwitchToDefaultIFrame();
+        WaitForElement(filterColumn);
+        addFilter("Recipients", Recipient);
         addBodyColumn();
-        addFilter("Body", BodyText);
-
-        WaitForElementToBeClicable(recipientFilter);
-        recipientFilter.sendKeys(Recipient);
-        recipientFilter.sendKeys(Keys.ENTER);
-        sleep(2);
 
         WaitForElementToBeClicable(subjectFilter);
-        subjectFilter.sendKeys(Subject);
+        sendKeysVerify(subjectFilter,Subject);
         subjectFilter.sendKeys(Keys.ENTER);
         sleep(2);
 
-        WaitForElementToBeClicable(bodyFilter);
-        click(bodyFilter);
-        bodyFilter.sendKeys(Keys.ENTER);
+        sendKeysVerify(bodyFilter,BodyText);
+        subjectFilter.sendKeys(Keys.ENTER);
+        sleep(5);
 
-        WaitForPageRefresh();
+        amendbodyFilter();
+
+        for (int i = 0; i < 5; i++) {
+            if(isElementPresent(emails))
+                break;
+            else
+                refreshFilter();
+        }
 
         AssertDisplayed(emails);
 

@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Util extends XMLUtil{
     protected static WebDriver driver = null;
@@ -26,7 +27,7 @@ public abstract class Util extends XMLUtil{
     protected String GblEmailsUser = "Ajoy Dasari";
 
     protected static void sleep(int waitValue) {
-        System.out.println("Sleeping for '" + waitValue + "' seconds");
+        System.out.println("Sleeping for '" + waitValue + "' half seconds");
         try {
             Thread.sleep(waitValue * 500);
         } catch (InterruptedException e) {
@@ -53,24 +54,41 @@ public abstract class Util extends XMLUtil{
         }
     }
 
+//    protected static void WaitForElement(WebElement element) {
+//        Boolean waiting=true;
+//        int timeout = defaultTimeout;
+//        System.out.println("Waiting for Element :" + element.toString() + ", a maximum of "+timeout+" seconds");
+//        try {
+//            for (int i = timeout; i > 0 ; i--) {
+//                try {
+//                    WebDriverWait wait = new WebDriverWait(driver, 1);
+//                    wait.until(ExpectedConditions.visibilityOf(element));
+//                    break;
+//                } catch (Exception e) {
+//                    sleep(1);
+//                }
+//            }
+//        } catch (Exception e) {
+//            System.out.println("Exception occurred while Waiting for Element, Exception :" + e.getMessage());
+//        }
+//    }
+
     protected static void WaitForElement(WebElement element) {
-        Boolean waiting=true;
+        Boolean found=false;
         int timeout = defaultTimeout;
-        System.out.println("Waiting for Element :" + element.toString());
-        while(waiting) {
-            if(timeout>0)
-            {
+        System.out.println("Waiting for Element :" + element.toString() + ", a maximum of "+timeout+" seconds");
+        try {
+            for (int i = timeout; i > 0 ; i--) {
                 try {
-                    WebDriverWait wait = new WebDriverWait(driver, 5);
-                    wait.until(ExpectedConditions.visibilityOf(element));
-                    waiting = false;
+                    found=element.isDisplayed();
+                    if(found)
+                        break;
                 } catch (Exception e) {
                     sleep(1);
                 }
-                timeout = timeout -1;
-            }else {
-                waiting = false;
             }
+        } catch (Exception e) {
+            System.out.println("Exception occurred while Waiting for Element, Exception :" + e.getMessage());
         }
     }
 
@@ -78,46 +96,60 @@ public abstract class Util extends XMLUtil{
     protected static void WaitForElementToBeClicable(WebElement element) {
         Boolean waiting=true;
         int timeout = defaultTimeout;
+        WaitForElement(element);
         System.out.println("Waiting for Element To Be Clickable :" + element.toString());
-        while(waiting) {
-            if(timeout>0)
-            {
+        for (int i = timeout; i > 0; i--) {
                 try {
-                    WebDriverWait wait = new WebDriverWait(driver, 5);
+                    WebDriverWait wait = new WebDriverWait(driver, 1);
                     wait.until(ExpectedConditions.elementToBeClickable(element));
-                    waiting = false;
+                    break;
                 } catch (Exception e) {
                     sleep(1);
                 }
-                timeout = timeout -1;
-            }else {
-                waiting = false;
-            }
         }
     }
+
+//
+//    protected static void WaitForElementToBeClicable(WebElement element) {
+//        WaitForElement(element);
+//    }
+
+//
+//    protected static void WaitForElementToBeClickableByXPath(String xpath) {
+//        Boolean waiting=true;
+//        int timeout = defaultTimeout;
+//        System.out.println("Waiting for Element To Be Clickable By XPath:" + xpath);
+//        while(waiting) {
+//            if(timeout>0)
+//            {
+//                try {
+//                    WebDriverWait wait = new WebDriverWait(driver, 5);
+//                    wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
+//                    System.out.println("Element is Clickable. XPath:" + xpath);
+//                    waiting = false;
+//                } catch (Exception e) {
+//                    sleep(1);
+//                }
+//                timeout = timeout -1;
+//            }else {
+//                waiting = false;
+//            }
+//        }
+//    }
 
 
     protected static void WaitForElementToBeClickableByXPath(String xpath) {
-        Boolean waiting=true;
-        int timeout = defaultTimeout;
         System.out.println("Waiting for Element To Be Clickable By XPath:" + xpath);
-        while(waiting) {
-            if(timeout>0)
-            {
-                try {
-                    WebDriverWait wait = new WebDriverWait(driver, 5);
-                    wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
-                    waiting = false;
-                } catch (Exception e) {
-                    sleep(1);
-                }
-                timeout = timeout -1;
-            }else {
-                waiting = false;
+        for (int i = defaultTimeout; i > 0; i--) {
+            try {
+                WebDriverWait wait = new WebDriverWait(driver, 1);
+                wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
+                break;
+            } catch (Exception e) {
+                sleep(1);
             }
         }
     }
-
 
     protected static void WaitForElementToDisappear(WebElement element) {
         System.out.println("Waiting for Element to Disappear :" + element.toString());
@@ -126,21 +158,27 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static WebElement ElementByXPath(String xpath) {
-        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+
+        WaitForElement(driver.findElement(By.xpath(xpath)));
         return driver.findElement(By.xpath(xpath));
     }
 
     protected static void ClickElementByXPath(String xpath) {
-        System.out.println("Clicking on Element :" + xpath);
-//        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-//        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
-        WaitForElementToBeClickableByXPath(xpath);
-        driver.findElement(By.xpath(xpath)).click();
+        System.out.println("Clicking on Element with Xpath:" + xpath);
+        for (int i = defaultTimeout; i > 0; i--) {
+            try {
+                WebDriverWait wait = new WebDriverWait(driver, 1);
+                wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
+                driver.findElement(By.xpath(xpath)).click();
+                break;
+            } catch (Exception e) {
+                sleep(1);
+                Log("Sleeping for 1 Second");
+            }
+        }
     }
 
     protected static void SwitchToIFrame() {
-        //System.out.println("Switching Focus to the default IFrame :");
         WaitForElement(driver.findElement(By.tagName("iframe")));
         driver.switchTo().frame(driver.findElement(By.tagName("iframe")));
     }
@@ -193,9 +231,15 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static String getValue(WebElement element) {
-        //WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        //wait.until(ExpectedConditions.visibilityOf(element));
-        return element.getAttribute("value");
+        String value="";
+            try {
+                WaitForElement(element);
+                value = element.getAttribute("value");
+            } catch (NoSuchElementException e) {
+                sleep(5);
+                value = element.getAttribute("value");
+            }
+        return value;
     }
 
     protected static String getText(WebElement element) {
@@ -230,14 +274,59 @@ public abstract class Util extends XMLUtil{
         driver.switchTo().window(parentWindowHandler);
     }
 
-    protected static void SwitchToNewWindow() {
-        sleep(1);
-        SwitchToDefault();
-        Set<String> allWindows;
-        allWindows = driver.getWindowHandles();
-        allWindows.removeAll(oldWindows);
-        String newWindow = allWindows.iterator().next();
-        driver.switchTo().window(newWindow);
+
+    protected static void ClickToOpenNewWindow(WebElement element) {
+        boolean found=false;
+        CaptureWindowHandles();
+        for (int i = 0; i < 3; i++) {
+            click(element);
+            found = SwitchToNewWindow();
+            if(found)
+                break;
+            else
+                sleep(2);
+        }
+    }
+
+
+    protected static void SelectFromLookup(WebElement element, String linkText) {
+        ClickToOpenNewWindow(element);
+        try{
+            WebElement element1 = driver.findElement(By.xpath(".//div[@class='input-group']/input"));
+        if(isElementPresent(element1))
+        {
+            sendKeysVerify(element1,linkText);
+            element1.sendKeys(Keys.ENTER);
+            sleep(3);
+        }
+        }catch (Exception e){}
+        ClickElementByXPath(".//a[text()='"+ linkText +"']");
+        SwitchToOldWindow();
+        SwitchToIFrame();
+    }
+
+
+    protected static boolean SwitchToNewWindow() {
+        boolean found=false;
+        for (int i = defaultTimeout; i > 0; i--) {
+            try {
+                SwitchToDefault();
+                Set<String> allWindows;
+                allWindows = driver.getWindowHandles();
+                allWindows.removeAll(oldWindows);
+                String newWindow = allWindows.iterator().next();
+                driver.switchTo().window(newWindow);
+                found=true;
+                break;
+            } catch (Exception e) {
+                sleep(1);
+            }
+        }
+        if(found)
+            Log("New Window Found : '" + driver.getTitle() + "'");
+        else
+            Log("New Window Not Found : '");
+        return found;
     }
 
     protected static void CloseNewWindow() {
@@ -245,27 +334,63 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static void selectValue(WebElement element, String optionValue) {
+
+        WaitForElementToBeClicable(element);
+        System.out.println("Select Value - " + element.toString() + " : '" + optionValue + "'");
         try {
-            WaitForElementToBeClicable(element);
-            System.out.println("Select Value - " + element.toString() + " : '"+ optionValue + "'");
-            click(element);
+            new Select(element).selectByVisibleText(optionValue);
+            return;
+        } catch (NoSuchElementException e) {
+          Log("selectValue: Unable to select option by Visible Text");
+        }
+
+        try {
+            new Select(element).selectByValue(optionValue);
+            return;
+        } catch (NoSuchElementException e) {
+            Log("selectValue: Unable to select option by Value");
+        }
+
+        try {
             List<WebElement> options = element.findElements(By.tagName("option"));
             for (WebElement option : options) {
-                if((option.getText().contains(optionValue)) || (option.getAttribute("value").contains(optionValue)))
-                {
-                    Log("Option '"+ optionValue +"' Found!");
+                WaitForElementToBeClicable(option);
+                click(element);
+                if (option.getAttribute("text").contains(optionValue))
                     click(option);
-                    break;
-                }
+                else
+                    Log("selectValue: Unable to select option using Text Attribute");
             }
         } catch (Exception e) {
             System.out.println("Exception occurred in 'selectValue' method :" + e.getMessage());
         }
+
+
+//            List<WebElement> options = element.findElements(By.tagName("option"));
+//            for (WebElement option : options) {
+//                WaitForElementToBeClicable(option);
+//                if(option.getAttribute("text").contains(optionValue))
+//                {
+//                    Log("Selecting Option by Text'"+ optionValue +"'");
+//                    new Select(element).selectByVisibleText(optionValue);
+//                    break;
+//                }else if (option.getAttribute("value").contains(optionValue))
+//                {
+//                    Log("Selecting Option by Value'"+ optionValue +"'");
+//                    new Select(element).selectByValue(optionValue);
+//                    break;
+//                }
+//            }
+
+//        } catch (Exception e) {
+//            System.out.println("Exception occurred in 'selectValue' method :" + e.getMessage());
+//        }
     }
 
     protected static void setValue(WebElement element, String textValue) {
         try {
             System.out.println("Set Value - " + element.toString() + " : '"+ textValue + "'");
+
             element.sendKeys(textValue);
         } catch (Exception e) {
             System.out.println("Exception occurred in 'setValue' method :" + e.getMessage());
@@ -293,8 +418,7 @@ public abstract class Util extends XMLUtil{
     protected static void AssertDisplayed(WebElement element)
     {
         System.out.println("Verifying Element is Displayed :" + element.toString());
-        WebDriverWait wait = new WebDriverWait(driver, defaultTimeout);
-        wait.until(ExpectedConditions.visibilityOf(element));
+        WaitForElement(element);
         element.isDisplayed();
     }
 
@@ -327,9 +451,16 @@ public abstract class Util extends XMLUtil{
 
     protected static void click(WebElement element)
     {
-        System.out.println("Clicking on Element :" + element.toString());
         WaitForElementToBeClicable(element);
-        element.click();
+        System.out.println("Clicking on Element :" + element.toString());
+        for (int i = 0; i <5 ; i++) {
+            try {
+                element.click();
+                break;
+            } catch (Exception e) {
+                sleep(1);
+            }
+        }
     }
 
     //This method takes a picture of the current screen when called and saves in the Screenshots folder
@@ -352,9 +483,29 @@ public abstract class Util extends XMLUtil{
         }
     }
 
+
+    protected static void PageLoadWait()
+    {
+        JavascriptExecutor js = (JavascriptExecutor)driver;
+        for (int i=0; i<defaultTimeout; i++){
+            if (js.executeScript("return document.readyState").toString().equals("complete")){
+                break;
+            }
+            sleep(1);
+        }
+        sleep(20);
+    }
+
     protected static void WaitForPageRefresh()
     {
-        sleep(8);
+        JavascriptExecutor js = (JavascriptExecutor)driver;
+        for (int i=0; i<defaultTimeout; i++){
+            if (js.executeScript("return document.readyState").toString().equals("complete")){
+                break;
+            }
+            sleep(1);
+        }
+        sleep(6);
     }
 
     protected static void WaitForPopup()
@@ -362,11 +513,41 @@ public abstract class Util extends XMLUtil{
         sleep(1);
     }
 
+
+    protected static void WaitForElementValue(WebElement element, String expected){
+        Log("Waiting For Element Value: '"+ expected+"'");
+        String actual = getValue(element);
+        for (int i = defaultTimeout; i > 0; i--) {
+            if(expected.equals(actual)) {
+                sleep(2);
+                break;
+            }
+            else {
+                Log("expected:'"+expected+"', actual:'"+actual+"', result:"+expected.equals(actual));
+                sleep(2);
+                actual = getValue(element);
+            }
+        }
+    }
+
+
     protected static void AssertElementValue(WebElement element, String expected){
         Log("Asserting Element Value: '"+ expected+"'");
         String actual = getValue(element);
-        Log("Expected: '" + expected + "', Actual: '" + actual + "'");
+        //Log("Expected: '" + expected + "', Actual: '" + actual + "'");
+        for (int i = defaultTimeout; i > 0; i--) {
+            if(expected.equals(actual)) {
+                Log("Expected: '" + expected + "', Actual: '" + actual + "', retry count:="+(defaultTimeout-i));
+                break;
+            }
+            else {
+                sleep(2);
+                actual = getValue(element);
+                Log("Expected: '" + expected + "', Actual: '" + actual + "', retry count:="+(defaultTimeout-i));
+            }
+        }
         Assert.assertTrue(expected.equals(actual), "Assert Failed, Expected: '" + expected + ", Actual: '" + actual + "'");
+        //Log("Expected: '" + expected + "', Actual: '" + actual + "'");
     }
 
     protected static void AssertElementText(WebElement element, String expected) {
@@ -438,7 +619,25 @@ public abstract class Util extends XMLUtil{
     protected static void sendKeys(WebElement element, String text) {
         Log("Entering Text'"+text+"' in ths element '"+element+"'");
         WaitForElement(element);
+        WaitForElementToBeClicable(element);
+        element.clear();
         element.sendKeys(text);
+    }
+
+
+
+    protected static void sendKeysVerify(WebElement element, String text) {
+        String enteredValue;
+        Log("Entering Text'"+text+"' in ths element '"+element+"'");
+        WaitForElement(element);
+        WaitForElementToBeClicable(element);
+        do {
+            element.clear();
+            element.sendKeys(text);
+            enteredValue = getValue(element).trim();
+            //Log("'"+text+"="+enteredValue+"'");
+        }while(!(text.equals(enteredValue)));
+
     }
 
     protected static void sendChars(WebElement element, String text) {
@@ -449,5 +648,49 @@ public abstract class Util extends XMLUtil{
     }
 
 
+
+    public void ScrollPage(WebElement element, int pages)
+    {
+        System.out.println("Scrolling Page, Pages to Scroll : " + pages);
+        element.click();
+        for (int i = 0; i < pages; i++)
+        {
+            element.sendKeys(Keys.PAGE_DOWN);
+            sleep(1);
+        }
+    }
+
+    public void selectTab(WebElement element) {
+        for (int i = defaultTimeout; i > 0; i--) {
+            if (!(element.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
+            {
+                click(element);
+                sleep(1);
+            }
+            else
+                break;
+        }
+    }
+
+    public void WaitForMessage(String messageText) {
+        WebElement element;
+        String displayedText = "";
+
+        for (int i = defaultTimeout; i > 0; i--) {
+            try {
+                element = ElementByXPath(".//div[@class='outputmsg_div']//span[@class='outputmsg_text']");
+                displayedText = getText(element);
+                if (displayedText.equals(messageText))
+                {
+                    Log("WaitForMessage: Message displayed: '" + messageText +"'");
+                    break;
+                }
+                else
+                    sleep(1);
+            } catch (Exception e) {
+                Log("Exception Occurred in WaitForMessage, Error Details: " + e.getMessage());
+            }
+        }
+    }
 }
 

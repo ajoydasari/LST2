@@ -28,7 +28,7 @@ public class EditMembersPage extends Util {
 
     protected void WaitForPageLoad()
     {
-        WaitForPageRefresh();
+//        PageLoadWait();
         SwitchToIFrame();
         WaitForElement(childList.findElement(By.tagName("option")));
         SwitchToDefault();

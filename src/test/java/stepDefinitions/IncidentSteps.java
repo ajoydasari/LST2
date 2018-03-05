@@ -145,9 +145,10 @@ public class IncidentSteps extends Util{
         new HomePage().SelectAllAppsTab();
         new LHSNavigationPage().setFilter("My Assignment Groups Open Incidents");
         new LHSNavigationPage().MyAssignmentGroupOpenIncidents();
-        new IncidentsListPage().WaitForPageLoad();
+//        new IncidentsListPage().WaitForPageLoad();
         incidentNo = RetrieveData(IncidentNumber);
         new IncidentsListPage().selectIncident(incidentNo);
+//        new IncidentPage().WaitForIncidentStateEditable();
     }
 
     @When("^I Select the (.*) from My Owning Groups Open Incidents link$")
@@ -255,10 +256,12 @@ public class IncidentSteps extends Util{
     public void Find_Incident(String IncidentNumber){
         incidentNo = RetrieveData(IncidentNumber);
         new HomePage().GlobalSearch(incidentNo);
+        WaitForPageRefresh();
     }
 
     @When("^I Search and Open the Incident$")
     public void i_Search_and_Open_the_Incident(){
+        WaitForPageRefresh();
         Find_Incident("Incident");
     }
 
@@ -315,7 +318,7 @@ public class IncidentSteps extends Util{
     }
 
     @When("^I Change the Incident Status to (.*)$")
-    public void i_Change_the_Incident_Status_to(String IncidentNumber, String status){
+    public void i_Change_the_Incident_Status_to(String status){
         new IncidentPage().ChangeIncidentStatus(status);
     }
 
@@ -358,7 +361,7 @@ public class IncidentSteps extends Util{
     @When("^I Click on the First Time Fix button$")
     public void i_Click_on_the_First_Time_Fix_button(){
         new IncidentPage().FirstTimeFix();
-        sleep(3);
+//        WaitForPageRefresh();
     }
 
 
