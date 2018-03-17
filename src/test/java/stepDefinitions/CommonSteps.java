@@ -25,11 +25,21 @@ public class CommonSteps extends Util {
             poiseloginpage.login();
 
         snowloginpage.login();
-        //sleep(2);
-        //Make sure the test instance is opened as sometimes poise login automatically launch to prod instead of test
-        //navigate("https://lssitest.service-now.com/welcome.do");
-        //sleep(2);
+    }
 
+
+
+    @Given("^I am Logged in ServiceNow ESS as Admin$")
+    public void i_am_Logged_in_ServiceNow_ESS_as_Admin() throws Throwable {
+        Poise_LoginPage poiseloginpage = new Poise_LoginPage();
+        SNOW_LoginPage snowloginpage = new SNOW_LoginPage();
+
+        navigate("https://lssitest.service-now.com/ess");
+
+        if (poiseloginpage.isAt())
+            poiseloginpage.login();
+
+        snowloginpage.ESSlogin();
     }
 
     @When("^I Logoff and Login as$")
@@ -43,6 +53,16 @@ public class CommonSteps extends Util {
         homePage.Impersonate_User(user.username);
     }
 
+    @When("^I Logoff and Login as ESS User$")
+    public void i_Logoff_and_Login_as_ESS_User(DataTable dataTable)
+    {
+        List<List<String>> data = dataTable.raw();
+        SNOWUser user= new SNOWUser();
+        user.initialize(data);
+        WaitForPageRefresh();
+        HomePage homePage = new HomePage();
+        homePage.Impersonate_ESSUser(user.username);
+    }
     @When("^I Select All Apps Tab$")
     public void I_Select_All_Apps_Tab()
     {

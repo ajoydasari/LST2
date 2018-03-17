@@ -50,6 +50,8 @@ public class HomePage extends Util {
     @FindBy(how = How.XPATH, using = ".//div[@id='output_messages']/button")
     private WebElement notificationMsg;
 
+    @FindBy(how = How.XPATH, using = ".//button[@data-dismiss='alert']")
+    private WebElement closeAlert;
 
     public void WaitForPageLoad()
     {
@@ -59,6 +61,8 @@ public class HomePage extends Util {
     }
 
     public void Impersonate_User(String username) {
+        if(isElementPresent(closeAlert))
+            click(closeAlert);
         WaitForElement(userinfodropdown);
         click(userinfodropdown);
         WaitForElement(impersonateUser);
@@ -77,7 +81,21 @@ public class HomePage extends Util {
         WaitForElement(welcome);
         SwitchToDefault();
         new HomePage().WaitForPageLoad();
-//        sleep(5);
+}
+
+
+    public void Impersonate_ESSUser(String username) {
+        WaitForElement(userinfodropdown);
+        click(userinfodropdown);
+        WaitForElement(impersonateUser);
+        click(impersonateUser);
+        WaitForElement(searchForUserDropdown);
+        click(searchForUserDropdown);
+        sendKeysVerify(searchInput,username);
+        sleep(2);
+        ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
+        SwitchToDefault();
+        new ESSLandingPage().WaitForPageLoad();
     }
 
     public void SelectFavouritesTab() {

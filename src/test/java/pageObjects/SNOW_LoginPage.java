@@ -24,6 +24,11 @@ public class SNOW_LoginPage extends Util{
     @FindBy(how = How.XPATH, using = ".//input[@id='home_title']")
     private WebElement welcome;
 
+    @FindBy(how = How.XPATH, using = ".//img[@src='ITnowlogolarge.png']")
+    private WebElement ESSLogo;
+
+    @FindBy(how = How.XPATH, using = ".//span[@class='icon-loading']")
+    private WebElement loading;
 
     public boolean isAt()
     {
@@ -31,14 +36,21 @@ public class SNOW_LoginPage extends Util{
     }
 
     public void login() {
-        // We continue using the element just as before
         userid.sendKeys("xxxxxxxxx");
         password.sendKeys("xxxxxxxxx");
         click(login);
         click(btncontinue);
+        WaitForElementToDisappear(loading);
         SwitchToIFrame();
         WaitForElement(welcome);
         SwitchToDefault();
+    }
+
+    public void ESSlogin() {
+        userid.sendKeys("xxxxxxxxx");
+        password.sendKeys("xxxxxxxxx");
+        click(login);
+        WaitForElement(ESSLogo);
     }
 
     public SNOW_LoginPage()

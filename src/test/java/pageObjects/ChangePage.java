@@ -46,6 +46,9 @@ public class ChangePage extends Util {
     @FindBy(how = How.ID, using = "label.ni.change_request.u_nominate_for_standard_change")
     private WebElement standardChange;
 
+    @FindBy(how = How.ID, using = "lookup.change_request.u_template")
+    private WebElement changeModel;
+
     @FindBy(how = How.ID, using = "change_request.short_description")
     private WebElement changeTitle;
 
@@ -102,6 +105,9 @@ public class ChangePage extends Util {
 
     @FindBy(how = How.ID, using = "change_request.work_notes")
     private WebElement workNotes;
+
+    @FindBy(how = How.ID, using = "activity-stream-comments-textarea")
+    private WebElement comments;
 
     @FindBy(how = How.XPATH, using = ".//div[@class='element date-calendar']//a[@id='change_request.start_date.ui_policy_sensitive']")
     private WebElement planStartDateTime;
@@ -202,23 +208,87 @@ public class ChangePage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'PIUs')]")
     private WebElement PIUsTab;
 
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Tasks')]")
+    private WebElement changeTasksTab;
+
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')]")
     private WebElement approvalsTab;
 
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')][contains(text(),'(2)')]")
     private WebElement approvals2Tab;
 
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')][contains(text(),'(3)')]")
+    private WebElement approvals3Tab;
+
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')][contains(text(),'(26)')]")
     private WebElement approvals26Tab;
 
+    @FindBy(how = How.XPATH, using = ".//span[@class='tabs2_tab tabs2_active']/span[contains(text(),'Approvals')]")
+    private WebElement approvalsTabSelected;
+
     @FindBy(how = How.ID, using = "request.assessment")
     private WebElement requestAssessments;
+
+    @FindBy(how = How.ID, using = "skip.assessment")
+    private WebElement skipAssessments;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='change_request.state']/option[@selected][contains(text(),'Awaiting Approval')]")
+    private WebElement awaitingValidationState;
 
     @FindBy(how = How.XPATH, using = ".//table[@id='change_request.u_piu.u_parent_change_table']//td[3]/a[contains(@href,'piu')]")
     private WebElement PIURecord;
 
     @FindBy(how = How.XPATH, using = ".//table[@id='change_request.u_piu.u_parent_change_table']//tr[1]/td[5]")
     private WebElement firstPIURecStatus;
+
+    @FindBy(how = How.XPATH, using = ".//tr[@record_class='change_task']//a[contains(text(),'CTASK')]")
+    private WebElement firstChangeTask;
+
+    @FindBy(how = How.XPATH, using = ".//tr[@record_class='change_task']/td[text()='Mandatory Fields']/..//a[contains(text(),'CTASK')]")
+    private WebElement mandatoryFieldsTask;
+
+    @FindBy(how = How.XPATH, using = ".//tr[@record_class='change_task']/td[text()='PIR']/..//a[contains(text(),'CTASK')]")
+    private WebElement PIRTask;
+
+    @FindBy(how = How.XPATH, using = ".//tr[@record_class='change_task']/td[text()='PIR']/..//td[text()='PIR Task Change unsuccessful']")
+    private WebElement PIRTaskUnsuccessful;
+
+    @FindBy(how = How.XPATH, using = ".//span[@id='change_request.sysapproval_approver.sysapproval_hide_search']//select")
+    private WebElement ApprovalFilter;
+
+    @FindBy(how = How.XPATH, using = ".//span[@id='change_request.sysapproval_approver.sysapproval_hide_search']//input")
+    private WebElement ApprovalFilterInput;
+//
+//    @FindBy(how = How.XPATH, using = ".//span[@id='change_request.sysapproval_approver.sysapproval_hide_search']//input")
+//    private WebElement RiskImpact;
+
+    @FindBy(how = How.ID, using = "change_request.u_approval_groups_unlock")
+    private WebElement internalAssessmentGroupsUnlock;
+
+    @FindBy(how = How.ID, using = "change_request.u_assessment_groups_unlock")
+    private WebElement externalAssessmentGroupsUnlock;
+
+    @FindBy(how = How.ID, using = "sys_display.change_request.u_approval_groups")
+    private WebElement approvalGroupsEdit;
+
+    @FindBy(how = How.ID, using = "sys_display.change_request.u_assessment_groups")
+    private WebElement assessmentGroupsEdit;
+
+    @FindBy(how = How.ID, using = "change_request.u_approval_groups_lock")
+    private WebElement approvalGroupsLock;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='select_0change_request.u_approval_groups']/option[text()='Test AssignmentGroup1']")
+    private WebElement assignmentGroup1;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='select_0change_request.u_approval_groups']/option[text()='HOT Tooling Team']")
+    private WebElement hotToolingTeam;
+
+    @FindBy(how = How.ID, using = "remove.change_request.u_approval_groups")
+    private WebElement removeApprovalGroup;
+
+
+    @FindBy(how = How.ID, using = "change_request.u_assessment_groups_lock")
+    private WebElement assessmentGroupsLock;
 
 
     public ChangePage() {
@@ -239,10 +309,19 @@ public class ChangePage extends Util {
         SwitchToDefaultIFrame();
         WaitForElement(changeTitle);
         ScrollPage(changeTitle,1);
-        AssertDisplayed(approvals2Tab);
+        AssertDisplayed(approvalsTab);
         SwitchToDefault();
     }
 
+
+    public void validateIsAt3()
+    {
+        SwitchToDefaultIFrame();
+        WaitForElement(changeTitle);
+        ScrollPage(changeTitle,1);
+        AssertDisplayed(approvals3Tab);
+        SwitchToDefault();
+    }
 
     public void validateIsAt26()
     {
@@ -263,18 +342,31 @@ public class ChangePage extends Util {
         sendKeys(requestor, changeData.Requestor);
         SelectFromLookup(requestorLookup, changeData.Requestor);
         sendKeys(changeTitle,changeData.ChangeTitle);
+        if(!(changeData.ChangeType == null))
+            selectValue(changeType,changeData.ChangeType);
+        if(!(changeData.Template == null))
+            SelectFromLookup(changeModel, changeData.Template);
         SwitchToDefault();
 
         return changeNo;
     }
 
 
+//    public void selectTemplate(String template)
+//    {
+//        SwitchToDefaultIFrame();
+//        SelectFromLookup(requestorLookup, template);
+//        SwitchToDefault();
+//    }
+
     public String NewChange(ChangeData changeData) {
         String changeNo = CompleteNewChangeDetails(changeData);
         SwitchToDefaultIFrame();
         click(save);
-        //WaitForPageRefresh();
-        WaitForElement(completeRiskImpact);
+        if(changeData.ChangeType.equals("Standard"))
+            WaitForElement(submitForValidation);
+        else
+            WaitForElement(completeRiskImpact);
         SwitchToDefault();
         return changeNo;
     }
@@ -292,6 +384,16 @@ public class ChangePage extends Util {
         WaitForPageRefresh();
         SwitchToDefault();
     }
+
+
+    public void SelectChangeModel() {
+        SwitchToDefaultIFrame();
+        ClickToOpenNewWindow(changeModel);
+        WaitForPageRefresh();
+//        SwitchToDefault();
+    }
+
+
 
     public void VerifyChangeRecordLoaded(String changeNo) {
         SwitchToDefaultIFrame();
@@ -324,11 +426,101 @@ public class ChangePage extends Util {
     }
 
 
+
+    public void PopulateEmergencyChangeDetails(ChangeData changeData) {
+
+        SwitchToDefaultIFrame();
+        selectTab(mainDetailsTab);
+        sendKeys_Select(configItem, changeData.PrimaryConfigItem);
+        selectValue(changeClassification, changeData.ChangeClassification);
+        sendKeys(description,changeData.Description);
+        sendKeys(reasonForChange,changeData.ReasonForChange);
+
+        selectTab(planningTab);
+        click(planStartDateTime);
+        new CommonPageObjects().selectCalendarDate(changeData.StartDateTime);
+        click(planEndDateTime);
+        new CommonPageObjects().selectCalendarDate(changeData.EndDateTime);
+        SwitchToDefault();
+    }
+
+
+    public void PopulateTest4ChangeDetails(ChangeData changeData) {
+
+        SwitchToDefaultIFrame();
+        selectTab(mainDetailsTab);
+        sendKeys_Select(configItem, changeData.PrimaryConfigItem);
+        selectValue(changeClassification, changeData.ChangeClassification);
+        sendKeys(description,changeData.Description);
+        sendKeys(reasonForChange,changeData.ReasonForChange);
+
+        selectTab(planningTab);
+        click(planStartDateTime);
+        new CommonPageObjects().selectCalendarDate(changeData.StartDateTime);
+        click(planEndDateTime);
+        new CommonPageObjects().selectCalendarDate(changeData.EndDateTime);
+
+        selectValue(implementationPlanAttached, changeData.ImplementationPlanAttached);
+        sendKeys(implementationPlan,changeData.ImplementationPlan);
+        selectValue(testEvidenceAttached, changeData.PreImplTestEvidenceAttached);
+        selectValue(backoutPlanAttached, changeData.BackoutPlanAttached);
+        sendKeys(postImplVerificationSteps, changeData.PostImplVerificationSteps);
+
+        SwitchToDefault();
+    }
+
+
+
+    public void PopulateChangeInfo(ChangeData changeData) {
+
+        SwitchToDefaultIFrame();
+        selectTab(planningTab);
+        ScrollPage(changeTitle,1);
+        selectValue(implementationPlanAttached, changeData.ImplementationPlanAttached);
+        sendKeys(implementationPlan,changeData.ImplementationPlan);
+        selectValue(testEvidenceAttached, changeData.PreImplTestEvidenceAttached);
+        selectValue(backoutPlanAttached, changeData.BackoutPlanAttached);
+        sendKeys(postImplVerificationSteps, changeData.PostImplVerificationSteps);
+        SwitchToDefault();
+    }
+
+
+
+
+    public void AddInternalAssessmentGroup(String groupName) {
+
+        SwitchToDefaultIFrame();
+        click(internalAssessmentGroupsUnlock);
+        WaitForElement(approvalGroupsEdit);
+        click(hotToolingTeam);
+        sleep(3);
+        click(removeApprovalGroup);
+        sleep(3);
+        sendKeysEnter(approvalGroupsEdit,groupName);
+        WaitForElement(assignmentGroup1);
+        click(approvalGroupsLock);
+        SwitchToDefault();
+    }
+
+
+
+    public void AddExternalAssessmentGroup(String groupName) {
+
+        SwitchToDefaultIFrame();
+        click(externalAssessmentGroupsUnlock);
+        WaitForElement(assessmentGroupsEdit);
+        sendKeysEnter(assessmentGroupsEdit,groupName);
+        WaitForElement(assignmentGroup1);
+        click(assessmentGroupsLock);
+        SwitchToDefault();
+    }
+
+
     public void ClickSubmitForValidation() {
         SwitchToDefaultIFrame();
         click(submitForValidation);
         WaitForPageRefresh();
-        WaitForElement(approvalsTab);
+//        WaitForElement(approvalsTab);
         SwitchToDefault();
     }
 
@@ -355,7 +547,8 @@ public class ChangePage extends Util {
         selectTab(planningTab);
         ScrollPage(justificationForExpedite,1);
         sendKeys(justificationForExpedite,changeData.JustificationToExpedite);
-        sendKeys(postImplVerificationSteps,changeData.PostImplVerificationSteps);
+        if(changeData.PostImplVerificationSteps != null)
+            sendKeys(postImplVerificationSteps,changeData.PostImplVerificationSteps);
         SwitchToDefault();
     }
 
@@ -428,6 +621,14 @@ public class ChangePage extends Util {
         SwitchToDefault();
     }
 
+
+    public void ClickSkipAssessments() {
+        SwitchToDefaultIFrame();
+        click(skipAssessments);
+        WaitForElement(awaitingValidationState);
+        SwitchToDefault();
+    }
+
     public void ValidatePIURecordCreated() {
         SwitchToDefaultIFrame();
         click(PIUsTab);
@@ -443,5 +644,114 @@ public class ChangePage extends Util {
         SwitchToDefault();
     }
 
+    public void addComments(String commentsText){
+        selectTab(notesTab);
+        sendKeys(comments,commentsText);
+        click(save);
+        WaitForPageRefresh();
+    }
+
+    public void editStartDate()
+    {
+        SwitchToDefaultIFrame();
+        selectTab(planningTab);
+        click(planStartDateTime);
+        new CommonPageObjects().selectCalendarDate("NOW");
+        SwitchToDefault();
+    }
+
+
+    public void editEndDate()
+    {
+        SwitchToDefaultIFrame();
+        selectTab(planningTab);
+        click(planEndDateTime);
+        new CommonPageObjects().selectCalendarDate("NOW");
+        SwitchToDefault();
+    }
+
+
+    public void saveRecord()
+    {
+        SwitchToDefaultIFrame();
+        click(save);
+        //WaitForPageRefresh();
+        WaitForPageLoad();
+        SwitchToDefault();
+    }
+
+
+    public void selectChangeTasksTab()
+    {
+        SwitchToDefaultIFrame();
+        WaitForPageRefresh();
+        selectTab(changeTasksTab);
+        SwitchToDefault();
+    }
+
+    public void selectApprovalsTab()
+    {
+        SwitchToDefaultIFrame();
+        selectTab(approvalsTab);
+        SwitchToDefault();
+    }
+
+    public void selectAssessorsTab()
+    {
+        SwitchToDefaultIFrame();
+        selectTab(assessorsTab);
+        SwitchToDefault();
+    }
+
+
+    public void selectFirstChangeTask()
+    {
+        SwitchToDefaultIFrame();
+        WaitForElement(firstChangeTask);
+        click(firstChangeTask);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+    public void selectMandatoryFieldsTask()
+    {
+        SwitchToDefaultIFrame();
+        WaitForElement(mandatoryFieldsTask);
+        click(mandatoryFieldsTask);
+        //WaitForPageRefresh();
+        new ChangeTaskPage().WaitForPageLoad();
+        SwitchToDefault();
+    }
+
+
+    public void selectPIRTask()
+    {
+        SwitchToDefaultIFrame();
+        WaitForElement(PIRTask);
+        click(PIRTask);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+    public void validatePIRTaskUnsuccessful()
+    {
+        SwitchToDefaultIFrame();
+        AssertDisplayed(PIRTaskUnsuccessful);
+        SwitchToDefault();
+    }
+
+
+    public void selectApproval(String approver, String changeNo)
+    {
+        SwitchToDefaultIFrame();
+        WaitForElement(approvalsTabSelected);
+        selectValue(ApprovalFilter,"Approver");
+        sendKeysEnter(ApprovalFilterInput,approver);
+        ClickElementByXPath(".//a[text()='" + approver + "']/../..//a[text()='Requested']");
+        SwitchToDefault();
+        new ApprovalPage().WaitForPageLoad(changeNo);
+    }
 
 }

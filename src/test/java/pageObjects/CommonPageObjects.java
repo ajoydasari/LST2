@@ -7,6 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
 
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -96,7 +97,19 @@ public class CommonPageObjects extends Util {
                     click(dtpToday);
                 else if(supplieddate.toUpperCase().equals("NOW"))
                 {
+                    SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String currentDateTime = formatter.format(new Date());
                     System.out.println("Supplied Date is 'Now'");
+                    Calendar myCalendar = Calendar.getInstance();
+                    myCalendar.setTime(myDateFormat.parse(currentDateTime));
+
+                    String hour = String.valueOf(myCalendar.get(Calendar.HOUR_OF_DAY));
+                    String month = String.valueOf(myCalendar.get(Calendar.MINUTE));
+                    String seconds = String.valueOf(myCalendar.get(Calendar.SECOND));
+                    sendKeys(dtpHour,hour);
+                    sendKeys(dtpMin,month);
+                    sendKeys(dtpSec,seconds);
                     click(dtpOK);
                 }
                 else {

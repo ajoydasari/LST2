@@ -1,7 +1,5 @@
 package dataObjects;
 
-import sun.rmi.runtime.Log;
-
 import java.util.List;
 
 public class ChangeData extends dataUtil{
@@ -50,6 +48,7 @@ public class ChangeData extends dataUtil{
     public String ClosedStatus;
     public String LeadTimeConflict;
     public String LockAssessments;
+    public String Template;
 
     public void initialize(List<List<String>> data){
         this.Requestor = getData("Requestor", data, this.Requestor);
@@ -97,5 +96,6 @@ public class ChangeData extends dataUtil{
         this.ClosedStatus = getData("ClosedStatus", data, this.ClosedStatus);
         this.LeadTimeConflict = getData("LeadTimeConflict", data, this.LeadTimeConflict);
         this.LockAssessments = getData("LockAssessments", data, this.LockAssessments);
+        this.Template = getData("Template", data, this.Template);
     }
 }

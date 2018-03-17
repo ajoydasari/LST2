@@ -3,11 +3,14 @@ package pageObjects;
 import Utilities.Util;
 import dataObjects.ChangeData;
 import dataObjects.ReadyReckonerData;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
+
+import static java.util.Objects.isNull;
 
 public class ReadyReckonerPage extends Util {
 
@@ -71,11 +74,17 @@ public class ReadyReckonerPage extends Util {
         sendKeys(service, readyReckonerData.ITService);
         SelectFromLookup(serviceLookup, readyReckonerData.ITService);
         selectValue(emergencyChange, readyReckonerData.EmergencyChange);
-        selectValue(newService, readyReckonerData.NewService);
-        selectValue(multiEnvironment, readyReckonerData.MultiEnvironment);
-        selectValue(multipleSuppliers, readyReckonerData.MultipleSuppliers);
-        selectValue(impactOtherSystems, readyReckonerData.ImpactOtherITSystems);
-        selectValue(deployTogether, readyReckonerData.DeployTogether);
+
+        if(readyReckonerData.NewService != null)
+            selectValue(newService, readyReckonerData.NewService);
+        if(readyReckonerData.MultiEnvironment != null)
+            selectValue(multiEnvironment, readyReckonerData.MultiEnvironment);
+        if(readyReckonerData.MultipleSuppliers != null)
+            selectValue(multipleSuppliers, readyReckonerData.MultipleSuppliers);
+        if(readyReckonerData.ImpactOtherITSystems != null)
+            selectValue(impactOtherSystems, readyReckonerData.ImpactOtherITSystems);
+        if(readyReckonerData.DeployTogether != null)
+            selectValue(deployTogether, readyReckonerData.DeployTogether);
 
         SwitchToDefault();
     }

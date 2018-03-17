@@ -43,6 +43,8 @@ public class LHSNavigationPage extends Util {
     @FindBy(how = How.XPATH, using = ".//*[text()='Emails']")
     private WebElement emails;
 
+    @FindBy(how = How.XPATH, using = ".//*[text()='My Groups PIU Tasks']")
+    private WebElement myGroupPIUTasks;
 
     public LHSNavigationPage()
     {
@@ -125,5 +127,12 @@ public class LHSNavigationPage extends Util {
         SwitchToIFrame();
         WaitForElement(new IncidentsListPage().incidentsHeader);
         SwitchToDefault();
+    }
+
+
+    public void MyGroupsPIUTasks()
+    {
+        click(myGroupPIUTasks);
+        new PIUListPage().WaitForPageLoad();
     }
 }

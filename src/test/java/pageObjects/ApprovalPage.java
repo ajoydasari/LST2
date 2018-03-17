@@ -20,6 +20,11 @@ public class ApprovalPage extends Util {
     @FindBy(how = How.ID, using = "sys_readonly.change_request.number")
     public WebElement changeNumber_ReadOnly;
 
+    @FindBy(how = How.ID, using = "activity-stream-comments-textarea")
+    public WebElement comments;
+
+    @FindBy(how = How.ID, using = "approve_review")
+    public WebElement proposedDatesRejected;
 
     public boolean isAt()
     {
@@ -59,4 +64,14 @@ public class ApprovalPage extends Util {
         new ApprovalListPage().WaitForPageLoad();
     }
 
+
+    public void ProposedDatesRejected(String commentsText)
+    {
+        SwitchToDefaultIFrame();
+        sendKeys(comments, commentsText);
+        click(proposedDatesRejected);
+        WaitForPageRefresh();
+        SwitchToDefault();
+        new ApprovalListPage().WaitForPageLoad();
+    }
 }

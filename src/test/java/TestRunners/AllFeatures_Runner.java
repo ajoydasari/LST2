@@ -18,6 +18,8 @@ import org.testng.annotations.Test;
                 "json:target/cucumber-reports/CucumberTestReport.json",
                 "rerun:target/cucumber-reports/rerun.txt"
         })
+
+
 public class AllFeatures_Runner {
     private TestNGCucumberRunner testNGCucumberRunner;
 

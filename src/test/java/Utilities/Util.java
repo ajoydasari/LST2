@@ -23,7 +23,7 @@ public abstract class Util extends XMLUtil{
     protected static WebDriver driver = null;
     private static String parentWindowHandler;
     private static Set<String> oldWindows;
-    private static int defaultTimeout = 20;
+    private static int defaultTimeout = 40;
     protected String GblEmailsUser = "Ajoy Dasari";
 
     protected static void sleep(int waitValue) {
@@ -533,6 +533,7 @@ public abstract class Util extends XMLUtil{
 
     protected static void AssertElementValue(WebElement element, String expected){
         Log("Asserting Element Value: '"+ expected+"'");
+        WaitForElement(element);
         String actual = getValue(element);
         //Log("Expected: '" + expected + "', Actual: '" + actual + "'");
         for (int i = defaultTimeout; i > 0; i--) {
@@ -620,10 +621,27 @@ public abstract class Util extends XMLUtil{
         Log("Entering Text'"+text+"' in ths element '"+element+"'");
         WaitForElement(element);
         WaitForElementToBeClicable(element);
-        element.clear();
-        element.sendKeys(text);
+        try {
+            element.clear();
+            element.sendKeys(text);
+        }
+        catch (Exception e){
+            sleep(5);
+            element.clear();
+            element.sendKeys(text);
+        }
     }
 
+
+    protected static void sendKeysEnter(WebElement element, String text) {
+        Log("Entering Text'"+text+"' in ths element '"+element+"'");
+        WaitForElement(element);
+        WaitForElementToBeClicable(element);
+        element.clear();
+        element.sendKeys(text);
+        element.sendKeys(Keys.ENTER);
+        WaitForPageRefresh();
+    }
 
 
     protected static void sendKeysVerify(WebElement element, String text) {
@@ -661,6 +679,7 @@ public abstract class Util extends XMLUtil{
     }
 
     public void selectTab(WebElement element) {
+        WaitForElement(element);
         for (int i = defaultTimeout; i > 0; i--) {
             if (!(element.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
             {
@@ -691,6 +710,10 @@ public abstract class Util extends XMLUtil{
                 Log("Exception Occurred in WaitForMessage, Error Details: " + e.getMessage());
             }
         }
+    }
+
+    public int Length(String stringContent){
+        return StringUtils.trim(stringContent).length();
     }
 }
 

@@ -24,6 +24,11 @@ public class PIUPage extends Util {
     @FindBy(how = How.ID, using = "complete_piu")
     public WebElement completePIU;
 
+    @FindBy(how = How.ID, using = "u_piu.u_change_complete_details")
+    public WebElement completionDetails;
+
+    @FindBy(how = How.ID, using = "sysverb_update_and_stay_save")
+    private WebElement save;
 
     public boolean isAt()
     {
@@ -47,17 +52,28 @@ public class PIUPage extends Util {
         SwitchToDefaultIFrame();
         WaitForElement(piuHeader);
         selectValue(changeCompleted,piuData.ChangeCompletedWithinChangeWindow);
+        if(piuData.ChangeCompletedWithinChangeWindow.equals("No"))
+            sendKeys(completionDetails, piuData.CompletionDetails);
         selectValue(changeSuccess,piuData.ChangeMetSuccessCriteria);
         selectValue(assetCIData,piuData.AssetCINeedUpdating);
         SwitchToDefault();
     }
 
 
+    public void saveRecord()
+    {
+        SwitchToDefaultIFrame();
+        click(save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
     public void CompletePIU()
     {
         SwitchToDefaultIFrame();
         WaitForElement(piuHeader);
         click(completePIU);
+        WaitForPageRefresh();
         SwitchToDefault();
         new PIUPage().WaitForPageLoad();
     }
