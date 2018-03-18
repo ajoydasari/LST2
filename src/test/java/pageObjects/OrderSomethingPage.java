@@ -2,6 +2,7 @@ package pageObjects;
 
 import Utilities.Util;
 import dataObjects.OrderSomethingData;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -33,11 +34,17 @@ public class OrderSomethingPage extends Util {
     @FindBy(how = How.ID, using = "s2id_autogen3_search")
     private WebElement whatDoYouWantToDoEdit;
 
+    @FindBy(how = How.ID, using = "s2id_autogen15_search")
+    private WebElement whatDoYouWantToDoEdit1;
+
     @FindBy(how = How.XPATH, using = ".//*[text()='POISE ID']/..//a")
     private WebElement POISEID;
 
     @FindBy(how = How.ID, using = "s2id_autogen5_search")
     private WebElement POISEIDEdit;
+
+    @FindBy(how = How.ID, using = "s2id_autogen17_search")
+    private WebElement POISEIDEdit1;
 
     @FindBy(how = How.XPATH, using = ".//*[text()='Asset Number Prefix']/..//a")
     private WebElement assetNumberPrefix;
@@ -48,7 +55,7 @@ public class OrderSomethingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//*[text()='Asset Number']/..//input")
     private WebElement assetNumber;
 
-    @FindBy(how = How.XPATH, using = ".//*[text()='Asset Number']/..//input")
+    @FindBy(how = How.XPATH, using = ".//*[text()='Asys Access Required']/..//input")
     private WebElement asysAccessRequired;
 
     @FindBy(how = How.XPATH, using = ".//*[text()='Level of Access required']/..//input")
@@ -81,13 +88,13 @@ public class OrderSomethingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//*[text()='Please select from the following']/..//a")
     private WebElement selectFromFollowing;
 
-    @FindBy(how = How.ID, using = "s2id_autogen24_search")
+    @FindBy(how = How.ID, using = "s2id_autogen16_search")
     private WebElement selectFromFollowingEdit;
 
-    @FindBy(how = How.XPATH, using = ".//*[@id='select2-chosen-21']/..")
+    @FindBy(how = How.XPATH, using = ".//*[@aria-label='Mandatory - Permissions Type']/..")
     private WebElement permissionsType;
 
-    @FindBy(how = How.ID, using = "s2id_autogen21_search")
+    @FindBy(how = How.ID, using = "s2id_autogen13_search")
     private WebElement permissionsTypeEdit;
 
     @FindBy(how = How.XPATH, using = ".//div[@aria-hidden='false']/*[text()='What is the information you are moving?']/..//input")
@@ -102,7 +109,7 @@ public class OrderSomethingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//div[@aria-hidden='false']/*[text()='Deskside']/..//a")
     private WebElement deskside;
 
-    @FindBy(how = How.ID, using = "s2id_autogen26_search")
+    @FindBy(how = How.ID, using = "s2id_autogen18_search")
     private WebElement desksideEdit;
 
     @FindBy(how = How.XPATH, using = ".//*[text()='Business Justification']/..//textarea")
@@ -116,6 +123,9 @@ public class OrderSomethingPage extends Util {
 
     @FindBy(how = How.XPATH, using = ".//span[text()='The quantity cap for this item is 20. Your cart has been adjusted to reflect this']")
     private WebElement quantityCap20;
+
+    @FindBy(how = How.XPATH, using = ".//button[@aria-label='Close Notification']")
+    private WebElement closeNotification;
 
     @FindBy(how = How.XPATH, using = ".//a[text()='Save to Regular Orders']")
     private WebElement saveToRegularOrders;
@@ -141,62 +151,59 @@ public class OrderSomethingPage extends Util {
     public void selectUserAccess()
     {
         click(userAccess);
-        WaitForElement(userAccessSoftware);
     }
 
 
     public void Checkout()
     {
         click(checkout);
-        WaitForElement(userAccessSoftware);
     }
 
+    public void Save()
+    {
+        click(save);
+        WaitForPageRefresh();
+    }
 
     public void selectHardware()
     {
         click(hardware);
-        WaitForElement(userAccessSoftware);
     }
 
 
     public void selectRemovableStorage()
     {
         click(removableStorage);
-        WaitForElement(userAccessSoftware);
     }
 
     public void selectEncryptedUSB()
     {
         click(encryptedUSB);
-        WaitForElement(whatDoYouWantToDo);
     }
 
 
     public void selectUserAccessSoftware()
     {
         click(userAccessSoftware);
-        WaitForElement(asysAccess);
     }
 
 
     public void selectASYSAccess()
     {
         click(asysAccess);
-        WaitForElement(whatDoYouWantToDo);
     }
 
 
     public void addToCart()
     {
-        click(asysAccess);
-        WaitForElement(checkout);
+        click(addToCart);
     }
 
 
     public void editItem()
     {
         click(editItem);
-        WaitForElement(POISEID);
+        WaitForPageRefresh();
     }
 
     public void editItemSave()
@@ -214,6 +221,7 @@ public class OrderSomethingPage extends Util {
     public void messageDisplayed(String qty)
     {
         AssertDisplayed(quantityCap20);
+        click(closeNotification);
     }
 
 
@@ -225,7 +233,8 @@ public class OrderSomethingPage extends Util {
 
     public void nameRegularOrder(OrderSomethingData orderSomethingData)
     {
-        sendKeys(nameRegularOrder,orderSomethingData.RegularOrderName);
+        String randomNumber = getRandomNumber();
+        sendKeys(nameRegularOrder,orderSomethingData.RegularOrderName + randomNumber);
         click(save);
         WaitForElementToBeClicable(saveToRegularOrders);
     }
@@ -234,11 +243,13 @@ public class OrderSomethingPage extends Util {
     public void editQty(String qty)
     {
         sendKeys(showQuantity,qty);
+        showQuantity.sendKeys(Keys.TAB);
     }
 
     public void removeItem()
     {
         click(removeItem);
+        WaitForPageRefresh();
         WaitForElement(emptyCart);
     }
 
@@ -252,7 +263,7 @@ public class OrderSomethingPage extends Util {
 
     public void selectDropDownOption1(String optionText)
     {
-        ClickElementByXPath(".//ul/li//div/span[contains(text(),'"+optionText+"')]");
+        ClickElementByXPath(".//li//span[text()='"+optionText+"']");
         sleep(3);
     }
 
@@ -269,7 +280,7 @@ public class OrderSomethingPage extends Util {
 
         click(assetNumberPrefix);
         sendKeys(assetNumberPrefixEdit, orderSomethingData.AssetNumberPrefix);
-        selectDropDownOption(orderSomethingData.AssetNumberPrefix);
+        selectDropDownOption1(orderSomethingData.AssetNumberPrefix);
 
         sendKeys(assetNumber, orderSomethingData.AssetNumber);
         sendKeys(asysAccessRequired, orderSomethingData.AsysAccessRequired);
@@ -277,7 +288,7 @@ public class OrderSomethingPage extends Util {
 
         click(scanningCapability);
         sendKeys(scanningCapabilityEdit, orderSomethingData.ASYSScanningCapabilityRequired);
-        selectDropDownOption(orderSomethingData.ASYSScanningCapabilityRequired);
+        selectDropDownOption1(orderSomethingData.ASYSScanningCapabilityRequired);
 
     }
 
@@ -287,14 +298,14 @@ public class OrderSomethingPage extends Util {
         sendKeys(asysAccessRequired, orderSomethingData.AsysAccessRequired);
         sendKeys(levelOfAccessRequired, orderSomethingData.LevelOfAccessRequired);
         click(save);
-        WaitForElementToDisappear(save);
+        WaitForElementToBeClicable(saveToRegularOrders);
     }
 
 
     public void CompleteUSBMemoryStickDetails(OrderSomethingData orderSomethingData)
     {
         click(whatDoYouWantToDo);
-        sendKeys(whatDoYouWantToDoEdit, orderSomethingData.WhatDoYouWantToDo);
+        sendKeys(whatDoYouWantToDoEdit1, orderSomethingData.WhatDoYouWantToDo);
         selectDropDownOption(orderSomethingData.WhatDoYouWantToDo);
 
         click(selectFromFollowing);
@@ -302,12 +313,12 @@ public class OrderSomethingPage extends Util {
         selectDropDownOption(orderSomethingData.PleaseSelectFromTheFollowing);
 
         click(POISEID);
-        sendKeys(POISEIDEdit, orderSomethingData.PoiseID);
+        sendKeys(POISEIDEdit1, orderSomethingData.PoiseID);
         selectDropDownOption(orderSomethingData.PoiseID);
 
         click(permissionsType);
         sendKeys(permissionsTypeEdit, orderSomethingData.PermissionType);
-        selectDropDownOption(orderSomethingData.PermissionType);
+        selectDropDownOption1(orderSomethingData.PermissionType);
 
         sendKeys(whatInfoIsMoving, orderSomethingData.WhatInfoIsMoving);
         sendKeys(businessBenefitOfMove, orderSomethingData.BusinessBenefitOfMove);
@@ -320,4 +331,6 @@ public class OrderSomethingPage extends Util {
         sendKeys(businessJustification, orderSomethingData.BusinessJustification);
         sendKeys(quantity, orderSomethingData.Quantity);
     }
+
+
 }

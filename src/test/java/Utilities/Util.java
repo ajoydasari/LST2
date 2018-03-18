@@ -12,6 +12,7 @@ import org.testng.Reporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,24 +55,6 @@ public abstract class Util extends XMLUtil{
         }
     }
 
-//    protected static void WaitForElement(WebElement element) {
-//        Boolean waiting=true;
-//        int timeout = defaultTimeout;
-//        System.out.println("Waiting for Element :" + element.toString() + ", a maximum of "+timeout+" seconds");
-//        try {
-//            for (int i = timeout; i > 0 ; i--) {
-//                try {
-//                    WebDriverWait wait = new WebDriverWait(driver, 1);
-//                    wait.until(ExpectedConditions.visibilityOf(element));
-//                    break;
-//                } catch (Exception e) {
-//                    sleep(1);
-//                }
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Exception occurred while Waiting for Element, Exception :" + e.getMessage());
-//        }
-//    }
 
     protected static void WaitForElement(WebElement element) {
         Boolean found=false;
@@ -81,8 +64,10 @@ public abstract class Util extends XMLUtil{
             for (int i = timeout; i > 0 ; i--) {
                 try {
                     found=element.isDisplayed();
-                    if(found)
+                    if(found){
+                        found = true;
                         break;
+                    }
                 } catch (Exception e) {
                     sleep(1);
                 }
@@ -90,6 +75,7 @@ public abstract class Util extends XMLUtil{
         } catch (Exception e) {
             System.out.println("Exception occurred while Waiting for Element, Exception :" + e.getMessage());
         }
+        Assert.assertTrue(found==true, "WaitForElement : Element NOT Found !");
     }
 
 
@@ -108,34 +94,6 @@ public abstract class Util extends XMLUtil{
                 }
         }
     }
-
-//
-//    protected static void WaitForElementToBeClicable(WebElement element) {
-//        WaitForElement(element);
-//    }
-
-//
-//    protected static void WaitForElementToBeClickableByXPath(String xpath) {
-//        Boolean waiting=true;
-//        int timeout = defaultTimeout;
-//        System.out.println("Waiting for Element To Be Clickable By XPath:" + xpath);
-//        while(waiting) {
-//            if(timeout>0)
-//            {
-//                try {
-//                    WebDriverWait wait = new WebDriverWait(driver, 5);
-//                    wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
-//                    System.out.println("Element is Clickable. XPath:" + xpath);
-//                    waiting = false;
-//                } catch (Exception e) {
-//                    sleep(1);
-//                }
-//                timeout = timeout -1;
-//            }else {
-//                waiting = false;
-//            }
-//        }
-//    }
 
 
     protected static void WaitForElementToBeClickableByXPath(String xpath) {
@@ -164,18 +122,21 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static void ClickElementByXPath(String xpath) {
+        boolean found = false;
         System.out.println("Clicking on Element with Xpath:" + xpath);
         for (int i = defaultTimeout; i > 0; i--) {
             try {
                 WebDriverWait wait = new WebDriverWait(driver, 1);
                 wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(xpath))));
                 driver.findElement(By.xpath(xpath)).click();
+                found = true;
                 break;
             } catch (Exception e) {
                 sleep(1);
                 Log("Sleeping for 1 Second");
             }
         }
+        Assert.assertTrue(found==true, "ClickElementByXPath : Element NOT Found");
     }
 
     protected static void SwitchToIFrame() {
@@ -364,27 +325,6 @@ public abstract class Util extends XMLUtil{
         } catch (Exception e) {
             System.out.println("Exception occurred in 'selectValue' method :" + e.getMessage());
         }
-
-
-//            List<WebElement> options = element.findElements(By.tagName("option"));
-//            for (WebElement option : options) {
-//                WaitForElementToBeClicable(option);
-//                if(option.getAttribute("text").contains(optionValue))
-//                {
-//                    Log("Selecting Option by Text'"+ optionValue +"'");
-//                    new Select(element).selectByVisibleText(optionValue);
-//                    break;
-//                }else if (option.getAttribute("value").contains(optionValue))
-//                {
-//                    Log("Selecting Option by Value'"+ optionValue +"'");
-//                    new Select(element).selectByValue(optionValue);
-//                    break;
-//                }
-//            }
-
-//        } catch (Exception e) {
-//            System.out.println("Exception occurred in 'selectValue' method :" + e.getMessage());
-//        }
     }
 
     protected static void setValue(WebElement element, String textValue) {
@@ -417,7 +357,7 @@ public abstract class Util extends XMLUtil{
 
     protected static void AssertDisplayed(WebElement element)
     {
-        System.out.println("Verifying Element is Displayed :" + element.toString());
+        Log("Verifying Element is Displayed :" + element.toString());
         WaitForElement(element);
         element.isDisplayed();
     }
@@ -451,16 +391,20 @@ public abstract class Util extends XMLUtil{
 
     protected static void click(WebElement element)
     {
+        Boolean found=false;
+        WaitForElement(element);
         WaitForElementToBeClicable(element);
         System.out.println("Clicking on Element :" + element.toString());
-        for (int i = 0; i <5 ; i++) {
+        for (int i = 0; i <defaultTimeout ; i++) {
             try {
                 element.click();
+                found=true;
                 break;
             } catch (Exception e) {
                 sleep(1);
             }
         }
+        Assert.assertTrue(found==true, "Element '" + element.toString() + "'");
     }
 
     //This method takes a picture of the current screen when called and saves in the Screenshots folder
@@ -714,6 +658,19 @@ public abstract class Util extends XMLUtil{
 
     public int Length(String stringContent){
         return StringUtils.trim(stringContent).length();
+    }
+
+    public String getRandomNumber() {
+        SecureRandom random = new SecureRandom();
+        int num = random.nextInt(100000);
+        String formatted = String.format("%05d", num);
+        return formatted;
+    }
+
+
+    public void WaitForEmailsToBeSent()
+    {
+        sleep(5);
     }
 }
 

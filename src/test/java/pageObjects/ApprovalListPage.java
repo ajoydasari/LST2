@@ -38,4 +38,5 @@ public class ApprovalListPage extends Util {
         SwitchToDefault();
         new ApprovalPage().WaitForPageLoad(recordNo);
     }
+
 }

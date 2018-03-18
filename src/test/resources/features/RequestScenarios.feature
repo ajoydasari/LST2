@@ -16,7 +16,7 @@ Feature: Request Feature
     And I Select the ASYS Access item
     And I Populate ASYS record with the information
       | WhatDoYouWantToDo | PoiseID    | AssetNumberPrefix    | AssetNumber | AsysAccessRequired | LevelOfAccessRequired | ASYSScanningCapabilityRequired |
-      | Provide		      | Test User1 | HOA                  | 1234123	 | Requirement text   | Requirement text 	  | Yes				               |
+      | Provide		      | Test User1 | HOA                  | 1234123	    | Requirement text   | Requirement text 	 | Yes				               |
     And I Add to cart
     And I Edit item
     And I update the record with the information
@@ -39,41 +39,44 @@ Feature: Request Feature
     And I Save to Regular Orders
     And I name the regular order
       | RegularOrderName |
-      | Test USB Order1  |
+      | Test USB Order  |
     And I Click on Checkout
-#    And I Navigate to the homepage
-#    And I Navigate to My Open Orders
-#    And I Select the reqested item
-#    Then the state is Awaiting Approval
-#    Then the Escalate and Withraw buttons are displayed
-#    Then the Approvers name is displayed
-#    Then an emial is sent to the requester
-#    Then an email is sent to the Approver
-#    When I Logoff and Login as
-#      | Approver       |
-#      | Test Approver1 |
-#    And I Navigate to the 'My Approvals' module on the Self-Service Application Menu
-#    And I Navigate to the request item
-#    And I Navigate to the approval task of the request item
-#    And I Approve
-#    Then an email is sent to the 2nd Approver
-#    When I Logoff and Login as
-#      | TestUser   |
-#      | Test User1 |
-#    And I Navigate to My Open Orders
-#    And I Select the reqested item
-#    Then the state is Awaiting Approval
-#    When I am Logged in ServiceNow as Admin
-#    And I Navigate to the request item
+    And I Navigate to the homepage
+    And I Navigate to My Open Orders
+    And I Select the requested item
+    Then Order State displayed as 'Awaiting Approval'
+    And 'Escalate Approval' and 'Withdraw' buttons are displayed
+    Then the Approvers name is displayed
+      | Approver       |
+      | Test Approver1 |
+    When I Logout of ESS
+    And I am Logged in ServiceNow as Admin
+    Then New Request Raised email sent to the Requester 'Test User1'
+    Then an email is sent to the Approver
+    When I Logoff and Login as
+      | Approver       |
+      | Test Approver1 |
+    And I Click on My Approvals in the External Change Assessment module
+    And I Click on the Approval for the request item
+    And I Click on Approve
+    Then an email is sent to the 2nd Approver 'HODDaTRemMedApprovals'
+    When I Logoff and Login as
+      | TestUser   |
+      | Test User1 |
+    And I Navigate to My Open Orders
+    And I Select the requested item
+    Then Order State displayed as 'Awaiting Approval'
+    When I am Logged in ServiceNow as Admin
+    And I Search and Open the Request Item
 #    And I Navigate to the approval task of the request item assigned to HODDaTRemMedApprovals
-#    And I Approve
+    And I Click on Approve
 #    Then an email is sent to the Fulfiller
 #    When I Logoff and Login as
 #      | TestUser   |
 #      | Test User1 |
 #    And I Navigate to My Open Orders
 #    And I Select the reqested item
-#    Then the state is In Progress
+#    Then Order State displayed as 'In Progress'
 #    Then The the estimated delivery date is displayed
 #    When I Logoff and Login as
 #      | HOTSSDRequestManagement |
@@ -109,7 +112,7 @@ Feature: Request Feature
 #      | Test User1 |
 #    And I Navigate to My Open Orders
 #    And I Select the reqested item
-#    Then the state is Awaiting Acceptance
+#     Then Order State displayed as 'Awaiting Acceptance'
 #    Then the user can view the customer visibile work notes added to the record
 #    And I Accept
 #  and I Populate the comment box with "Acceptance Thanks"
@@ -132,7 +135,7 @@ Feature: Request Feature
 #      | TestUser   |
 #      | Test User1 |
 #    And I Navigate to My Closed Orders
-#    Then the state is Closed
+#    Then Order State displayed as 'Closed'
 #    Then an email is sent to the Requester
 
 #

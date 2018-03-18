@@ -5,9 +5,7 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import dataObjects.SNOWUser;
-import pageObjects.HomePage;
-import pageObjects.Poise_LoginPage;
-import pageObjects.SNOW_LoginPage;
+import pageObjects.*;
 
 import java.util.List;
 

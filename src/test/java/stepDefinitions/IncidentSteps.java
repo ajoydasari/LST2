@@ -123,11 +123,6 @@ public class IncidentSteps extends Util{
         new IncidentPage().SLACreatedAsInProgress();
     }
 
-    private void WaitForEmailsToBeSent()
-    {
-        sleep(5);
-    }
-
     @Then("^New Incident notification Email has been sent to the requester")
     public void incident_notification_Email_has_been_sent_to_the_requester() {
 
@@ -227,6 +222,7 @@ public class IncidentSteps extends Util{
         navPage.openEmails();
         emails.Email_Exists(requester, subject, bodyText);
     }
+
 
     @Then("^(.*) Resolution Email has been sent to the requester$")
     public void incident_Resolution_Email_has_been_sent_to_the_requester(String IncidentNumber){

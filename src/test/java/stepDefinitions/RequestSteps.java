@@ -153,4 +153,106 @@ public class RequestSteps extends Util {
     {
         new ESSLandingPage().navigateToHome();
     }
+
+
+    @When("^I Navigate to My Open Orders$")
+    public void I_Navigate_to_My_Open_Orders()
+    {
+        new ESSLandingPage().MyOpenOrders();
+    }
+
+
+    @When("^I Select the requested item$")
+    public void I_Select_the_requested_item()
+    {
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        essMyOpenRequestsPage.SelectFirstOrder();
+        String requestNo = essMyOpenRequestsPage.getRequestNumber();
+        String ritmNo = essMyOpenRequestsPage.getRITMNumber();
+
+        SaveData("Request", requestNo);
+        SaveData("RITMNo", ritmNo);
+    }
+
+
+    @When("^Order State displayed as '(.*)'$")
+    public void Order_State_displayed_as(String state)
+    {
+        new ESSMyOpenRequestsPage().validateState(state);
+    }
+
+    @Then("^'Escalate Approval' and 'Withdraw' buttons are displayed$")
+    public void escalate_Approval_and_Withdraw_buttons_are_displayed()
+    {
+        new ESSMyOpenRequestsPage().validateButtonDisplayed("Escalate Approval");
+        new ESSMyOpenRequestsPage().validateButtonDisplayed("Withdraw");
+    }
+
+    @Then("^the Approvers name is displayed$")
+    public void Approvers_name_is_displayed(DataTable dataTable)
+    {
+        List<List<String>> data = dataTable.raw();
+        orderSomethingData.initialize(data);
+        new ESSMyOpenRequestsPage().verifyApproverDisplayed(orderSomethingData);
+    }
+
+
+    @When("^I Logout of ESS$")
+    public void I_Logout_of_ESS()
+    {
+        new ESSLandingPage().ESSLogout();
+    }
+
+    @Then("^New Request Raised email sent to the Requester '(.*)'")
+    public void New_Request_Raised_email_sent_to_the_Requester(String requester) {
+
+        WaitForEmailsToBeSent();
+
+        String requestNo = RetrieveData("Request");
+        Find_Email1(FormatEmailReceiver(requester), "New Request Raised", requestNo);
+    }
+
+
+    @Then("^an email is sent to the Approver")
+    public void an_email_is_sent_to_the_Approver(OrderSomethingData orderSomethingData) {
+
+        WaitForEmailsToBeSent();
+
+        String requestNo = RetrieveData("RITMNo");
+        Find_Email1(FormatEmailReceiver(orderSomethingData.Approver), "New Requested Item", requestNo);
+    }
+
+
+    @Then("^an email is sent to the 2nd Approver '(.*)'")
+    public void an_email_is_sent_to_the_2ndApprover(String approver) {
+
+        WaitForEmailsToBeSent();
+
+        String requestNo = RetrieveData("RITMNo");
+        Find_Email1(FormatEmailReceiver(approver), "*For Your Approval", requestNo);
+    }
+
+    private void Find_Email1(String requester, String subject, String targetText)
+    {
+        LHSNavigationPage navPage = new LHSNavigationPage();
+        EmailsPage emails = new EmailsPage();
+        navPage.openEmails();
+        emails.Email_Exists1(requester, subject, targetText);
+    }
+
+    @When("^I Click on the Approval for the request item")
+    public void I_Click_on_the_Approval_for_the_request_item(OrderSomethingData orderSomethingData) {
+
+        String requestNo = RetrieveData("RITMNo");
+        new ApprovalListPage().selectRecord(requestNo);
+        new ApprovalPage().WaitForPageLoad(requestNo);
+    }
+
+
+    @When("^I Search and Open the Request Item")
+    public void I_Search_and_Open_the_Request_Item() {
+        new CommonPageObjects().Find_Record("RITMNo");
+    }
+
+
 }

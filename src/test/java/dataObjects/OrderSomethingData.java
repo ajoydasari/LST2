@@ -19,6 +19,7 @@ public class OrderSomethingData extends dataUtil{
     public String BusinessJustification;
     public String Quantity;
     public String RegularOrderName;
+    public String Approver;
 
     public void initialize(List<List<String>> data){
         this.WhatDoYouWantToDo = getData("WhatDoYouWantToDo", data, this.WhatDoYouWantToDo);
@@ -37,6 +38,6 @@ public class OrderSomethingData extends dataUtil{
         this.BusinessJustification = getData("BusinessJustification", data, this.BusinessJustification);
         this.Quantity = getData("Quantity", data, this.Quantity);
         this.RegularOrderName = getData("RegularOrderName", data, this.RegularOrderName);
-
+        this.Approver = getData("Approver", data, this.Approver);
     }
 }

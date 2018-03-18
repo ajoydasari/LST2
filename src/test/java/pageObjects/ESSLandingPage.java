@@ -45,6 +45,9 @@ public class ESSLandingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[text()='My Orders']")
     private WebElement myOrders;
 
+    @FindBy(how = How.XPATH, using = ".//span[text()='My Open Orders']")
+    private WebElement myOpenOrders;
+
     @FindBy(how = How.XPATH, using = ".//span[text()='Chat']")
     private WebElement chat;
 
@@ -53,6 +56,10 @@ public class ESSLandingPage extends Util {
 
     @FindBy(how = How.XPATH, using = ".//ul[contains(@ng-if,'user.logged_in')]")
     private WebElement loggedinUser;
+
+    @FindBy(how = How.XPATH, using = ".//a[text()='Logout']")
+    private WebElement logout;
+
 
     public void WaitForPageLoad()
     {
@@ -74,6 +81,20 @@ public class ESSLandingPage extends Util {
     {
         click(home);
         WaitForPageLoad();
+    }
+
+    public void MyOpenOrders()
+    {
+        click(myOrders);
+        click(myOpenOrders);
+        new ESSMyOpenRequestsPage().WaitForPageLoad();
+    }
+
+    public void ESSLogout()
+    {
+        click(loggedinUser);
+        click(logout);
+        WaitForPageRefresh();
     }
 
 }

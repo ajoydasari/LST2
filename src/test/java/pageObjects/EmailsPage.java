@@ -20,6 +20,9 @@ public class EmailsPage extends Util {
     @FindBy(how = How.XPATH, using = ".//*[@id=\"slush_left\"]/option[text()='Body']")
     private WebElement bodyOption;
 
+    @FindBy(how = How.XPATH, using = ".//*[@id=\"slush_left\"]/option[text()='Target']")
+    private WebElement targetOption;
+
     @FindBy(how = How.XPATH, using = ".//*[@id=\"addRemoveButtons\"]/a[@title='Add']")
     private WebElement addOption;
 
@@ -62,7 +65,6 @@ public class EmailsPage extends Util {
     {
         SwitchToDefaultIFrame();
         WaitForElementToBeClicable(filterColumn);
-//        WaitForPageRefresh();
         SwitchToDefault();
     }
 
@@ -88,6 +90,29 @@ public class EmailsPage extends Util {
         }
     }
 
+    private void addTargetColumn()
+    {
+        if (!(isElementPresent(bodyColumn)))
+        {
+            WaitForElement(selectColumns);
+            for (int i = 0; i < 3; i++) {
+                click(selectColumns);
+                if(isElementPresent(targetOption)) {
+                    System.out.println("Checking to see if Element is Present : Element Found !");
+                    break;
+                }
+                else
+                    sleep(1);
+            }
+            click(targetOption);
+            click(addOption);
+            click(okButton);
+            WaitForPageRefresh();
+            SwitchToDefaultIFrame();
+        }
+    }
+
+
     private void addFilter(String FilterColumn, String FilterText)
     {
         selectValue(filterColumn,FilterColumn);
@@ -110,10 +135,10 @@ public class EmailsPage extends Util {
     private void refreshFilter()
     {
         click(showHideFilter);
-        WaitForElementToBeClicable(bodyFilterCondition);
+//        WaitForElementToBeClicable(bodyFilterCondition);
         click(runFilters);
-        sleep(2);
-        WaitForElementToBeClicable(bodyColumn);
+        WaitForPageRefresh();
+//        WaitForElementToBeClicable(bodyColumn);
     }
 
     public void Email_Exists(String Recipient, String Subject, String BodyText) {
@@ -145,6 +170,36 @@ public class EmailsPage extends Util {
         }
 
         AssertDisplayed(emails);
+
+        SwitchToDefault();
+
+    }
+
+
+
+    public void Email_Exists1(String Recipient, String Subject, String targetText) {
+
+        int retryCount = 3;
+        WaitForPageLoad();
+
+        SwitchToDefaultIFrame();
+        WaitForElement(filterColumn);
+        addFilter("Recipients", Recipient);
+        addTargetColumn();
+
+        WaitForElementToBeClicable(subjectFilter);
+        sendKeysVerify(subjectFilter,Subject);
+        subjectFilter.sendKeys(Keys.ENTER);
+        sleep(2);
+
+        for (int i = 0; i < 5; i++) {
+            if(isElementPresent(ElementByXPath(".//table[@id='sys_email_table']//tr[@data-list_id]//a[contains(text(),'"+targetText+"')]")))
+                break;
+            else
+                refreshFilter();
+        }
+
+        AssertDisplayed(ElementByXPath(".//table[@id='sys_email_table']//tr[@data-list_id]//a[contains(text(),'"+targetText+"')]"));
 
         SwitchToDefault();
 
