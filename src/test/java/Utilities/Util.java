@@ -26,6 +26,12 @@ public abstract class Util extends XMLUtil{
     private static Set<String> oldWindows;
     private static int defaultTimeout = 40;
     protected String GblEmailsUser = "Ajoy Dasari";
+//    protected static String SNOW_URL = "https://lssitest.service-now.com/welcome.do";
+//    protected static String SNOW_URL1 = "https://lssitest.service-now.com/";
+//    protected static String SNOW_URL2 = "https://lssitest.service-now.com/login.do";
+    protected static String SNOW_URL = "https://lssidatabuild.service-now.com/welcome.do";
+    protected static String SNOW_URL1 = "https://lssidatabuild.service-now.com/";
+    protected static String SNOW_URL2 = "https://lssidatabuild.service-now.com/login.do";
 
     protected static void sleep(int waitValue) {
         System.out.println("Sleeping for '" + waitValue + "' half seconds");
@@ -58,16 +64,17 @@ public abstract class Util extends XMLUtil{
 
     protected static void WaitForElement(WebElement element) {
         Boolean found=false;
-        int timeout = defaultTimeout;
-        System.out.println("Waiting for Element :" + element.toString() + ", a maximum of "+timeout+" seconds");
+        System.out.println("Waiting for Element :" + element.toString() + ", a maximum of "+defaultTimeout+" seconds");
         try {
-            for (int i = timeout; i > 0 ; i--) {
+            for (int i = 0; i < defaultTimeout ; i++) {
                 try {
                     found=element.isDisplayed();
                     if(found){
                         found = true;
                         break;
                     }
+                    else
+                        sleep(1);
                 } catch (Exception e) {
                     sleep(1);
                 }
@@ -75,7 +82,7 @@ public abstract class Util extends XMLUtil{
         } catch (Exception e) {
             System.out.println("Exception occurred while Waiting for Element, Exception :" + e.getMessage());
         }
-        Assert.assertTrue(found==true, "WaitForElement : Element NOT Found !");
+        Assert.assertTrue(found, "WaitForElement : Element Found = ");
     }
 
 
@@ -219,6 +226,8 @@ public abstract class Util extends XMLUtil{
         }
         else {
             value = element.getAttribute("text");
+            if(value==null)
+                value = element.getText();
             System.out.println("element is not a select: value: = " + value);
         }
 
@@ -295,9 +304,9 @@ public abstract class Util extends XMLUtil{
     }
 
     protected static void selectValue(WebElement element, String optionValue) {
-
-        WaitForElementToBeClicable(element);
         System.out.println("Select Value - " + element.toString() + " : '" + optionValue + "'");
+        WaitForElement(element);
+        WaitForElementToBeClicable(element);
         try {
             new Select(element).selectByVisibleText(optionValue);
             return;
@@ -343,6 +352,7 @@ public abstract class Util extends XMLUtil{
         element.clear();
         element.sendKeys(valueToSelect);
         ClickElementByXPath(".//*[text()='" + valueToSelect + "']");
+        sleep(2);
     }
 
     protected static void SaveData(String variableName, String variableData)
@@ -407,6 +417,26 @@ public abstract class Util extends XMLUtil{
         Assert.assertTrue(found==true, "Element '" + element.toString() + "'");
     }
 
+
+    protected static void click_NoAssert(WebElement element)
+    {
+        Boolean found=false;
+        WaitForElement(element);
+        WaitForElementToBeClicable(element);
+        System.out.println("Clicking on Element :" + element.toString());
+        for (int i = 0; i <defaultTimeout ; i++) {
+            try {
+                element.click();
+                found=true;
+                break;
+            } catch (Exception e) {
+                sleep(1);
+            }
+        }
+//        Assert.assertTrue(found==true, "Element '" + element.toString() + "'");
+    }
+
+
     //This method takes a picture of the current screen when called and saves in the Screenshots folder
     protected static void captureScreenshot() {
         try {
@@ -462,12 +492,13 @@ public abstract class Util extends XMLUtil{
         Log("Waiting For Element Value: '"+ expected+"'");
         String actual = getValue(element);
         for (int i = defaultTimeout; i > 0; i--) {
-            if(expected.equals(actual)) {
+//            if(expected.equals(actual)) {
+            if(actual.contains(expected)) {
                 sleep(2);
                 break;
             }
             else {
-                Log("expected:'"+expected+"', actual:'"+actual+"', result:"+expected.equals(actual));
+                Log("expected:'"+expected+"', actual:'"+actual+"', result:"+actual.contains(expected));
                 sleep(2);
                 actual = getValue(element);
             }
@@ -628,7 +659,7 @@ public abstract class Util extends XMLUtil{
             if (!(element.findElement(By.xpath("..")).getAttribute("className").contains("tabs2_active")))
             {
                 click(element);
-                sleep(1);
+                WaitForPageRefresh();
             }
             else
                 break;

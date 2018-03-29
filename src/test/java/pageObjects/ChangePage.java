@@ -55,7 +55,7 @@ public class ChangePage extends Util {
     @FindBy(how = How.ID, using = "change_request.type")
     private WebElement changeType;
 
-    @FindBy(how = How.ID, using = "change_request.state")
+    @FindBy(how = How.XPATH, using = ".//select[contains(@id,'change_request.state')]")
     private WebElement changeState;
 
     @FindBy(how = How.ID, using = "change_request.contact_type")
@@ -220,7 +220,8 @@ public class ChangePage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')][contains(text(),'(3)')]")
     private WebElement approvals3Tab;
 
-    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')][contains(text(),'(26)')]")
+//    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')][contains(text(),'(26)')]") - removed as this number changes per environment
+    @FindBy(how = How.XPATH, using = ".//span[@class='tab_caption_text'][contains(text(),'Approvals')]")
     private WebElement approvals26Tab;
 
     @FindBy(how = How.XPATH, using = ".//span[@class='tabs2_tab tabs2_active']/span[contains(text(),'Approvals')]")
@@ -279,6 +280,9 @@ public class ChangePage extends Util {
 
     @FindBy(how = How.XPATH, using = ".//select[@id='select_0change_request.u_approval_groups']/option[text()='Test AssignmentGroup1']")
     private WebElement assignmentGroup1;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='select_0change_request.u_assessment_groups']/option[text()='Test AssignmentGroup2']")
+    private WebElement assignmentGroup2;
 
     @FindBy(how = How.XPATH, using = ".//select[@id='select_0change_request.u_approval_groups']/option[text()='HOT Tooling Team']")
     private WebElement hotToolingTeam;
@@ -344,8 +348,10 @@ public class ChangePage extends Util {
         sendKeys(changeTitle,changeData.ChangeTitle);
         if(!(changeData.ChangeType == null))
             selectValue(changeType,changeData.ChangeType);
-        if(!(changeData.Template == null))
+        if(!(changeData.Template == null)) {
             SelectFromLookup(changeModel, changeData.Template);
+            sleep(30);
+        }
         SwitchToDefault();
 
         return changeNo;
@@ -492,10 +498,13 @@ public class ChangePage extends Util {
         SwitchToDefaultIFrame();
         click(internalAssessmentGroupsUnlock);
         WaitForElement(approvalGroupsEdit);
-        click(hotToolingTeam);
-        sleep(3);
-        click(removeApprovalGroup);
-        sleep(3);
+        if(isElementPresent(hotToolingTeam))
+        {
+            click(hotToolingTeam);
+            sleep(3);
+            click(removeApprovalGroup);
+            sleep(3);
+        }
         sendKeysEnter(approvalGroupsEdit,groupName);
         WaitForElement(assignmentGroup1);
         click(approvalGroupsLock);
@@ -510,7 +519,7 @@ public class ChangePage extends Util {
         click(externalAssessmentGroupsUnlock);
         WaitForElement(assessmentGroupsEdit);
         sendKeysEnter(assessmentGroupsEdit,groupName);
-        WaitForElement(assignmentGroup1);
+        WaitForElement(assignmentGroup2);
         click(assessmentGroupsLock);
         SwitchToDefault();
     }
@@ -617,7 +626,8 @@ public class ChangePage extends Util {
         SwitchToDefaultIFrame();
         click(requestAssessments);
         //WaitForPageRefresh();
-        WaitForElement(approvals2Tab);
+//        WaitForElement(approvals2Tab);   Removed as the number of approvals differ per environment
+        WaitForElement(approvalsTab);
         SwitchToDefault();
     }
 
@@ -670,15 +680,14 @@ public class ChangePage extends Util {
         SwitchToDefault();
     }
 
-
-    public void saveRecord()
-    {
-        SwitchToDefaultIFrame();
-        click(save);
-        //WaitForPageRefresh();
-        WaitForPageLoad();
-        SwitchToDefault();
-    }
+//
+//    public void saveRecord()
+//    {
+//        SwitchToDefaultIFrame();
+//        click(save);
+//        WaitForPageLoad();
+//        SwitchToDefault();
+//    }
 
 
     public void selectChangeTasksTab()
@@ -746,7 +755,8 @@ public class ChangePage extends Util {
     public void selectApproval(String approver, String changeNo)
     {
         SwitchToDefaultIFrame();
-        WaitForElement(approvalsTabSelected);
+//        WaitForElement(approvalsTabSelected);
+        WaitForElement(ApprovalFilter);
         selectValue(ApprovalFilter,"Approver");
         sendKeysEnter(ApprovalFilterInput,approver);
         ClickElementByXPath(".//a[text()='" + approver + "']/../..//a[text()='Requested']");

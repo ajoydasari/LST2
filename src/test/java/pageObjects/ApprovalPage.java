@@ -14,11 +14,14 @@ public class ApprovalPage extends Util {
     @FindBy(how = How.ID, using = "view.sysapproval_approver.document_id")
     public WebElement approvingInfo;
 
-    @FindBy(how = How.ID, using = "change_approve")
+    @FindBy(how = How.XPATH, using = ".//button[text()='Approve']")
     public WebElement approve;
 
     @FindBy(how = How.ID, using = "sys_readonly.change_request.number")
     public WebElement changeNumber_ReadOnly;
+
+    @FindBy(how = How.XPATH, using = ".//input[@id='sys_readonly.sysapproval_approver.document_id'][contains(@value,'CHG') or contains(@value,'RIT')]")
+    public WebElement approvingItem;
 
     @FindBy(how = How.ID, using = "activity-stream-comments-textarea")
     public WebElement comments;
@@ -36,11 +39,29 @@ public class ApprovalPage extends Util {
         PageFactory.initElements(driver,this);
     }
 
-    public void WaitForPageLoad(String changeNo)
+
+    public void WaitForPageLoad()
     {
         SwitchToDefaultIFrame();
         WaitForElement(approvalHeader);
-        WaitForElementValue(changeNumber_ReadOnly,changeNo);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+//    public void WaitForPageLoad(String changeNo)
+//    {
+//        SwitchToDefaultIFrame();
+//        WaitForElement(approvalHeader);
+//        WaitForElementValue(changeNumber_ReadOnly,changeNo);
+//        WaitForPageRefresh();
+//        SwitchToDefault();
+//    }
+
+    public void WaitForPageLoad(String approvingItemNo)
+    {
+        SwitchToDefaultIFrame();
+        WaitForElement(approvalHeader);
+        WaitForElementValue(approvingItem,approvingItemNo);
         WaitForPageRefresh();
         SwitchToDefault();
     }
@@ -60,8 +81,8 @@ public class ApprovalPage extends Util {
         SwitchToDefaultIFrame();
         click(approve);
         WaitForPageRefresh();
+        WaitForPageRefresh();
         SwitchToDefault();
-        new ApprovalListPage().WaitForPageLoad();
     }
 
 

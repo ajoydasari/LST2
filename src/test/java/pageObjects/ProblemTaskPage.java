@@ -26,7 +26,7 @@ public class ProblemTaskPage extends Util {
     @FindBy(how = How.ID, using = "sys_readonly.problem_task.number")
     private WebElement taskNumber;
 
-    @FindBy(how = How.ID, using = "problem_task.state")
+    @FindBy(how = How.XPATH, using = ".//select[contains(@id,'problem_task.state')]")
     private WebElement taskStatus;
 
     @FindBy(how = How.ID, using = "sys_readonly.problem_task.state")

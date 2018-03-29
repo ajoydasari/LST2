@@ -211,6 +211,7 @@ public class IncidentPage extends Util {
     {
         SwitchToDefaultIFrame();
         WaitForElement(incidentState);
+        WaitForPageRefresh();
         SwitchToDefault();
     }
 
@@ -363,7 +364,7 @@ public class IncidentPage extends Util {
     public void FirstTimeFix()
     {
         SwitchToIFrame();
-        click(FirstTimeFix);
+        click_NoAssert(FirstTimeFix);
     }
 
 

@@ -95,8 +95,9 @@ public class ChangeSteps  extends Util {
     @Then("^I Create a New Change Record with the details$")
     public void i_Create_a_New_Change_Record_with_the_details(DataTable dataTable) {
         List<List<String>> data = dataTable.raw();
+        ChangePage changePage = new  ChangePage();
         change1Data.initialize(data);
-        changeNo = new ChangePage().NewChange(change1Data);
+        changeNo = changePage.NewChange(change1Data);
         SaveData("Change1",changeNo);
     }
 
@@ -370,10 +371,11 @@ public class ChangeSteps  extends Util {
         new ChangePage().editEndDate();
     }
 
-    @Then("^I Click on Save$")
-    public void i_Click_on_Save(){
-        new ChangePage().saveRecord();
-    }
+//    @Then("^I Click on Save$")
+//    public void i_Click_on_Save(){
+////        new ChangePage().saveRecord();
+//        new CommonPageObjects().saveRecord();
+//    }
 
     @Then("^I Click on the Change Task$")
     public void i_Click_on_the_Change_Task(){
@@ -432,11 +434,11 @@ public class ChangeSteps  extends Util {
         change1Data.initialize(data);
         new ChangePage().PopulateChangeInfo(change1Data);
      }
-
-    @When("^I Click Save$")
-    public void i_click_Save() {
-        new ChangePage().saveRecord();
-    }
+//
+//    @When("^I Click Save$")
+//    public void i_click_Save() {
+//        new ChangePage().saveRecord();
+//    }
 
     @When("^I navigate to the Change Task titled 'Mandatory Fields'$")
     public void i_navigate_to_the_Change_Task_titled_Mandatory_Fields() {

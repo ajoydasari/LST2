@@ -6,11 +6,24 @@ import cucumber.api.java.Before;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.IOException;
+
 public class ServiceHooks extends Util {
+
+    public void killChrome()
+    {
+        //Kill all active browsers
+        try {
+            Runtime.getRuntime().exec("C:\\Selenium\\IntelliJ_Projects\\LST2\\KillChrome.bat");
+            sleep(5);
+        }catch (IOException e){}
+    }
 
     @Before
     public void initializeTest()
     {
+        killChrome();
+
         xmlobj = new XMLUtil();
         xmlfilename ="C:\\Selenium\\IntelliJ_Projects\\LST2\\target\\LST2_RunData.xml";
         xmlobj.setXMLFileName(xmlfilename);

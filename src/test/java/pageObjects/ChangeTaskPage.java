@@ -25,13 +25,13 @@ public class ChangeTaskPage extends Util {
     @FindBy(how = How.ID, using = "change_task.u_closed_status")
     private WebElement closedStatus;
 
-    @FindBy(how = How.ID, using = ".//select[@id='sys_readonly.change_task.state']/option [@selected][contains(text(),'Closed Complete')]")
+    @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.change_task.state']/option[@selected][contains(text(),'Closed Complete')]")
     private WebElement closedCompleteState;
 
     @FindBy(how = How.ID, using = ".//select[@id='change_task.change_request.u_pir_reason']")
     private WebElement PIRReason;
 
-    @FindBy(how = How.XPATH, using = ".//select[@id='change_task.change_request.u_pir_reason']/option [@selected][contains(text(),'Emergency change')]")
+    @FindBy(how = How.XPATH, using = ".//select[@id='change_task.change_request.u_pir_reason']/option[@selected][contains(text(),'Emergency change')]")
     private WebElement emergencyChangePIRReason;
 
     public ChangeTaskPage()

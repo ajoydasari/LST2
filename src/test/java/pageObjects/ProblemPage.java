@@ -395,9 +395,9 @@ public class ProblemPage extends Util {
         IsEditable(problemStatement);
         IsEditable(businessImpact);
 
-        click(notesTab);
+        selectTab(notesTab);
         IsEditable(WorkNotesTextArea);
-        click(relatedRecordsTab);
+        selectTab(relatedRecordsTab);
         Readonly(relatedChange);
 
         click(resolutionTab);

@@ -48,6 +48,9 @@ public class ESSLandingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[text()='My Open Orders']")
     private WebElement myOpenOrders;
 
+    @FindBy(how = How.XPATH, using = ".//span[text()='My Closed Orders']")
+    private WebElement myClosedOrders;
+
     @FindBy(how = How.XPATH, using = ".//span[text()='Chat']")
     private WebElement chat;
 
@@ -60,6 +63,12 @@ public class ESSLandingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//a[text()='Logout']")
     private WebElement logout;
 
+
+
+    public boolean IsAt()
+    {
+        return(isElementPresent(ESSLogo));
+    }
 
     public void WaitForPageLoad()
     {
@@ -90,12 +99,21 @@ public class ESSLandingPage extends Util {
         new ESSMyOpenRequestsPage().WaitForPageLoad();
     }
 
+    public void MyClosedOrders()
+    {
+        click(myOrders);
+        click(myClosedOrders);
+        new ESSMyOpenRequestsPage().WaitForPageLoad();
+    }
+
     public void ESSLogout()
     {
         click(loggedinUser);
         click(logout);
         WaitForPageRefresh();
     }
+
+
 
 }
 

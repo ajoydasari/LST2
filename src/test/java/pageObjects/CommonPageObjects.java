@@ -1,6 +1,7 @@
 package pageObjects;
 
 import Utilities.Util;
+import cucumber.api.java.en.Then;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -54,6 +55,9 @@ public class CommonPageObjects extends Util {
 
     @FindBy(how = How.ID, using = "GwtDateTimePicker_cancel")
     private static WebElement dtpCancel;
+
+    @FindBy(how = How.ID, using = "sysverb_update_and_stay_save")
+    private WebElement save;
 
 //    @FindBy(how = How.XPATH, using = ".//table[@id='window.GwtDateTimePicker']//td[(@class='calText calCurrentMonthDate') or (@class='calText calCurrentDate')]")
 //    private static WebElement dtpDays;
@@ -172,4 +176,12 @@ public class CommonPageObjects extends Util {
         WaitForPageRefresh();
     }
 
+
+    public void saveRecord()
+    {
+        SwitchToDefaultIFrame();
+        click(save);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
 }

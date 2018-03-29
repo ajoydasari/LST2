@@ -3,6 +3,7 @@ package stepDefinitions;
 import Utilities.Util;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import dataObjects.SNOWUser;
 import pageObjects.*;
@@ -17,12 +18,15 @@ public class CommonSteps extends Util {
         Poise_LoginPage poiseloginpage = new Poise_LoginPage();
         SNOW_LoginPage snowloginpage = new SNOW_LoginPage();
 
-        navigate("https://lssitest.service-now.com/welcome.do");
+        navigate(SNOW_URL);
 
         if (poiseloginpage.isAt())
             poiseloginpage.login();
 
         snowloginpage.login();
+
+        if (new ESSLandingPage().IsAt())
+            navigate(SNOW_URL1);
     }
 
 
@@ -74,4 +78,8 @@ public class CommonSteps extends Util {
     }
 
 
+    @Then("^I Click on Save$")
+    public void i_Click_on_Save(){
+        new CommonPageObjects().saveRecord();
+    }
 }

@@ -43,8 +43,14 @@ public class LHSNavigationPage extends Util {
     @FindBy(how = How.XPATH, using = ".//*[text()='Emails']")
     private WebElement emails;
 
+    @FindBy(how = How.XPATH, using = ".//*[text()='Items']")
+    private WebElement items;
+
     @FindBy(how = How.XPATH, using = ".//*[text()='My Groups PIU Tasks']")
     private WebElement myGroupPIUTasks;
+
+    @FindBy(how = How.XPATH, using = ".//*[text()='My Group Work']")
+    private WebElement myGroupWork;
 
     public LHSNavigationPage()
     {
@@ -113,6 +119,25 @@ public class LHSNavigationPage extends Util {
         SwitchToDefault();
     }
 
+    public void openServiceCatalogItems()
+    {
+        setFilter("Items");
+        click(items);
+        SwitchToIFrame();
+        new RequestedItemsPage().WaitForPageLoad();
+        SwitchToDefault();
+    }
+
+
+    public void openMyGroupWork()
+    {
+        setFilter("My Group Work");
+        click(myGroupWork);
+        SwitchToIFrame();
+        new CatalogTasksPage().WaitForPageLoad();
+        SwitchToDefault();
+    }
+
 
     public void Change_MyApprovals() {
         setFilter("Change");
@@ -132,6 +157,7 @@ public class LHSNavigationPage extends Util {
 
     public void MyGroupsPIUTasks()
     {
+        setFilter("PIU");
         click(myGroupPIUTasks);
         new PIUListPage().WaitForPageLoad();
     }

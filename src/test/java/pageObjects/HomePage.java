@@ -60,40 +60,123 @@ public class HomePage extends Util {
         SwitchToDefault();
     }
 
-    public void Impersonate_User(String username) {
+
+
+    public void Impersonate(String username) {
         if(isElementPresent(closeAlert))
             click(closeAlert);
         WaitForElement(userinfodropdown);
         click(userinfodropdown);
         WaitForElement(impersonateUser);
+        for (int i = 0; i < 3 ; i++) {
+            if (!isElementPresent(impersonateUser)) {
+                sleep(5);
+                click(userinfodropdown);
+                WaitForElement(impersonateUser);
+            }
+            else
+                break;
+        }
         click(impersonateUser);
         WaitForElement(searchForUserDropdown);
+        if(!isElementPresent(searchForUserDropdown))
+        {
+            sleep(5);
+            click(impersonateUser);
+            WaitForElement(searchForUserDropdown);
+        }
         click(searchForUserDropdown);
         sendKeysVerify(searchInput,username);
         sleep(2);
         ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
-//        WaitForPageRefresh();
+        WaitForPageRefresh();
+
         try {
             WaitForElementToDisappear(impersonatePopup);
         }catch (Exception e){}
 
+    }
+
+//
+//    public void Impersonate_User(String username) {
+//        if(isElementPresent(closeAlert))
+//            click(closeAlert);
+//        WaitForElement(userinfodropdown);
+//        click(userinfodropdown);
+//        WaitForElement(impersonateUser);
+//        for (int i = 0; i < 3 ; i++) {
+//            if (!isElementPresent(impersonateUser)) {
+//                sleep(5);
+//                click(userinfodropdown);
+//                WaitForElement(impersonateUser);
+//            }
+//            else
+//                break;
+//        }
+//        click(impersonateUser);
+//        WaitForElement(searchForUserDropdown);
+//        if(!isElementPresent(searchForUserDropdown))
+//        {
+//            sleep(5);
+//            click(impersonateUser);
+//            WaitForElement(searchForUserDropdown);
+//        }
+//        click(searchForUserDropdown);
+//        sendKeysVerify(searchInput,username);
+//        sleep(2);
+//        ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
+////        WaitForPageRefresh();
+//        try {
+//            WaitForElementToDisappear(impersonatePopup);
+//        }catch (Exception e){}
+//
+//        SwitchToDefaultIFrame();
+//        WaitForElement(welcome);
+//        SwitchToDefault();
+//        new HomePage().WaitForPageLoad();
+//}
+//
+//
+//    public void Impersonate_ESSUser(String username) {
+//        WaitForElement(userinfodropdown);
+//        click(userinfodropdown);
+//        WaitForElement(impersonateUser);
+//        for (int i = 0; i < 3 ; i++) {
+//            if (!isElementPresent(impersonateUser)) {
+//                sleep(5);
+//                click(userinfodropdown);
+//                WaitForElement(impersonateUser);
+//            }
+//            else
+//                break;
+//        }
+//        click(impersonateUser);
+//        WaitForElement(searchForUserDropdown);
+//        if(!isElementPresent(searchForUserDropdown))
+//        {
+//            sleep(5);
+//            click(impersonateUser);
+//            WaitForElement(searchForUserDropdown);
+//        }
+//        click(searchForUserDropdown);
+//        sendKeysVerify(searchInput,username);
+//        sleep(2);
+//        ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
+//        SwitchToDefault();
+//        new ESSLandingPage().WaitForPageLoad();
+//    }
+
+    public void Impersonate_User(String username)
+    {
+        Impersonate(username);
         SwitchToDefaultIFrame();
         WaitForElement(welcome);
         SwitchToDefault();
         new HomePage().WaitForPageLoad();
-}
-
+    }
 
     public void Impersonate_ESSUser(String username) {
-        WaitForElement(userinfodropdown);
-        click(userinfodropdown);
-        WaitForElement(impersonateUser);
-        click(impersonateUser);
-        WaitForElement(searchForUserDropdown);
-        click(searchForUserDropdown);
-        sendKeysVerify(searchInput,username);
-        sleep(2);
-        ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
+        Impersonate(username);
         SwitchToDefault();
         new ESSLandingPage().WaitForPageLoad();
     }
@@ -125,10 +208,17 @@ public class HomePage extends Util {
             globalSearch.clear();
             globalSearch.sendKeys(searchText);
             globalSearch.sendKeys(Keys.ENTER);
-
+            WaitForPageRefresh();
+            if(isElementPresent(notificationMsg))
+                click(notificationMsg);
             SwitchToDefaultIFrame();
-            WaitForElement(notificationMsg);
-            click(notificationMsg);
+            try{
+            if(isElementPresent(notificationMsg))
+                notificationMsg.click();
+            }catch(Exception e)
+            {
+                sleep(500);
+            }
     }
 
     public HomePage()
