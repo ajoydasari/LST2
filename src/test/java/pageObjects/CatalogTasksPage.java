@@ -27,6 +27,7 @@ public class CatalogTasksPage extends Util {
     {
         SwitchToDefaultIFrame();
         ClickElementByXPath(".//a[contains(text(),'"+taskItem+"')]");
+        WaitForPageRefresh();
         new CatalogTaskPage().WaitForPageLoad();
         SwitchToDefault();
     }

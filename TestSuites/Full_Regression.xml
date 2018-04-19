@@ -3,11 +3,11 @@
 <suite name="BDD Test Suite" verbose="1" parallel="tests" thread-count="1" configfailurepolicy="continue">
     <test name="LST Tests" annotations="JDK" preserve-order="true">
         <classes>
-            <class name="TestRunners.AllFeatures_Runner"/>
-            <!--<class name="TestRunners.IncidentFeature_Runner"/>-->
-            <!--<class name="TestRunners.ChangeFeature_Runner"/>-->
-            <!--<class name="TestRunners.ProblemFeature_Runner"/>-->
-            <!--<class name="TestRunners.RequestFeature_Runner"/>-->
+            <!--<class name="TestRunners.AllFeatures_Runner"/>-->
+            <class name="TestRunners.IncidentFeature_Runner"/>
+            <class name="TestRunners.ChangeFeature_Runner"/>
+            <class name="TestRunners.ProblemFeature_Runner"/>
+            <class name="TestRunners.RequestFeature_Runner"/>
         </classes>
     </test>
 </suite>

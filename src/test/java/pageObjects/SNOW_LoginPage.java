@@ -36,8 +36,15 @@ public class SNOW_LoginPage extends Util{
     }
 
     public void login() {
-        userid.sendKeys("xxxxxxxxx");
-        password.sendKeys("xxxxxxxxx");
+        //WaitForElement(userid);
+        if(!(isElementPresent(userid))) {
+//            driver.navigate().to(SNOW_URL2);
+            driver.navigate().to(getURL2());
+//            WaitForElement(userid);
+        }
+        sendKeys(userid,getSNOW_LOGIN_ID());
+        sendKeys(password,getSNOW_LOGIN_PASSWORD());
+
         click(login);
         click(btncontinue);
         WaitForElementToDisappear(loading);
@@ -46,9 +53,12 @@ public class SNOW_LoginPage extends Util{
         SwitchToDefault();
     }
 
+
+
     public void ESSlogin() {
-        userid.sendKeys("xxxxxxxxx");
-        password.sendKeys("xxxxxxxxx");
+        sendKeys(userid,getSNOW_LOGIN_ID());
+        sendKeys(password,getSNOW_LOGIN_PASSWORD());
+
         click(login);
         WaitForElement(ESSLogo);
     }

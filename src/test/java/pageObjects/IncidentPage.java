@@ -150,6 +150,9 @@ public class IncidentPage extends Util {
     @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Resolved']")
     private WebElement resolvedActive;
 
+    @FindBy(how = How.XPATH, using = ".//li[@class='active']/a[text()='Closed']")
+    private WebElement closedActive;
+
     @FindBy(how = How.XPATH, using = ".//*[@id='incident.task_sla.task_table']//tr[@record_class='task_sla']")
     private WebElement IncidentSLA;
 
@@ -228,7 +231,7 @@ public class IncidentPage extends Util {
 
         String incidentNo;
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(incidentState);
+        WaitForElementToBeClickable(incidentState);
         sleep(3);
         UserSearchPage userspage = new UserSearchPage();
 
@@ -380,11 +383,11 @@ public class IncidentPage extends Util {
 
     public void ChangeIncidentStatus(String status) {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(incidentState);
+        WaitForElementToBeClickable(incidentState);
         selectValue(incidentState,status);
         click(Save);
         WaitForPageRefresh();
-        WaitForElementToBeClicable(incidentState);
+        WaitForElementToBeClickable(incidentState);
         String incidentStatusValue = getIncidentStatusValue(status);
         WaitForElementValue(incidentState, incidentStatusValue);
     }
@@ -392,7 +395,7 @@ public class IncidentPage extends Util {
 
     public void CloseIncident(IncidentData incidentData) {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(incidentState);
+        WaitForElementToBeClickable(incidentState);
         selectValue(incidentState,"Closed");
 
         selectClosureTab();
@@ -417,7 +420,7 @@ public class IncidentPage extends Util {
     public void RejectIncident(String WorkNotes) {
 
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(incidentState);
+        WaitForElementToBeClickable(incidentState);
         selectValue(incidentState,"Rejected");     //Rejected
         click(Save);
         WaitForPageRefresh();
@@ -587,7 +590,7 @@ public class IncidentPage extends Util {
 
         SwitchToDefaultIFrame();
         selectMainTab();
-        WaitForElementToBeClicable(assignemntGroup);
+        WaitForElementToBeClickable(assignemntGroup);
         sendKeys_Select(assignemntGroup,incidentData.AssignmentGroup);
         AddWorkNotes(incidentData.WorkNotes);
         click(mainDetailsTab);
@@ -603,7 +606,7 @@ public class IncidentPage extends Util {
         SwitchToDefault();
         SwitchToIFrame();
 
-        WaitForElementToBeClicable(resolutionTab);
+        WaitForElementToBeClickable(resolutionTab);
         click(resolutionTab);
         WaitForElement(resolutionCode);
 
@@ -615,6 +618,29 @@ public class IncidentPage extends Util {
         WaitForPageRefresh();
 
         WaitForElement(resolvedActive);
+        SwitchToDefault();
+    }
+
+
+    public void ResolveCloseIncident(IncidentData incidentData) {
+
+        WaitForPageLoad();
+
+        SwitchToDefault();
+        SwitchToIFrame();
+
+        WaitForElementToBeClickable(resolutionTab);
+        click(resolutionTab);
+        WaitForElement(resolutionCode);
+
+        selectValue(incidentState,"Resolved");
+        selectValue(resolutionCode, incidentData.ResolutionCode);
+        resolutionNotes.sendKeys(incidentData.ResolutionNotes);
+        click(Save);
+
+        WaitForPageRefresh();
+
+        WaitForElement(closedActive);
         SwitchToDefault();
     }
 

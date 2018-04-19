@@ -302,7 +302,7 @@ public class ChangePage extends Util {
     public void WaitForPageLoad() {
         SwitchToDefaultIFrame();
         WaitForElement(urgencyOption);
-        WaitForElementToBeClicable(urgencyOption);
+        WaitForElementToBeClickable(urgencyOption);
         WaitForPageRefresh();
         SwitchToDefault();
     }
@@ -694,6 +694,7 @@ public class ChangePage extends Util {
     {
         SwitchToDefaultIFrame();
         WaitForPageRefresh();
+        ScrollPage(requestor,1);
         selectTab(changeTasksTab);
         SwitchToDefault();
     }

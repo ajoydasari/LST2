@@ -17,6 +17,15 @@ public class ApprovalPage extends Util {
     @FindBy(how = How.XPATH, using = ".//button[text()='Approve']")
     public WebElement approve;
 
+    @FindBy(how = How.XPATH, using = ".//button[text()='Reject']")
+    public WebElement reject;
+
+    @FindBy(how = How.XPATH, using = ".//button[text()='Request Info']")
+    public WebElement requestInfo;
+
+    @FindBy(how = How.XPATH, using = ".//button[text()='Provide Info']")
+    public WebElement provideInfo;
+
     @FindBy(how = How.ID, using = "sys_readonly.change_request.number")
     public WebElement changeNumber_ReadOnly;
 
@@ -85,6 +94,38 @@ public class ApprovalPage extends Util {
         SwitchToDefault();
     }
 
+
+
+    public void RejectWithNotes(String notes)
+    {
+        SwitchToDefaultIFrame();
+        sendKeys(comments, notes);
+        click(reject);
+        WaitForPageRefresh();
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+    public void RequestInfo(String notes)
+    {
+        SwitchToDefaultIFrame();
+        sendKeys(comments, notes);
+        click(requestInfo);
+        WaitForPageRefresh();
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+    public void ProvideInfo(String notes)
+    {
+        SwitchToDefaultIFrame();
+        sendKeys(comments, notes);
+        click(provideInfo);
+        WaitForPageRefresh();
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
 
     public void ProposedDatesRejected(String commentsText)
     {

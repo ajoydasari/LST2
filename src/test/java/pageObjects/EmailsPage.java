@@ -83,7 +83,7 @@ public class EmailsPage extends Util {
     protected void WaitForPageLoad()
     {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(filterColumn);
+        WaitForElementToBeClickable(filterColumn);
         SwitchToDefault();
     }
 
@@ -111,40 +111,34 @@ public class EmailsPage extends Util {
         }
     }
 
-    private void addTargetColumn()
-    {
+    private void addTargetColumn() {
         SwitchToDefaultIFrame();
-        if (!(isElementPresent(targetColumn)))
-        {
+        if (!(isElementPresent(targetColumn))) {
             WaitForElement(selectColumns);
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < defaultTimeout; i++) {
                 try {
-                    click(selectColumns);
-                }catch (Exception e){}
-                if(isElementPresent(targetOption)) {
-                    System.out.println("Checking to see if Element is Present : Element Found !");
-                    break;
+                    if (isElementPresent(targetOption)) {
+                        System.out.println("Checking to see if Target Element is Present : Element Found !");
+                        click(targetOption);
+                        click(addOption);
+                        click(okButton);
+                        break;
+                    } else if (isElementPresent(stateOption)) {
+                        System.out.println("Target Element Not Found !");
+                        click(stateOption);
+                        stateOption.sendKeys(Keys.PAGE_DOWN);
+                        sleep(1);
+                    } else if (isElementPresent(selectColumns)) {
+                        sleep(1);
+                        click(selectColumns);
+                    }
+                } catch (Exception e) {
                 }
-                else if(isElementPresent(stateOption)){
-                    click(stateOption);
-                    stateOption.sendKeys(Keys.PAGE_DOWN);
-                    sleep(1);
-                }
-                else
-                    sleep(1);
+                WaitForPageRefresh();
+                SwitchToDefaultIFrame();
             }
-
-            if(isElementPresent(targetOption))
-            {
-                click(targetOption);
-                click(addOption);
-            }
-            click(okButton);
-            WaitForPageRefresh();
-            SwitchToDefaultIFrame();
         }
     }
-
 
     private void addFilter(String FilterColumn, String FilterText)
     {
@@ -152,23 +146,31 @@ public class EmailsPage extends Util {
         sendKeysVerify(filterText,FilterText);
         filterText.sendKeys(Keys.ENTER);
         sleep(2);
-        WaitForElementToBeClicable(filterColumn);
+        WaitForElementToBeClickable(filterColumn);
     }
 
     private void amendbodyFilter()
     {
         click(showHideFilter);
-        WaitForElementToBeClicable(bodyFilterCondition);
+        WaitForElementToBeClickable(bodyFilterCondition);
         selectValue(bodyFilterCondition,"LIKE");
         click(runFilters);
         sleep(2);
-        WaitForElementToBeClicable(bodyColumn);
+        WaitForElementToBeClickable(bodyColumn);
     }
 
     private void refreshFilter()
     {
-        click(subjectFilter);
-        subjectFilter.sendKeys(Keys.ENTER);
+        if(isElementPresent(subjectFilter)) {
+            click(subjectFilter);
+            subjectFilter.sendKeys(Keys.ENTER);
+        }
+        else
+        {
+            click(showHideFilter);
+            WaitForPageRefresh();
+            click(runFilters);
+        }
         WaitForPageRefresh();
     }
 
@@ -182,7 +184,7 @@ public class EmailsPage extends Util {
         addFilter("Recipients", Recipient);
         addBodyColumn();
 
-        WaitForElementToBeClicable(subjectFilter);
+        WaitForElementToBeClickable(subjectFilter);
         sendKeysVerify(subjectFilter,Subject);
         subjectFilter.sendKeys(Keys.ENTER);
         sleep(2);
@@ -221,7 +223,7 @@ public class EmailsPage extends Util {
         addFilter("Recipients", Recipient);
         addTargetColumn();
 
-        WaitForElementToBeClicable(subjectFilter);
+        WaitForElementToBeClickable(subjectFilter);
         sendKeysVerify(subjectFilter,Subject);
         subjectFilter.sendKeys(Keys.ENTER);
         sleep(2);
@@ -241,6 +243,7 @@ public class EmailsPage extends Util {
                 if (isElementPresent(ElementByXPath(".//table[@id='sys_email_table']//tr[@data-list_id]//a[contains(text(),'" + targetText + "')]")))
                     break;
             }catch (Exception e){}
+
             refreshFilter();
 
         }

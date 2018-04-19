@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-public class XMLUtil {
+public class XMLUtil extends Environment_Config{
     private String filePath;
     public static XMLUtil xmlobj;
     public static String xmlfilename;

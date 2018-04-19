@@ -4,7 +4,9 @@ import Utilities.Util;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import dataObjects.IncidentData;
 import dataObjects.OrderSomethingData;
+import org.testng.Assert;
 import pageObjects.*;
 
 import java.util.List;
@@ -146,14 +148,21 @@ public class RequestSteps extends Util {
     public void I_Delete_the_item_from_the_cart()
     {
         new OrderSomethingPage().removeItem();
+        new OrderSomethingPage().removeAllPreviousRegularItems();
     }
 
     @When("^I Navigate to the homepage$")
-    public void I_Navigate_to_the_homepage()
+    public void i_navigate_to_the_homepage()
     {
         new ESSLandingPage().navigateToHome();
     }
 
+
+    @When("^I Navigate to My Open Incidents$")
+    public void I_Navigate_to_My_Open_Incidents()
+    {
+        new ESSLandingPage().MyOpenIncidents();
+    }
 
     @When("^I Navigate to My Open Orders$")
     public void I_Navigate_to_My_Open_Orders()
@@ -178,6 +187,91 @@ public class RequestSteps extends Util {
 
         SaveData("Request", requestNo);
         SaveData("RITMNo", ritmNo);
+    }
+
+
+    @When("^I Select the requested item A$")
+    public void I_Select_the_requested_item_A()
+    {
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        essMyOpenRequestsPage.SelectFirstOrder();
+        String requestNo = essMyOpenRequestsPage.getRequestNumber();
+        String ritmNo1 = essMyOpenRequestsPage.getRITMNumber();
+
+        SaveData("Request", requestNo);
+        SaveData("RITMNo1", ritmNo1);
+
+    }
+
+    @When("^I Select the requested item B$")
+    public void I_Select_the_requested_item_B()
+    {
+
+        String ESSUser = RetrieveData("ESSUser");
+        new HomePage().Impersonate_ESSUser(ESSUser);
+        new ESSLandingPage().MyOpenOrders();
+
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        essMyOpenRequestsPage.SelectSecondOrder();
+        String ritmNo2 = essMyOpenRequestsPage.getSecondRITMNumber();
+        SaveData("RITMNo2", ritmNo2);
+
+    }
+
+
+    @When("^I Select the requested item C$")
+    public void I_Select_the_requested_item_C()
+    {
+
+        String ESSUser = RetrieveData("ESSUser");
+        new HomePage().Impersonate_ESSUser(ESSUser);
+        new ESSLandingPage().MyOpenOrders();
+
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        essMyOpenRequestsPage.SelectThirdOrder();
+        String ritmNo3 = essMyOpenRequestsPage.getThirdRITMNumber();
+        SaveData("RITMNo3", ritmNo3);
+    }
+
+
+    @When("^I Search for requested item A$")
+    public void I_Search_for_the_requested_item_A()
+    {
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        String ritmNo1 = RetrieveData("RITMNo1");
+        essMyOpenRequestsPage.SearchOrder(ritmNo1);
+        essMyOpenRequestsPage.SelectFirstOrder();
+    }
+
+
+    @When("^I Search for Request Incident$")
+    public void I_Search_for_Request_Incident()
+    {
+        ESSMyIncidentsPage myIncidentsPage = new ESSMyIncidentsPage();
+        String incidentNo = RetrieveData("IncidentNo");
+        myIncidentsPage.SearchIncident(incidentNo);
+        myIncidentsPage.SelectFirstIncident();
+    }
+
+
+    @When("^I Search for requested item B$")
+    public void I_Search_for_the_requested_item_B()
+    {
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        String ritmNo1 = RetrieveData("RITMNo2");
+        essMyOpenRequestsPage.SearchOrder(ritmNo1);
+        essMyOpenRequestsPage.SelectFirstOrder();
+    }
+
+
+    @When("^I Search for requested item C$")
+    public void I_Search_for_the_requested_item_C()
+    {
+        ESSMyOpenRequestsPage essMyOpenRequestsPage = new ESSMyOpenRequestsPage();
+        String ritmNo1 = RetrieveData("RITMNo3");
+        essMyOpenRequestsPage.ClearSearch();
+        essMyOpenRequestsPage.SearchOrder(ritmNo1);
+        essMyOpenRequestsPage.SelectFirstOrder();
     }
 
 
@@ -216,15 +310,16 @@ public class RequestSteps extends Util {
         SNOW_LoginPage snowloginpage = new SNOW_LoginPage();
 
         new ESSLandingPage().ESSLogout();
-        navigate(SNOW_URL);
-
+//        navigate(SNOW_URL);
+        navigate(getURL());
         if (poiseloginpage.isAt())
             poiseloginpage.login();
 
         snowloginpage.ESSlogin();
 
         if (new ESSLandingPage().IsAt())
-            navigate(SNOW_URL1);
+//            navigate(SNOW_URL1);
+            navigate(getURL1());
 
     }
 
@@ -242,19 +337,47 @@ public class RequestSteps extends Util {
 
     @Then("^an email is sent to the Approver")
     public void an_email_is_sent_to_the_Approver() {
-
+        ESSLandingPage landingPage = new ESSLandingPage();
         WaitForEmailsToBeSent();
+        if(landingPage.IsAtESS())
+            I_Logout_of_ESS_and_Login_to_ServiceNow_as_Admin();
 
         String requestNo = RetrieveData("RITMNo");
         Find_Email(FormatEmailReceiver(orderSomethingData.Approver), "New Requested Item", requestNo);
     }
 
 
+    @Then("^email is sent to the Approver for Request (.*)")
+    public void email_is_sent_to_the_Approver_for_Request(String Request) {
+
+        WaitForEmailsToBeSent();
+        I_Logout_of_ESS_and_Login_to_ServiceNow_as_Admin();
+        String requestNo;
+
+        switch (Request) {
+            case "A":
+                requestNo = RetrieveData("RITMNo1");
+                break;
+            case "B":
+                requestNo = RetrieveData("RITMNo2");
+                break;
+            case "C":
+                requestNo = RetrieveData("RITMNo3");
+                break;
+            default:
+                requestNo = RetrieveData("RITMNo");
+        }
+
+//        requestNo = RetrieveData("RITMNo");
+        Find_Email(FormatEmailReceiver(orderSomethingData.Approver), "New Requested Item", requestNo);
+    }
+
     @Then("^an email is sent to the 2nd Approver '(.*)'")
     public void an_email_is_sent_to_the_2ndApprover(String approver) {
 
         WaitForEmailsToBeSent();
         new HomePage().Impersonate_User(GblEmailsUser);
+//        I_Logout_of_ESS_and_Login_to_ServiceNow_as_Admin();
 
         String requestNo = RetrieveData("RITMNo");
         Find_Email1(approver, "New Requested Item", requestNo);
@@ -273,7 +396,6 @@ public class RequestSteps extends Util {
 //        Find_Email1(fulfiller, "New Request Task For Your Action", requestNo);
         Find_Email1(fulfiller, "*New Requested Item", requestNo);
     }
-
 
 
     private void Find_Email(String requester, String subject, String bodyText)
@@ -300,10 +422,50 @@ public class RequestSteps extends Util {
         new ApprovalPage().WaitForPageLoad(requestNo);
     }
 
+    @When("^I Click on the Approval entry for the request item A")
+    public void I_Click_on_the_Approval_Entry_for_the_request_itemA() {
+
+        String requestNo = RetrieveData("RITMNo1");
+        new ApprovalListPage().selectRecord(requestNo);
+        new ApprovalPage().WaitForPageLoad(requestNo);
+    }
+
+    @When("^I Click on the Approval entry for the request item B")
+    public void I_Click_on_the_Approval_for_the_request_itemB() {
+
+        String requestNo = RetrieveData("RITMNo2");
+        new ApprovalListPage().selectRecord(requestNo);
+        new ApprovalPage().WaitForPageLoad(requestNo);
+    }
+
+    @When("^I Click on the Approval entry for the request item C")
+    public void I_Click_on_the_Approval_for_the_request_itemC() {
+
+        String requestNo = RetrieveData("RITMNo3");
+        new ApprovalListPage().selectRecord(requestNo);
+        new ApprovalPage().WaitForPageLoad(requestNo);
+    }
 
     @When("^I Search and Open the Request Item")
     public void I_Search_and_Open_the_Request_Item() {
         new CommonPageObjects().Find_Record("RITMNo");
+    }
+
+
+    @When("^I Open the Request Item and Save Delivery date and Task Number")
+    public void I_Open_the_Request_Item_Save_Deliverydate() {
+        new CommonPageObjects().Find_Record("RITMNo");
+        String prevDate = new RequestedItemPage().getDeliveryDate();
+        SaveData("DeliveryDate", prevDate);
+        String TaskNo = new RequestedItemPage().getAsysRequestTaskNo();
+        SaveData("TaskNo", TaskNo);
+    }
+
+    @When("^I Search and Open Request Item A and Save the Task Number")
+    public void I_Search_and_Open_the_Request_ItemA() {
+        new CommonPageObjects().Find_Record("RITMNo1");
+        String TaskNo = new RequestedItemPage().getRequestTaskNo();
+        SaveData("TaskNo", TaskNo);
     }
 
 
@@ -317,11 +479,28 @@ public class RequestSteps extends Util {
     }
 
 
-    @When("^The the estimated delivery date is displayed")
-    public void The_the_estimated_delivery_date_is_displayed() {
+    @When("^The estimated delivery date is displayed")
+    public void The_estimated_delivery_date_is_displayed() {
         new ESSMyOpenRequestsPage().verifyEstimatedDeliveryDateDisplayed();
     }
 
+
+    @When("^The estimated delivery date displayed for Requested Item A")
+    public void The_estimated_delivery_date_displayed_for_Requested_Item_A() {
+        The_estimated_delivery_date_is_displayed();
+    }
+
+
+    @When("^The the estimated delivery date displayed for Requested Item B")
+    public void The_estimated_delivery_date_displayed_for_Requested_Item_B() {
+        new ESSMyOpenRequestsPage().verifyEstimatedDeliveryDateDisplayed2();
+    }
+
+
+    @When("^The the estimated delivery date displayed for Requested Item C")
+    public void The_estimated_delivery_date_displayed_for_Requested_Item_C() {
+        new ESSMyOpenRequestsPage().verifyEstimatedDeliveryDateDisplayed3();
+    }
 
     @When("^I Navigate to the Items module on the Service Catalog application menu")
     public void I_Navigate_to_the_Items_module_on_the_Service_Catalog_application_menu() {
@@ -352,21 +531,26 @@ public class RequestSteps extends Util {
         navPage.openMyGroupWork();
     }
 
-    @When("^I Select the fultilment task for the requested item")
-    public void I_Select_the_fultilment_task_for_the_requested_item() {
+    @When("^I Select the fulfilment task for the requested item")
+    public void I_Select_the_fulfilment_task_for_the_requested_item() {
         String taskNo = RetrieveData("TaskNo");
         new CatalogTasksPage().selectTaskItem(taskNo);
     }
 
     @When("^the SLA assigned to the fulfilment task is appropriate for the quantity of items selected")
     public void the_SLA_assigned_to_the_fulfilment_task_is_appropriate_for_the_quantity_of_items_selected() {
-        new CatalogTaskPage().verifyTaskSLA1Created();
+        new RequestedItemPage().verifyTaskSLA1Created();
     }
 
 
-    @When("^I assign the task to myself '(.*)'")
-    public void I_assign_the_task_to_myself(String user) {
-        new CatalogTaskPage().AssignToMe(user);
+    @When("^SLA assigned to the fulfilment task is appropriate for the quantity of items selected")
+    public void SLA_assigned_to_the_fulfilment_task_is_appropriate_for_the_quantity_of_items_selected() {
+        new CatalogTaskPage().verifyTaskSLACreated();
+    }
+
+    @When("^I Assign the task to myself")
+    public void I_Assign_the_task_to_myself() {
+        new CatalogTaskPage().AssignToMe();
     }
 
 
@@ -434,6 +618,12 @@ public class RequestSteps extends Util {
     }
 
 
+    @When("^I Click on Dispute and provide comments '(.*)'")
+    public void I_Click_on_Dispute(String comments) {
+        new ESSMyOpenRequestsPage().DisputeRequest(comments);
+    }
+
+
     @When("^I Populate the comment box with '(.*)'")
     public void I_Populate_the_comment_box(String comments) {
         new ESSMyOpenRequestsPage().ConfirmAcceptComments(comments);
@@ -479,8 +669,200 @@ public class RequestSteps extends Util {
     public void Closure_email_is_sent_to_the_Requester(String user) {
         WaitForEmailsToBeSent();
         String requestNo = RetrieveData("RITMNo");
-        Find_Email1(user, "Request Item Closure", requestNo);
+        Find_Email1(FormatEmailReceiver(user), "Request Item Closure", requestNo);
     }
+
+    @When("^I Continue Shopping$")
+    public void I_Continue_Shopping()
+    {
+        new OrderSomethingPage().continueShopping();
+    }
+
+
+    @When("^I Search and Select item '(.*)'$")
+    public void Search_and_Select_item(String searchItem)
+    {
+        new OrderSomethingPage().orderSomethingSearch(searchItem);
+    }
+
+    @When("^I Populate the DDI record with the information$")
+    public void I_Populate_the_DDI_record_with_the_information(DataTable dataTable)
+    {
+        List<List<String>> data = dataTable.raw();
+        orderSomethingData.initialize(data);
+        new OrderSomethingPage().CompleteDDIDetails(orderSomethingData);
+    }
+
+    @When("^I Click on Order Something from My Orders drop down list$")
+    public void I_Click_on_Order_Something_from_My_Orders_drop_down_list(){
+        new ESSLandingPage().MyOrders_OrderSomething();
+    }
+
+    @When("^I Select the I-Manage subcategory$")
+    public void I_Select_the_IManage_subcategory(){
+        new OrderSomethingPage().selectIManage();
+    }
+
+    @When("^I Select the I-Manage SyncPoint Access item$")
+    public void I_Select_the_IManage_SyncPoint_Access_item(){
+        new OrderSomethingPage().selectIManageSyncPointAccess();
+    }
+
+    @When("^I Populate the I-Manage SyncPoint Access record with the information$")
+    public void I_Populate_the_IManage_SyncPoint_Access_record_with_the_information(DataTable dataTable)
+    {
+        List<List<String>> data = dataTable.raw();
+        orderSomethingData.initialize(data);
+        new OrderSomethingPage().CompleteManageSyncPointAccessDetails(orderSomethingData);
+    }
+
+    @When("^First Order State displayed as '(.*)'$")
+    public void First_Order_State_displayed_as(String state)
+    {
+        new ESSMyOpenRequestsPage().validateState(state);
+    }
+
+    @When("^Second Order State displayed as '(.*)'$")
+    public void Second_Order_State_displayed_as(String state)
+    {
+        new ESSMyOpenRequestsPage().validateState(state);
+    }
+
+    @When("^Third Order State displayed as '(.*)'$")
+    public void Third_Order_State_displayed_as(String state)
+    {
+        new ESSMyOpenRequestsPage().validateState(state);
+    }
+
+
+
+    @Then("^I Reject the entry with work notes (.*)$")
+    public void I_Reject_the_entry_with_work_notes(String notes) {
+        new ApprovalPage().RejectWithNotes(notes);
+    }
+
+
+    @Then("^I Request More Information with details (.*)$")
+    public void I_Request_More_Information_with_details(String notes) {
+        new ApprovalPage().RequestInfo(notes);
+    }
+
+    @Then("^I Search and Provide more info '(.*)' for Request Item C$")
+    public void I_Search_and_Provide_more_info_for_Request_Item_C(String notes) {
+        new CommonPageObjects().Find_Record("RITMNo3");
+        new RequestedItemPage().selectRequestMoreInfoItem();
+        new ApprovalPage().ProvideInfo(notes);
+    }
+
+
+    @Then("^an Incident has been created$")
+    public void an_Incident_has_been_created() {
+        new ESSMyOpenRequestsPage().VerifyIncidentCreated();
+    }
+
+    @Then("^New Incident notification Email has been sent to the user")
+    public void incident_notification_Email_has_been_sent_to_the_user() {
+
+        WaitForEmailsToBeSent();
+
+        I_Logout_of_ESS_and_Login_to_ServiceNow_as_Admin();
+
+        HomePage homePage = new HomePage();
+        homePage.Impersonate_User(GblEmailsUser);
+        String requester = RetrieveData("ESSUser");
+        String incidentNo = RetrieveData("IncidentNo");
+        Find_Email(FormatEmailReceiver(requester), "New Incident Raised", incidentNo);
+    }
+
+
+    @When("^First Incident State displayed as '(.*)'$")
+    public void First_Incident_State_displayed_as(String state)
+    {
+        new ESSMyIncidentsPage().validateState(state);
+    }
+
+
+    @When("^I Progress the Request Incident to 'In Progress' State$")
+    public void I_Progress_the_Request_Incident_to_InProgress_State()
+    {
+        new IncidentPage().ChangeIncidentStatus("Assigned");
+        new IncidentPage().ChangeIncidentStatus("In Progress");
+    }
+
+
+
+    @When("^I Progress the Request Incident to 'Resolved' State$")
+    public void I_Progress_the_Request_Incident_to_Resolved_State(DataTable dataTable)
+    {
+        List<List<String>> data = dataTable.raw();
+        IncidentData incidentData = new IncidentData();
+        incidentData.initialize(data);
+        new IncidentPage().ResolveCloseIncident(incidentData);
+    }
+
+
+    @Then("^Closure notification Email has been sent to the user")
+    public void Closure_notification_Email_has_been_sent_to_the_user() {
+
+        WaitForEmailsToBeSent();
+
+        HomePage homePage = new HomePage();
+        homePage.Impersonate_User(GblEmailsUser);
+        String requester = RetrieveData("ESSUser");
+        String incidentNo = RetrieveData("IncidentNo");
+        Find_Email(FormatEmailReceiver(requester), "Incident Closure", incidentNo);
+    }
+
+
+    @When("^I Search for 'USB' and validate order items only are listed$")
+    public void I_Populate_the_Search_field_with_USB()
+    {
+        new OrderSomethingPage().orderSomethingUSBSearch();
+    }
+
+
+    @When("^I Select the fultilment task for the requested item$")
+    public void I_Select_the_fultilment_task_for_the_requested_item()
+    {
+        new OrderSomethingPage().orderSomethingUSBSearch();
+    }
+
+    @When("^I Progress the task to Awaiting User with Notes '(.*)'$")
+    public void I_Progress_the_task_to_Awaiting_User(String notes)
+    {
+        new CatalogTaskPage().AwaitingUser(notes);
+    }
+
+    @When("^the task SLA has been paused$")
+    public void the_task_SLA_has_been_paused()
+    {
+        new CatalogTaskPage().VerifySLAPaused();
+    }
+
+
+    @When("^I Progress the task to In Progress with Notes '(.*)'$")
+    public void Progress_the_task_to_In_Progress_with_Notes(String notes)
+    {
+        new CatalogTaskPage().RevertToInProgress(notes);
+    }
+
+    @When("^the task SLA has been presumed$")
+    public void the_task_SLA_has_been_presumed()
+    {
+        new CatalogTaskPage().VerifySLAPresumed();
+    }
+
+
+    @When("^I Open the Request Item and verify that Delivery date is updated")
+    public void I_Open_the_Request_Item_and_verify_that_Delivery_date_is_updated() {
+        new CommonPageObjects().Find_Record("RITMNo");
+        String currentDateValue = new RequestedItemPage().getDeliveryDate();
+        SaveData("DeliveryDate2", currentDateValue);
+        String prevDate = RetrieveData("DeliveryDate");
+        Assert.assertNotEquals(prevDate,currentDateValue);
+        SaveData("DeliveryDate", currentDateValue);
+    }
+
 }
 
 

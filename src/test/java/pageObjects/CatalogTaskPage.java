@@ -8,6 +8,9 @@ import org.openqa.selenium.support.PageFactory;
 
 public class CatalogTaskPage extends Util {
 
+    @FindBy(how = How.XPATH, using = ".//input[@id='sys_readonly.sc_task.number']")
+    private WebElement taskNoReadOnly;
+
     @FindBy(how = How.XPATH, using = ".//h2//div[text()='Catalog Task']")
     private WebElement catalogTaskHeader;
 
@@ -35,6 +38,18 @@ public class CatalogTaskPage extends Util {
     @FindBy(how = How.ID, using = "ctask_close_complete")
     private WebElement closeTask;
 
+    @FindBy(how = How.ID, using = "ctask_awaiting_user")
+    private WebElement awaitingUser;
+
+    @FindBy(how = How.ID, using = "ctask_revert_in_progress")
+    private WebElement revertToInProgress;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.sc_task.state']/option[@selected][text()='Awaiting User']")
+    private WebElement awaitingUserState;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.sc_task.state']/option[@selected][text()='In Progress']")
+    private WebElement inProgressState;
+
     @FindBy(how = How.XPATH, using = ".//table[@id='sc_task.u_task_variable.u_catalog_task_table']/tbody/tr[1]/td[2]")
     private WebElement firstAssetNumber;
 
@@ -49,9 +64,18 @@ public class CatalogTaskPage extends Util {
 
     @FindBy(how = How.ID, using = "sysverb_update")
     private WebElement update;
-//
-//    @FindBy(how = How.XPATH, using = "sysverb_update_and_stay_save")
-//    private WebElement save;
+
+    @FindBy(how = How.XPATH, using = ".//table[@id='sc_task.task_sla.task_table']/tbody/tr[1]//a/span")
+    private WebElement SLATaskPreview;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.task_sla.stage']/option[@selected][text()='Paused']")
+    private WebElement SLATaskStatePaused;
+
+    @FindBy(how = How.XPATH, using = ".//select[@id='sys_readonly.task_sla.stage']/option[@selected][text()='In progress']")
+    private WebElement SLATaskStateInProgress;
+
+    @FindBy(how = How.XPATH, using = ".//button[contains(@class,'chevron-left')]")
+    private WebElement back;
 
 
     public void WaitForPageLoad()
@@ -75,9 +99,18 @@ public class CatalogTaskPage extends Util {
         SwitchToDefault();
     }
 
-
-    public void AssignToMe(String user)
+    public void verifyTaskSLACreated()
     {
+        SwitchToDefaultIFrame();
+        ScrollPage(taskNoReadOnly,2);
+        AssertDisplayed(taskSLA);
+
+        SwitchToDefault();
+    }
+
+    public void AssignToMe()
+    {
+        String user = RetrieveData("CurrentUser");
         SwitchToDefaultIFrame();
         sendKeys_Select(assignedToEdit,user);
         SwitchToDefault();
@@ -88,7 +121,8 @@ public class CatalogTaskPage extends Util {
     public void AddWorkNotes(String notes)
     {
         SwitchToDefaultIFrame();
-        ScrollPage(assignedToEdit,1);
+//        ScrollPage(assignedToEdit,1);
+        ScrollPage(taskNoReadOnly,1);
         sendKeys(workNotes,notes);
         SwitchToDefault();
     }
@@ -141,13 +175,57 @@ public class CatalogTaskPage extends Util {
     {
         AddWorkNotes(notes);
         SwitchToDefaultIFrame();
-        click(closeTask);
-        WaitForPageRefresh();
+        click_NoAssert(closeTask);
+//        WaitForPageRefresh();
         Alert_OK();
         WaitForPageRefresh();
         SwitchToDefault();
     }
 
 
+    public void AwaitingUser(String notes)
+    {
+        AddWorkNotes(notes);
+        SwitchToDefaultIFrame();
+        click(awaitingUser);
+        WaitForPageRefresh();
+        WaitForElement(awaitingUserState);
+        SwitchToDefault();
+    }
+
+
+    public void VerifySLAPaused()
+    {
+        SwitchToDefaultIFrame();
+        ScrollPage(taskNoReadOnly,3);
+        click(SLATaskPreview);
+        AssertDisplayed(SLATaskStatePaused);
+        click(back);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
+
+
+    public void RevertToInProgress(String notes)
+    {
+        AddWorkNotes(notes);
+        SwitchToDefaultIFrame();
+        click(revertToInProgress);
+        WaitForPageRefresh();
+        WaitForElement(inProgressState);
+        SwitchToDefault();
+    }
+
+
+    public void VerifySLAPresumed()
+    {
+        SwitchToDefaultIFrame();
+        ScrollPage(taskNoReadOnly,3);
+        click(SLATaskPreview);
+        AssertDisplayed(SLATaskStateInProgress);
+        click(back);
+        WaitForPageRefresh();
+        SwitchToDefault();
+    }
 }
 

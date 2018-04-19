@@ -469,12 +469,9 @@ public class ChangeSteps  extends Util {
         new ChangeTaskPage().ChangeClosedStatus(status);
     }
 
-    @Then("^I click close Task$")
-    public void i_click_close_Task() {
-
-        
-        
-    }
-
+//    @Then("^I click close Task$")
+//    public void i_click_close_Task() {
+//
+//    }
 
 }

@@ -14,8 +14,14 @@ public class HomePage extends Util {
     @FindBy(how = How.ID, using = "home_title")
     private WebElement homePage000;
 
-    @FindBy(how = How.ID, using = "user_info_dropdown")
+//    @FindBy(how = How.ID, using = "user_info_dropdown")
+//    private WebElement userinfodropdown;
+
+    @FindBy(how = How.XPATH, using = ".//div[@class='dropdown pull-left']/button[@id='user_info_dropdown']")
     private WebElement userinfodropdown;
+
+    @FindBy(how = How.XPATH, using = ".//div[@class='dropdown pull-left open']/button[@id='user_info_dropdown']")
+    private WebElement userinfodropdownOpen;
 
     @FindBy(how = How.XPATH, using = ".//a[text()='Impersonate User']/..")
     private WebElement impersonateUser;
@@ -57,44 +63,65 @@ public class HomePage extends Util {
     {
         SwitchToDefaultIFrame();
         WaitForElement(homePage000);
+        WaitForPageRefresh();
         SwitchToDefault();
     }
 
 
 
     public void Impersonate(String username) {
-        if(isElementPresent(closeAlert))
+
+        if(isElementPresent(closeAlert)) {
             click(closeAlert);
-        WaitForElement(userinfodropdown);
-        click(userinfodropdown);
-        WaitForElement(impersonateUser);
-        for (int i = 0; i < 3 ; i++) {
-            if (!isElementPresent(impersonateUser)) {
-                sleep(5);
-                click(userinfodropdown);
-                WaitForElement(impersonateUser);
-            }
-            else
-                break;
-        }
-        click(impersonateUser);
-        WaitForElement(searchForUserDropdown);
-        if(!isElementPresent(searchForUserDropdown))
-        {
             sleep(5);
-            click(impersonateUser);
-            WaitForElement(searchForUserDropdown);
         }
-        click(searchForUserDropdown);
-        sendKeysVerify(searchInput,username);
-        sleep(2);
-        ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
-        WaitForPageRefresh();
 
-        try {
-            WaitForElementToDisappear(impersonatePopup);
-        }catch (Exception e){}
+        for (int i = 0; i < defaultTimeout; i++) {
+            if(!isElementPresent(userinfodropdownOpen))
+            {
+                click(userinfodropdown);
+//                sleep(3);
+            }
+            else {
+                click(impersonateUser);
+//                WaitForPageRefresh();
+                click(searchForUserDropdown);
+                sendKeysVerify(searchInput,username);
+//                WaitForPageRefresh();
+                ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
+                WaitForPageRefresh();
+                break;
+            }
+        }
 
+
+//        if(isElementPresent(closeAlert))
+//            click(closeAlert);
+//        WaitForElement(userinfodropdown);
+//        click(userinfodropdown);
+//        WaitForElement(impersonateUser);
+//        for (int i = 0; i < 3 ; i++) {
+//            if (!isElementPresent(impersonateUser)) {
+//                sleep(5);
+//                click(userinfodropdown);
+//                WaitForElement(impersonateUser);
+//            }
+//            else
+//                break;
+//        }
+//        click(impersonateUser);
+//        WaitForElement(searchForUserDropdown);
+//        if(!isElementPresent(searchForUserDropdown))
+//        {
+//            sleep(5);
+//            click(impersonateUser);
+//            WaitForElement(searchForUserDropdown);
+//        }
+//        click(searchForUserDropdown);
+//        sendKeysVerify(searchInput,username);
+//        sleep(2);
+//        ClickElementByXPath(".//ul[@class='select2-results']//div[text()='"+username+"']");
+//        WaitForPageRefresh();
     }
 
 //
@@ -169,6 +196,12 @@ public class HomePage extends Util {
     public void Impersonate_User(String username)
     {
         Impersonate(username);
+
+        try {
+            if(isElementPresent(impersonatePopup))
+                WaitForElementToDisappear(impersonatePopup);
+        }catch (Exception e){}
+
         SwitchToDefaultIFrame();
         WaitForElement(welcome);
         SwitchToDefault();
@@ -209,16 +242,20 @@ public class HomePage extends Util {
             globalSearch.sendKeys(searchText);
             globalSearch.sendKeys(Keys.ENTER);
             WaitForPageRefresh();
-            if(isElementPresent(notificationMsg))
-                click(notificationMsg);
+//            if(isElementPresent(notificationMsg))
+//                click(notificationMsg);
+            if(isElementPresent(closeAlert))
+                click(closeAlert);
             SwitchToDefaultIFrame();
-            try{
-            if(isElementPresent(notificationMsg))
-                notificationMsg.click();
-            }catch(Exception e)
-            {
-                sleep(500);
-            }
+            if(isElementPresent(closeAlert))
+                click(closeAlert);
+//            try{
+//            if(isElementPresent(notificationMsg))
+//                notificationMsg.click();
+//            }catch(Exception e)
+//            {
+//                sleep(500);
+//            }
     }
 
     public HomePage()

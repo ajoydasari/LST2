@@ -18,7 +18,7 @@ public class CommonSteps extends Util {
         Poise_LoginPage poiseloginpage = new Poise_LoginPage();
         SNOW_LoginPage snowloginpage = new SNOW_LoginPage();
 
-        navigate(SNOW_URL);
+        navigate(getURL());
 
         if (poiseloginpage.isAt())
             poiseloginpage.login();
@@ -26,7 +26,7 @@ public class CommonSteps extends Util {
         snowloginpage.login();
 
         if (new ESSLandingPage().IsAt())
-            navigate(SNOW_URL1);
+            navigate(getURL1());
     }
 
 
@@ -36,7 +36,8 @@ public class CommonSteps extends Util {
         Poise_LoginPage poiseloginpage = new Poise_LoginPage();
         SNOW_LoginPage snowloginpage = new SNOW_LoginPage();
 
-        navigate("https://lssitest.service-now.com/ess");
+//        navigate("https://lssitest.service-now.com/ess");
+        navigate(getESSURL());
 
         if (poiseloginpage.isAt())
             poiseloginpage.login();
@@ -53,6 +54,7 @@ public class CommonSteps extends Util {
         WaitForPageRefresh();
         HomePage homePage = new HomePage();
         homePage.Impersonate_User(user.username);
+        SaveData("CurrentUser", user.username);
     }
 
     @When("^I Logoff and Login as ESS User$")
@@ -64,6 +66,7 @@ public class CommonSteps extends Util {
         WaitForPageRefresh();
         HomePage homePage = new HomePage();
         homePage.Impersonate_ESSUser(user.username);
+        SaveData("ESSUser", user.username);
     }
     @When("^I Select All Apps Tab$")
     public void I_Select_All_Apps_Tab()

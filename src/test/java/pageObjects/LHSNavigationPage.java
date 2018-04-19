@@ -115,7 +115,7 @@ public class LHSNavigationPage extends Util {
         setFilter("Emails");
         click(emails);
         SwitchToIFrame();
-        WaitForElementToBeClicable(new EmailsPage().filterColumn);
+        WaitForElementToBeClickable(new EmailsPage().filterColumn);
         SwitchToDefault();
     }
 

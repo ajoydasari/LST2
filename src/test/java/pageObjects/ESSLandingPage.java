@@ -12,6 +12,9 @@ public class ESSLandingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//img[@src='ITnowlogolarge.png']")
     private WebElement ESSLogo;
 
+    @FindBy(how = How.XPATH, using = ".//a[contains(@ng-if,'portal.logo')]")
+    private WebElement ESSSession;
+
     @FindBy(how = How.XPATH, using = ".//h1[text()='Resolve it yourself']")
     private WebElement resolveITYourself;
 
@@ -42,6 +45,9 @@ public class ESSLandingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//span[text()='My Incidents']")
     private WebElement myIncidents;
 
+    @FindBy(how = How.XPATH, using = ".//span[text()='My Open Incidents']")
+    private WebElement myOpenIncidents;
+
     @FindBy(how = How.XPATH, using = ".//span[text()='My Orders']")
     private WebElement myOrders;
 
@@ -50,6 +56,9 @@ public class ESSLandingPage extends Util {
 
     @FindBy(how = How.XPATH, using = ".//span[text()='My Closed Orders']")
     private WebElement myClosedOrders;
+
+    @FindBy(how = How.XPATH, using = ".//span[text()='Order Something']")
+    private WebElement myOrdersOrderSomething;
 
     @FindBy(how = How.XPATH, using = ".//span[text()='Chat']")
     private WebElement chat;
@@ -63,11 +72,17 @@ public class ESSLandingPage extends Util {
     @FindBy(how = How.XPATH, using = ".//a[text()='Logout']")
     private WebElement logout;
 
-
+    @FindBy(how = How.XPATH, using = ".//th/div[contains(text(),'Number')]/../i[contains(@class,'down') and contains(@class,'grey')]")
+    private WebElement sortNumberDesc;
 
     public boolean IsAt()
     {
         return(isElementPresent(ESSLogo));
+    }
+
+    public boolean IsAtESS()
+    {
+        return(isElementPresent(ESSSession));
     }
 
     public void WaitForPageLoad()
@@ -92,18 +107,30 @@ public class ESSLandingPage extends Util {
         WaitForPageLoad();
     }
 
+    public void MyOpenIncidents()
+    {
+        click(myIncidents);
+        click(myOpenIncidents);
+        WaitForPageRefresh();
+    }
+
     public void MyOpenOrders()
     {
         click(myOrders);
         click(myOpenOrders);
-        new ESSMyOpenRequestsPage().WaitForPageLoad();
+        WaitForPageRefresh();
+        click(sortNumberDesc);
+        WaitForPageRefresh();
+        if(isElementPresent(sortNumberDesc))
+            click(sortNumberDesc);
+        WaitForPageRefresh();
     }
 
     public void MyClosedOrders()
     {
         click(myOrders);
         click(myClosedOrders);
-        new ESSMyOpenRequestsPage().WaitForPageLoad();
+        WaitForPageRefresh();
     }
 
     public void ESSLogout()
@@ -113,6 +140,13 @@ public class ESSLandingPage extends Util {
         WaitForPageRefresh();
     }
 
+
+    public void MyOrders_OrderSomething()
+    {
+        click(myOrders);
+        click(myOrdersOrderSomething);
+        new ESSMyOpenRequestsPage().WaitForPageLoad();
+    }
 
 
 }

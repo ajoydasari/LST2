@@ -28,9 +28,9 @@ public class Poise_LoginPage extends Util{
 
     public void login() {
         WaitForElement(userid);
-        // We continue using the element just as before
-        userid.sendKeys("poise\\xxxxxxxx");
-        password.sendKeys("xxxxxxxxxx");
+        sendKeys(userid,getPOISE_LOGIN_ID());
+        sendKeys(password,getPOISE_LOGIN_PASSWORD());
+
         click(submit);
         WaitForElement(welcome);
     }

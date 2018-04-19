@@ -444,7 +444,7 @@ public class ProblemPage extends Util {
 
     public void ChangeProblemStatus(String status) {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(problemState);
+        WaitForElementToBeClickable(problemState);
         selectValue(problemState,status);
         click(Save);
         WaitForPageRefresh();
@@ -454,14 +454,14 @@ public class ProblemPage extends Util {
 
     public void ChangeProblemStatusWithoutSave(String status) {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(problemState);
+        WaitForElementToBeClickable(problemState);
         selectValue(problemState, status);
         SwitchToDefault();
     }
 
     public void ChangeAssignmentGroup(String group) {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(assignemntGroup);
+        WaitForElementToBeClickable(assignemntGroup);
         sendKeys_Select(assignemntGroup,group);
         click(Save);
         WaitForPageRefresh();

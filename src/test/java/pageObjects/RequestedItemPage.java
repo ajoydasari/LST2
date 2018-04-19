@@ -20,13 +20,19 @@ public class RequestedItemPage extends Util {
     @FindBy(how = How.ID, using = "sc_req_item.estimated_delivery")
     private WebElement estimatedDelivery;
 
+    @FindBy(how = How.ID, using = "sys_readonly.sc_req_item.estimated_delivery")
+    private WebElement estimatedDelivery_Readonly;
+
     @FindBy(how = How.ID, using = "sys_readonly.sc_req_item.number")
     private WebElement requestItemNumber;
 
     @FindBy(how = How.XPATH, using = ".//*[text()='Implement']/..//a[contains(text(),'SCTASK')]")
     private WebElement requestTask;
 
-    @FindBy(how = How.XPATH, using = ".//*[text()='Implement']/..//a[contains(text(),'SCTASK')]")
+    @FindBy(how = How.XPATH, using = ".//*[text()='ASYS access add - Implement']/..//a[contains(text(),'SCTASK')]")
+    private WebElement asysRequestTask;
+
+    @FindBy(how = How.XPATH, using = ".//*[text()='Update License']/..//a[contains(text(),'SCTASK')]")
     private WebElement updateLicenseTask;
 
     @FindBy(how = How.ID, using = "activity-stream-work_notes-textarea")
@@ -37,6 +43,9 @@ public class RequestedItemPage extends Util {
 
     @FindBy(how = How.ID, using = "sysverb_update_and_stay_save")
     private WebElement save;
+
+    @FindBy(how = How.XPATH, using = ".//table[@id='sc_req_item.sc_task.request_item_table']/tbody/tr[1]")
+    private WebElement taskSLA;
 
     public void WaitForPageLoad()
     {
@@ -61,6 +70,18 @@ public class RequestedItemPage extends Util {
         SwitchToDefault();
     }
 
+
+    public void selectRequestMoreInfoItem()
+    {
+        SwitchToDefaultIFrame();
+        ApprovalPage approvalPage = new ApprovalPage();
+        ScrollPage(requestItemNumber,3);
+        selectTab(approversTab);
+        ClickElementByXPath(".//a[text()='Request More Info']");
+        approvalPage.WaitForPageLoad();
+        SwitchToDefault();
+    }
+
     public String getRequestTaskNo()
     {
         String TaskNo="";
@@ -71,6 +92,20 @@ public class RequestedItemPage extends Util {
 
         return TaskNo;
     }
+
+
+    public String getAsysRequestTaskNo()
+    {
+        String TaskNo="";
+        SwitchToDefaultIFrame();
+        ScrollPage(estimatedDelivery_Readonly,2);
+        selectTab(tasksTab);
+        TaskNo= getText(asysRequestTask);
+        SwitchToDefault();
+
+        return TaskNo;
+    }
+
 
     public String getUpdateLicenseTaskNo()
     {
@@ -84,11 +119,22 @@ public class RequestedItemPage extends Util {
     }
 
 
+    public String getDeliveryDate()
+    {
+        String deliveryDate="";
+        SwitchToDefaultIFrame();
+        deliveryDate= getText(estimatedDelivery_Readonly);
+        SwitchToDefault();
+
+        return deliveryDate;
+    }
+
 
     public void AddWorkNotes(String notes)
     {
         SwitchToDefaultIFrame();
-        ScrollPage(estimatedDelivery,1);
+//        ScrollPage(estimatedDelivery,1);
+        ScrollPage(requestItemNumber,1);
         sendKeys(workNotes,notes);
         SwitchToDefault();
     }
@@ -108,10 +154,20 @@ public class RequestedItemPage extends Util {
     public void verifyImplementTaskDisplayed(String taskNo)
     {
         SwitchToDefaultIFrame();
-//        ScrollPage(requestItemNumber,3);
-        ScrollPage(estimatedDelivery,4);
+        ScrollPage(requestItemNumber,3);
+//        ScrollPage(estimatedDelivery,4);
         selectTab(tasksTab);
         AssertDisplayed(ElementByXPath(".//*[text()='Implement']/..//a[contains(text(),'"+taskNo+"')]"));
+        SwitchToDefault();
+    }
+
+
+    public void verifyTaskSLA1Created()
+    {
+        SwitchToDefaultIFrame();
+        ScrollPage(requestItemNumber,2);
+        selectTab(tasksTab);
+        AssertDisplayed(taskSLA);
         SwitchToDefault();
     }
 }

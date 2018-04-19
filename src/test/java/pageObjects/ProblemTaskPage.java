@@ -237,7 +237,7 @@ public class ProblemTaskPage extends Util {
 
     public void ChangeTaskStatus(String status) {
         SwitchToDefaultIFrame();
-        WaitForElementToBeClicable(taskStatus);
+        WaitForElementToBeClickable(taskStatus);
         selectValue(taskStatus,status);
         click(Save);
         WaitForPageRefresh();
