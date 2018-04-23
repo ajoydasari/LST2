@@ -43,6 +43,18 @@ Feature: Change Feature
     When I populate the Change Classification
       | ChangeClassification |
       | Minor                |
+    And I Click on Save
+    When I Logoff and Login as
+      | ChangeManager       |
+      | Test ChangeManager1 |
+    And I Search and Open the Change Record
+    When I Populate Accepted For Expediting
+      | AcceptExpedite |
+      | Yes            |
+    And I Logoff and Login as
+      | HOT Change Analyst  |
+      | Test ChangeAnalyst1 |
+    And I Search and Open the Change Record
     And I Click on Request Assessments
     Then The Change Record State changes to Awaiting Approval
     When I Logoff and Login as
@@ -131,6 +143,18 @@ Feature: Change Feature
     When I populate the Change Classification
       | ChangeClassification |
       | Minor                |
+    And I Click on Save
+    When I Logoff and Login as
+      | ChangeManager       |
+      | Test ChangeManager1 |
+    And I Search and Open the Change Record
+    When I Populate Accepted For Expediting
+      | AcceptExpedite |
+      | Yes            |
+    And I Logoff and Login as
+      | HOT Change Analyst  |
+      | Test ChangeAnalyst2 |
+    And I Search and Open the Change Record
     And I Click on Request Assessments
     Then The Change Record State changes to Awaiting Approval
     When I Logoff and Login as
@@ -324,6 +348,10 @@ Feature: Change Feature
     Then I Click on the Change Assessors Tab
     And I add 'Test AssignmentGroup1' to the Internal Assessment groups
     And I add 'Test AssignmentGroup2' to the External Assessment groups
+      When I Populate Accepted For Expediting
+        | AcceptExpedite |
+        | Yes            |
+      And I Click on Save
     And I Click on Request Assessments
     Then The Change Record State changes to Awaiting Approval
     When I Logoff and Login as

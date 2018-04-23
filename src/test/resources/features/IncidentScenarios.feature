@@ -53,25 +53,25 @@ Feature: Incident Feature
     Then Resolution Service Classification displayed correctly for Incident
     And Incident Status changed to Resolved
     Then Incident Resolution Email has been sent to the requester
-    When I Logoff and Login as
-      | HOTServiceDeskAgent        |
-      | Test SDServiceDeskAnalyst1 |
-    And I Call Customer with notes for the Incident
-      | WorkNotes                                 |
-      | Attempt call customer for the first time  |
-    And I Call Customer with notes for the Incident
-      | WorkNotes                                 |
-      | Attempt call customer for the second time |
-    And I Call Customer with notes for the Incident
-      | WorkNotes                                 |
-      | Attempt call customer for the third time  |
-    And I Search and Open the Incident
-    Then Incident Status changed to Closed
-    And Incident Closure Details displayed correctly for Incident
-      | ClosureCode                       | ClosureNotes                                                                                            |
-      | Closed - Three Contacts Attempted | This call is being closed automatically after three contacts. Please see work notes for further details |
-    Then Incident Closure Email has been sent to the requester
-
+#    When I Logoff and Login as
+#      | HOTServiceDeskAgent        |
+#      | Test SDServiceDeskAnalyst1 |
+#    And I Call Customer with notes for the Incident
+#      | WorkNotes                                 |
+#      | Attempt call customer for the first time  |
+#    And I Call Customer with notes for the Incident
+#      | WorkNotes                                 |
+#      | Attempt call customer for the second time |
+#    And I Call Customer with notes for the Incident
+#      | WorkNotes                                 |
+#      | Attempt call customer for the third time  |
+#    And I Search and Open the Incident
+#    Then Incident Status changed to Closed
+#    And Incident Closure Details displayed correctly for Incident
+#      | ClosureCode                       | ClosureNotes                                                                                            |
+#      | Closed - Three Contacts Attempted | This call is being closed automatically after three contacts. Please see work notes for further details |
+#    Then Incident Closure Email has been sent to the requester
+#
 
 
   Scenario: Incident 2
@@ -111,21 +111,21 @@ Feature: Incident Feature
     Then Incident1 Status changed to Resolved
     When I Search and Open the Incident2
     Then Incident2 Status changed to Resolved
-    When I Logoff and Login as
-      | HOT Service Desk Agent     |
-      | Test SDServiceDeskAnalyst1 |
-    And I Search and Open the Incident3
-    When I Close the Incident3 with details
-      | ClosureCode                     | ClosureNotes       |
-      | Closed - Parent incident closed | Closure Notes Text |
-    Then Incident3 Status changed to Closed
-    When I Search and Open the Incident1
-    Then Incident1 Status changed to Closed
-    When I Search and Open the Incident2
-    Then Incident2 Status changed to Closed
-    And Child Incident1 contains Closure Details from Incident3
-    And Child Incident2 contains Closure Details from Incident3
-    Then Incident3 Closure Email has been sent to the requester
+#    When I Logoff and Login as
+#      | HOT Service Desk Agent     |
+#      | Test SDServiceDeskAnalyst1 |
+#    And I Search and Open the Incident3
+#    When I Close the Incident3 with details
+#      | ClosureCode                     | ClosureNotes       |
+#      | Closed - Parent incident closed | Closure Notes Text |
+#    Then Incident3 Status changed to Closed
+#    When I Search and Open the Incident1
+#    Then Incident1 Status changed to Closed
+#    When I Search and Open the Incident2
+#    Then Incident2 Status changed to Closed
+#    And Child Incident1 contains Closure Details from Incident3
+#    And Child Incident2 contains Closure Details from Incident3
+#    Then Incident3 Closure Email has been sent to the requester
 
 
   Scenario: Incident 3

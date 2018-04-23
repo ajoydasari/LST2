@@ -25,6 +25,7 @@ public class ChangeData extends dataUtil{
     public String RevokeReason;
     public String ImpactofNoChange;
     public String ChangeClassification;
+    public String AcceptExpedite;
     public String Location;
     public String CustomerNotes;
     public String WorkNotes;
@@ -73,6 +74,7 @@ public class ChangeData extends dataUtil{
         this.RevokeReason = getData("RevokeReason", data, this.RevokeReason);
         this.ImpactofNoChange = getData("ImpactofNoChange", data, this.ImpactofNoChange);
         this.ChangeClassification = getData("ChangeClassification", data, this.ChangeClassification);
+        this.AcceptExpedite = getData("AcceptExpedite", data, this.AcceptExpedite);
         this.Location = getData("Location", data, this.Location);
         this.CustomerNotes = getData("CustomerNotes", data, this.CustomerNotes);
         this.WorkNotes = getData("WorkNotes", data, this.WorkNotes);

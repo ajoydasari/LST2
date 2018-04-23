@@ -539,7 +539,7 @@ public class RequestSteps extends Util {
 
     @When("^the SLA assigned to the fulfilment task is appropriate for the quantity of items selected")
     public void the_SLA_assigned_to_the_fulfilment_task_is_appropriate_for_the_quantity_of_items_selected() {
-        new RequestedItemPage().verifyTaskSLA1Created();
+        new CatalogTaskPage().verifyTaskSLA1Created();
     }
 
 

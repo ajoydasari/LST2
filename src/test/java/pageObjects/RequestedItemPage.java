@@ -155,7 +155,6 @@ public class RequestedItemPage extends Util {
     {
         SwitchToDefaultIFrame();
         ScrollPage(requestItemNumber,3);
-//        ScrollPage(estimatedDelivery,4);
         selectTab(tasksTab);
         AssertDisplayed(ElementByXPath(".//*[text()='Implement']/..//a[contains(text(),'"+taskNo+"')]"));
         SwitchToDefault();

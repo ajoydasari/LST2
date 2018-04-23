@@ -239,11 +239,10 @@ public class HomePage extends Util {
             click(globalSearchIcon);
             WaitForElement(globalSearch);
             globalSearch.clear();
-            globalSearch.sendKeys(searchText);
+            //globalSearch.sendKeys(searchText);
+            sendKeysVerify(globalSearch, searchText);
             globalSearch.sendKeys(Keys.ENTER);
             WaitForPageRefresh();
-//            if(isElementPresent(notificationMsg))
-//                click(notificationMsg);
             if(isElementPresent(closeAlert))
                 click(closeAlert);
             SwitchToDefaultIFrame();

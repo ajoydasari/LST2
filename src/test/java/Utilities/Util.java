@@ -407,7 +407,11 @@ public abstract class Util extends XMLUtil{
         if(element!=null)
         {
             System.out.println("Verifying Element is Not Displayed :" + element.toString());
-            found = element.isDisplayed();
+            try {
+                found = element.isDisplayed();
+            }catch(NoSuchElementException e) {
+                found = false;
+            }
         }
         else
             found= false;

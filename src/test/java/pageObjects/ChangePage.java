@@ -97,6 +97,9 @@ public class ChangePage extends Util {
     @FindBy(how = How.ID, using = "change_request.u_change_classification")
     private WebElement changeClassification;
 
+    @FindBy(how = How.ID, using = "change_request.u_accept_expedite")
+    private WebElement acceptExpedite;
+
     @FindBy(how = How.ID, using = "sys_display.change_request.location")
     private WebElement location;
 
@@ -529,7 +532,6 @@ public class ChangePage extends Util {
         SwitchToDefaultIFrame();
         click(submitForValidation);
         WaitForPageRefresh();
-//        WaitForElement(approvalsTab);
         SwitchToDefault();
     }
 
@@ -549,6 +551,12 @@ public class ChangePage extends Util {
         SwitchToDefault();
     }
 
+
+    public void ValidateRequestAssessmentsNotDisplayed() {
+        SwitchToDefaultIFrame();
+        AssertNotDisplayed(requestAssessments);
+        SwitchToDefault();
+    }
 
     public void PopulateExpediteJustification(ChangeData changeData) {
         SwitchToDefaultIFrame();
@@ -620,6 +628,14 @@ public class ChangePage extends Util {
         selectTab(mainDetailsTab);
         selectValue(changeClassification, changeData.ChangeClassification);
         SwitchToDefault();
+    }
+
+    public void PopulateAcceptedForExpediteing(ChangeData changeData) {
+        SwitchToDefaultIFrame();
+        selectTab(mainDetailsTab);
+        selectValue(acceptExpedite, changeData.AcceptExpedite);
+        SwitchToDefault();
+        new CommonPageObjects().saveRecord();
     }
 
     public void ClickRequestAssessments() {
